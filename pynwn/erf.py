@@ -12,13 +12,63 @@ class Erf(res.Container):
 
         self.localized_strings = {}
         self.io = io
-        self.ftype, fversion = "ERF", "V1.0"
+        self.ftype, self.fversion = "ERF", "V1.0"
         self.desc_strref = 0xffffffff
 
         now = datetime.datetime.now()
         self.year = now.year - 1900
         self.day_of_year = now.timetuple().tm_yday
 
+
+    # Note about the following... Python doesn't seem to auto-pad strings in the way that
+    # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
+    # be
+    def write_to(self, io):
+        fnlen = Erf.filename_length(self.fversion)
+        lstr_iter = iter(sorted(self.localized_strings.iteritems()))
+        locstr = []
+        for k, v in lstr_iter:
+            print k, len(v), v
+            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
+        locstr = ''.join(locstr)
+
+        keylist = []
+        for i, co in enumerate(self.content):
+            pad = 0
+            max = len(co.resref)
+            if len(co.resref) > fnlen:
+                print "truncating filename %s, longer than %d" % (co.resref, fnlen)
+                max = fnlen
+            else:
+                pad = fnlen - len(co.resref)
+
+            keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad), co.resref, i, co.res_type, 0))
+        keylist = ''.join(keylist)
+
+        offset = 160 + len(locstr) + len(keylist) + 8 * len(self.content)
+
+        reslist = []
+        for co in self.content:
+            reslist.append(struct.pack("< L L", offset, co.size))
+            offset += co.size
+
+        reslist = ''.join(reslist)
+
+        offset_to_locstr = 160
+        offset_to_keylist = offset_to_locstr + len(locstr)
+        offset_to_resourcelist = offset_to_keylist + len(keylist)
+
+        header = struct.pack("8s LL LL LL LL L 116x", self.ftype+' '+ self.fversion, len(self.localized_strings),
+                             len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
+                             offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
+
+        io.write(header)
+        io.write(locstr)
+        io.write(keylist)
+        io.write(reslist)
+
+        for co in self.content:
+            io.write(co.get())
 
     @staticmethod
     def from_io(io):
