@@ -1,5 +1,3 @@
-import hashlib
-
 Extensions = {
     'res': 0,
     'bmp': 1,
@@ -268,18 +266,6 @@ class ContentObject(object):
 
     def get_filename(self):
         return "%s.%s" % (self.resref, self.get_extension())
-
-    def get_hash(self, hash_type):
-        fname = self.get_filename()
-        content = self.get()
-        if hash_type == 'md5':
-            return (fname, hashlib.md5(content).hexdigest())
-        elif hash_type == 'sha1':
-            return (fname, hashlib.sha1(content).hexdigest())
-        else:
-            msg = "Unkown hash type: %s" % hash_type
-            raise ValueError(msg)
-
         
 class Container(object):
     def __init__(self):
@@ -299,9 +285,6 @@ class Container(object):
 
     def get_filenames(self):
         return self.filenames.keys()
-
-    def get_hashes(self, hash_type):
-        return [co.get_hash(hash_type) for co in self.content]
 
     def get_content_obj(self, name):
         if type(name) == str:
