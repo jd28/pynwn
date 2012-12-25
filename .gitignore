@@ -2,6 +2,9 @@ test_*.py
 
 *.py[cod]
 
+# Sphinx
+docs/_build
+
 # C extensions
 *.so
 
