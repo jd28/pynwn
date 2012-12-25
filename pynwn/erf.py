@@ -6,6 +6,9 @@ from helper import chunks
 VALID_TYPES = ['ERF', 'HAK', 'MOD']
 
 class Erf(res.Container):
+    """Reads/Writes NWN ERF formats: erf, hak, and mod.
+    """
+
     def __init__(self, io=None):
         super(Erf, self).__init__()
         self.container = res.Container()
@@ -24,11 +27,16 @@ class Erf(res.Container):
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
     # be
     def write_to(self, io):
+        """Writes ERF file to file handle.
+
+        :param io: A file handle.
+
+        """
         fnlen = Erf.filename_length(self.fversion)
         lstr_iter = iter(sorted(self.localized_strings.iteritems()))
         locstr = []
         for k, v in lstr_iter:
-            print k, len(v), v
+            print(repr(v))
             locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
         locstr = ''.join(locstr)
 
@@ -72,6 +80,11 @@ class Erf(res.Container):
 
     @staticmethod
     def from_io(io):
+        """Create an Erf from a file handle.
+
+        :param io: A file handle.
+
+        """
         new_erf = Erf(io)
 
         header = io.read(160)
@@ -146,6 +159,12 @@ class Erf(res.Container):
 
     @staticmethod
     def filename_length(version):
+        """Determine maximum ResRef length.
+
+        :param version: ERF version. Only "V1.0" and "V1.1" are valid parameters.
+        :type name: str.
+
+        """
         if version == "V1.0":
             return 16
         elif version == "V1.1":

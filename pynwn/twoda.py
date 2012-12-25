@@ -3,17 +3,12 @@ import shlex
 import itertools
 import os, shutil
 import yaml
-
-def convert_to_number(val):
-    try:
-        return int(val)
-    except:
-        try:
-            return float(val)
-        except:
-            return val
+from helper import convert_to_number
 
 class TwoDA:
+    """2da Files.
+    """
+
     ROW_NUM_RE = re.compile('^\d+\s+(.*)')
     DEFAULT_RE = re.compile('^DEFAULT:\s+(.*)')
 
@@ -32,6 +27,8 @@ class TwoDA:
         return self.rows[i]
 
     def expload(self, out_dir='.'):
+        """Extracts each line from a tlk and creates a yaml file.
+        """
         if not os.path.isdir(out_dir):
             os.mkdir(out_dir)
 
@@ -64,25 +61,39 @@ class TwoDA:
 
 
     def get(self, row, col):
+        """Gets a 2da entry by row and column label or column index.
+        """
         col = self.get_column_index(col)
         return self.rows[row][col]
 
     def get_column_index(self, col):
+        """Gets the column index from a column label.
+        """
+
         if type(col) is str:
             col = self.columns.index(col)
 
         return col
 
     def get_float(self, row, col):
+        """Gets a 2da entry by row and column label or column index as a float.
+        """
         return float(self.get(row, col))
 
     def get_int(self, row, col):
+        """Gets a 2da entry by row and column label or column index as an int.
+        """
         return int(self.get(row, col))
 
     def label_valid(self, lbl):
+        """Deterimnes if a 2da label is valid.
+        """
         return not lbl in self.invalid_labels
 
     def parse(self, io):
+        """Parses a 2da file.
+        """
+
         lines = [l.strip() for l in io if l.strip() != '']
 
         if len(lines) == 0:
@@ -107,6 +118,10 @@ class TwoDA:
         self.rows = [self.parse_row(r) for r in it]
 
     def parse_row(self, row, strip_row_number=True):
+        """Parses a 2da row.  Currently this is implimented by using the
+        Python shlex package which parses a superset of 2da row format.
+        So it could parse things that are not legal 2da rows.
+        """
         if strip_row_number:
             m = self.ROW_NUM_RE.match(row)
             if m: row = m.group(1)
@@ -116,5 +131,9 @@ class TwoDA:
         return list(splitter)
 
     def set(self, row, col, val):
+        """Sets a 2da entry by row and column label or column index.
+        The value passed is automatically coerced to str.
+        """
+
         col = self.get_column_index(col)
         self.rows[row][col] = str(val)

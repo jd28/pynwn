@@ -2,10 +2,12 @@ import resource as res
 import struct, os
 from helper import chunks
 
-# A Bif object encapsulates an open file handle pointing
-# to a .bif file. It's contents are indexed on first access,
-# not on creation by NWN::Key::Key (to speed up things).
 class Bif:
+    """A Bif object encapsulates an open file handle pointing
+    to a .bif file. It's contents are indexed on first access,
+    not on creation by NWN::Key::Key (to speed up things).
+    """
+
     def __init__(self, key, io):
         # The Key object this Bif belongs to.
         self.key = key
@@ -42,9 +44,20 @@ class Bif:
         return self.io.read(size)
 
     def has_res(self, id):
+        """Determine if Bif contains a resource by an resoure ID.
+
+        :param id: A resource ID.
+        :type id: int
+
+        """
         return self.contained.has_key(id)
 
 class Key(res.Container):
+    """...
+
+    :param io: File handle.
+    :param data_path: Path to your NWN installation directory.  e.g: C:/NeverwinterNights/NWN/
+    """    
     def __init__(self, io, data_path):
         super(Key, self).__init__()
 

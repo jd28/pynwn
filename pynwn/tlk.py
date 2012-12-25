@@ -16,6 +16,9 @@ LANGUAGES = {
 GENDER = ['male', 'female']
 
 class Tlk:
+    """Loads a TLK file from a file handle.
+    """
+
     HEADER_SIZE = 20
     DATA_ELEMENT_SIZE = 4 + 16 + 4 + 4 + 4 + 4 + 4
 
@@ -86,6 +89,8 @@ class Tlk:
         d['pitch_variance'] = val['pitch_variance']
 
     def add (self, text, sound = "", sound_length = 0.0, volume_variance = 0, pitch_variance = 0):
+        """Adds TLK entry to the end of entry list.
+        """
         next_i = self.highest()
 
         #$stderr.puts "put in cache: #{next_id}"
@@ -99,6 +104,8 @@ class Tlk:
         return next_i
 
     def highest(self):
+        """Determines the highest TLK entry.
+        """
         keys = self.cache.keys()
         if len(keys)  == 0 and self.str_count == 0:
             return 0
@@ -109,6 +116,8 @@ class Tlk:
         return max(h, c)
 
     def extract(self, start=0, count=None):
+        """Extracts lines from a TLK, returning a new Tlk instance.
+        """
         if not count: count = self.highest()
         n = Tlk(None)
 
@@ -123,6 +132,8 @@ class Tlk:
         return n
 
     def inject(self, loc, tlk, start=0, count=None):
+        """Injects lines from one TLK into another.
+        """        
         if not end: end = tlk.highest()
 
         for i in range(start, count):
