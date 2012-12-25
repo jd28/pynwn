@@ -1,9 +1,12 @@
 test_*.py
 
+#vim
+*.swp
+
 *.py[cod]
 
 # Sphinx
-docs/_build
+docs/build/
 
 # C extensions
 *.so
