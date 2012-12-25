@@ -240,3 +240,11 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+def skip(app, what, name, obj, skip, options):
+    if name == "__weakref__":
+        return True
+    return skip
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip)
