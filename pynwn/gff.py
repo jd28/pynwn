@@ -59,7 +59,7 @@
 import os, struct
 import chardet
 
-class gff( object ):
+class Gff( object ):
     """Represents a GFF file."""
 
     # current GFF version
