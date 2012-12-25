@@ -226,8 +226,10 @@ ResTypes = {
     9999: 'key',
 }
 
-
 class ContentObject(object):
+    """A ContentObject is an abstraction of any particular NWN resource object.
+    Either in NWN container (i.e. a hak, mod, or erf) or in a file.
+    """
     def __init__(self, resref, res_type, io = None, offset = None, size=None):
         self.is_file = type(io) == str
 
@@ -242,6 +244,8 @@ class ContentObject(object):
 
     @staticmethod
     def from_file(filename):
+        """Instantiates a ContentObject from a file.
+        """
         if not os.path.isfile(filename): raise ValueError("%s does not exist!" % filename)
 
         abspath = os.path.abspath(filename)
@@ -254,6 +258,8 @@ class ContentObject(object):
         return ContentObject(basename, Extensions[ext], abspath, 0, size)
 
     def get(self):
+        """Returns the actual data.
+        """
         if self.is_file:
             with open(self.io) as f:
                 return f.read(self.size)
@@ -262,12 +268,20 @@ class ContentObject(object):
             return self.io.read(self.size)
 
     def get_extension(self):
+        """Determines the ContentObject's file extention by resource
+        type.
+        """
+
         return ResTypes[self.res_type]
 
     def get_filename(self):
+        """Determines the ContentObject's base file name: <resref>.<ext>
+        """
         return "%s.%s" % (self.resref, self.get_extension())
-        
+
 class Container(object):
+    """A basic container for ContentObjects
+    """
     def __init__(self):
         self.content = []
         self.filenames = {}
@@ -277,16 +291,28 @@ class Container(object):
         return co.get()
 
     def add(self, content_obj):
+        """Add a content object to a container.
+        """
         self.filenames[content_obj.get_filename()] = content_obj
         self.content.append(content_obj)
 
     def add_file(self, fname):
+        """Add a content object from a file to a container.
+        """
+
         self.add(ContentObject.from_file(fname))
 
     def get_filenames(self):
+        """Gets a list of the filenames of all content objects.
+        """
+
         return self.filenames.keys()
 
     def get_content_obj(self, name):
+        """Get a content object associated with a file name or integer
+        index.
+        """
+
         if type(name) == str:
             if not self.filenames.has_key(name): raise ValueError("No ContentObject exists for %s" % name)
             return self.filenames[name]
@@ -294,20 +320,30 @@ class Container(object):
             return self.content[name]
 
     def has_file(self, fname):
+        """Determines if container has a content object associated with
+        a given filename.
+        """
         return self.filenames.has_key(fname)
 
 class ResourceManager(object):
+    """A container for Container objects.
+    """
     def __init__(self):
         self.containers = []
         self.filenames = None
 
     def add_container(self, container):
+        """Adds a container
+        """
+
         self.containers.append(container)
 
     def __getitem__(self, fname):
         self.get_content_object(fname).get()
 
     def get_filenames(self):
+        """Gets a list of all file names.
+        """
         if self.filenames: return self.filenames
 
         self.filenames = []
@@ -317,6 +353,11 @@ class ResourceManager(object):
         return self.filenames
 
     def get_content_object(self, fname):
+        """Gets a ContentObject by file name.
+        The order of search is the reverse order.  The last container
+        added will be the first searched.
+        """
+
         for con in self.containers[::-1]:
             if con.has_file(fname):
                 return con.get_content_obj(self, fname)
