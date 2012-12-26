@@ -38,8 +38,26 @@ class Tlk:
             self.str_count = 0
             self.str_offset = -1
 
-
     def __getitem__(self, i):
+        """Get a TLK element.  Tlk supports integer indices and
+        Python slices.  Please note that taking a huge slice say a
+        reverse (tlk[::-1] can be a very costly.
+        """
+
+        if isinstance(i, slice):
+            indices = i.indices( len(self) )
+
+            n = Tlk(None)
+            n.ftype = self.ftype
+            n.fvers = self.fvers
+            n.lang = self.lang
+            n.cache = {}
+
+            for i in range(*indices):
+                n.add(**self[i])
+
+            return n
+
         if i == 0xffffffff:
             return {
                 'text': '',
@@ -50,8 +68,12 @@ class Tlk:
             }
         elif self.cache.has_key(i):
             return self.cache[i]
-        elif i > self.highest() or i < 0:
-            print "Invalid TLK entry: %d" % i
+        elif i >= len(self):
+            raise ValueError( "Invalid TLK entry: %d" % i )
+        elif i < 0:
+            if len(self) - 1 < 0:
+                raise ValueError( "Invalid TLK entry: %d" % i )
+            return self[ len(self) - 1]
         else:
             seek_to = self.HEADER_SIZE + (i) * self.DATA_ELEMENT_SIZE
             self.io.seek(seek_to)
@@ -79,6 +101,18 @@ class Tlk:
 
             return self[i]
 
+    def __len__(self):
+        """Determines the highest TLK entry.
+        """
+        keys = self.cache.keys()
+        if len(keys)  == 0 and self.str_count == 0:
+            return 0
+
+        h = max(keys) + 1 if len(keys) > 0 else 0
+        c = self.str_count
+
+        return max(h, c)
+
     def __setitem__(self, i, val):
         d = self[i]
 
@@ -91,7 +125,7 @@ class Tlk:
     def add (self, text, sound = "", sound_length = 0.0, volume_variance = 0, pitch_variance = 0):
         """Adds TLK entry to the end of entry list.
         """
-        next_i = self.highest()
+        next_i = len(self)
 
         #$stderr.puts "put in cache: #{next_id}"
         self.cache[next_i] = {
@@ -103,38 +137,10 @@ class Tlk:
         }
         return next_i
 
-    def highest(self):
-        """Determines the highest TLK entry.
-        """
-        keys = self.cache.keys()
-        if len(keys)  == 0 and self.str_count == 0:
-            return 0
-
-        h = max(keys) + 1 if len(keys) > 0 else 0
-        c = self.str_count
-
-        return max(h, c)
-
-    def extract(self, start=0, count=None):
-        """Extracts lines from a TLK, returning a new Tlk instance.
-        """
-        if not count: count = self.highest()
-        n = Tlk(None)
-
-        n.ftype = self.ftype
-        n.fvers = self.fvers
-        n.lang = self.lang
-        n.cache = {}
-
-        for i in range(start, start+count):
-            n.add(**self[i])
-
-        return n
-
     def inject(self, loc, tlk, start=0, count=None):
         """Injects lines from one TLK into another.
-        """        
-        if not end: end = tlk.highest()
+        """
+        if not end: end = len(tlk)
 
         for i in range(start, count):
             self[loc + i] = tlk[i]

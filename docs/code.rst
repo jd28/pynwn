@@ -43,4 +43,4 @@ Tlk
 
 .. autoclass:: pynwn.tlk.Tlk
    :members:
-
+   :special-members:
