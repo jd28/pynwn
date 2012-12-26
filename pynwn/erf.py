@@ -9,12 +9,10 @@ class Erf(res.Container):
     """Reads/Writes NWN ERF formats: erf, hak, and mod.
     """
 
-    def __init__(self, io=None):
+    def __init__(self):
         super(Erf, self).__init__()
-        self.container = res.Container()
 
         self.localized_strings = {}
-        self.io = io
         self.ftype, self.fversion = "ERF", "V1.0"
         self.desc_strref = 0xffffffff
 
