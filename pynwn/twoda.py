@@ -4,6 +4,14 @@ import itertools
 import os, shutil
 import yaml
 from helper import convert_to_number
+from resource import ContentObject
+
+def make_row(lst, max):
+    return ''.join([s.ljust(m + 4) for s, m in itertools.izip(lst, max)])
+
+def max_array(current_max, add):
+    if not current_max: return add
+    return [max(x, y) for x, y in zip(current_max, add)]
 
 class TwoDA:
     """2da Files.
@@ -12,19 +20,28 @@ class TwoDA:
     ROW_NUM_RE = re.compile('^\d+\s+(.*)')
     DEFAULT_RE = re.compile('^DEFAULT:\s+(.*)')
 
-    def __init__(self, io):
+    def __init__(self, source):
+        if isinstance(source, str):
+            source = ContentObject.from_file(source)
+        elif not isinstance(source, ContentObject):
+            raise ValueError("Unsupported source type %s!" % type(source))
+
         self.columns = []
         self.rows = []
+        self.max = None
         self.newline = "\n"
-        self.io = io
-        self.parse(io)
         self.default = None
+        self.co = source
+        self.parse(source.get())
 
-    def __getitem__(self, i):
-        if i >= len(self.rows) or i < 0:
-            raise ValueError("Invalid row index!")
 
-        return self.rows[i]
+    def __getitem__(self, index):
+        if isinstance(index, int):
+            if i >= len(self.rows) or i < 0:
+                raise ValueError("Invalid row index!")
+            return self.rows[i]
+        elif isinstance(index, slice):
+            pass
 
     def expload(self, out_dir='.'):
         """Extracts each line from a tlk and creates a yaml file.
@@ -66,11 +83,34 @@ class TwoDA:
         col = self.get_column_index(col)
         return self.rows[row][col]
 
+    def to_content_object(self):
+        pass
+
+
+    def to_2da(self):
+        """Returns a valid 2da as a string
+        """
+        
+        num_adj = len(str(len(self.max)))
+
+        result = ["2DA V2.0"]
+        if self.default:
+            result.append("DEFAULT: %s" % self.default)
+        else:
+            result.append('')
+
+        head = [s.ljust(m + 4) for s, m in itertools.izip(self.columns, self.max)]
+        result.append(''.ljust(num_adj+4) + ''.join(head))
+        tail = [str(i).ljust(num_adj + 4) + make_row(r, self.max) for i, r in enumerate(self.rows)]
+        result += tail
+
+        return self.newline.join(result)
+
     def get_column_index(self, col):
         """Gets the column index from a column label.
         """
 
-        if type(col) is str:
+        if isinstance(col, str):
             col = self.columns.index(col)
 
         return col
@@ -94,7 +134,7 @@ class TwoDA:
         """Parses a 2da file.
         """
 
-        lines = [l.strip() for l in io if l.strip() != '']
+        lines = [l.strip() for l in iter(io.splitlines()) if l.strip() != '']
 
         if len(lines) == 0:
             raise ValueError("Invalid 2da file!")
@@ -115,6 +155,7 @@ class TwoDA:
             colname = it.next()
 
         self.columns = self.parse_row(colname, False)
+        self.max = [len(s) for s in self.columns]
         self.rows = [self.parse_row(r) for r in it]
 
     def parse_row(self, row, strip_row_number=True):
@@ -128,7 +169,11 @@ class TwoDA:
 
         splitter = shlex.shlex(row, posix=True)
         splitter.whitespace_split = True
-        return list(splitter)
+        lst = list(splitter)
+
+        self.max = max_array(self.max, [len(s) for s in lst])
+
+        return lst
 
     def set(self, row, col, val):
         """Sets a 2da entry by row and column label or column index.
@@ -137,3 +182,6 @@ class TwoDA:
 
         col = self.get_column_index(col)
         self.rows[row][col] = str(val)
+
+    def write_to(io):
+        pass
