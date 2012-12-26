@@ -1,3 +1,5 @@
+import fnmatch
+
 Extensions = {
     'res': 0,
     'bmp': 1,
@@ -287,6 +289,8 @@ class Container(object):
         self.filenames = {}
 
     def __getitem__(self, fname):
+        """Get item by file name or integer index
+        """
         co = self.get_content_obj(fname)
         return co.get()
 
@@ -318,6 +322,13 @@ class Container(object):
             return self.filenames[name]
         elif type(name) == int:
             return self.content[name]
+
+    def glob(self, glob_pattern):
+        """Returns a list of files matching a glob pattern...
+        i.e. Unix shell-style wildcards: *.utc
+        Note: all file names are converted to lowercase.
+        """
+        return fnmatch.filter(self.get_filenames(), glob_pattern.lower())
 
     def has_file(self, fname):
         """Determines if container has a content object associated with

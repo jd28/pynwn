@@ -10,11 +10,12 @@ Container
 
 .. autoclass:: pynwn.resource.Container
    :members:
-   :undoc-members:
+   :special-members:
 
 ContentObject
 =============
 
 .. autoclass:: pynwn.resource.ContentObject
    :members:
-   :undoc-members:
+
+
