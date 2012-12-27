@@ -1,7 +1,7 @@
 import re
 import shlex
 import itertools
-import os, shutil
+import os, shutil, cStringIO
 import yaml
 from helper import convert_to_number
 from resource import ContentObject
@@ -43,6 +43,16 @@ class TwoDA:
         elif isinstance(index, slice):
             pass
 
+    def __repr__(self):
+        """Returns repr of the 2da as a string
+        """
+        return repr(self.to_StringIO().getvalue())
+        
+    def __str__(self):
+        """Returns a valid 2da as a string
+        """
+        return self.to_StringIO().getvalue()
+
     def expload(self, out_dir='.'):
         """Extracts each line from a tlk and creates a yaml file.
         """
@@ -83,28 +93,40 @@ class TwoDA:
         col = self.get_column_index(col)
         return self.rows[row][col]
 
-    def to_content_object(self):
-        pass
-
-
-    def to_2da(self):
-        """Returns a valid 2da as a string
+    def to_ContentObject(self):
+        """Returns 2da as a ContentObject.  It's .io contents
+        are cStringIO buffer.
         """
-        
+        sio = self.to_StringIO()
+        resref = self.co.resref
+        res_type = 2017
+        sio.seek(0, os.SEEK_END)
+        size = sio.tell()
+        return ContentObject(resref, res_type, sio, 0, size)
+
+    def to_StringIO(self):
+        """Returns 2da written in a cStringIO buffer.
+        """
+        result = cStringIO.StringIO()
+        result.write("2DA V2.0")
+        result.write(self.newline)
+
         num_adj = len(str(len(self.max)))
 
-        result = ["2DA V2.0"]
         if self.default:
-            result.append("DEFAULT: %s" % self.default)
-        else:
-            result.append('')
+            result.write("DEFAULT: %s" % self.default)
+
+        result.write(self.newline)
 
         head = [s.ljust(m + 4) for s, m in itertools.izip(self.columns, self.max)]
-        result.append(''.ljust(num_adj+4) + ''.join(head))
-        tail = [str(i).ljust(num_adj + 4) + make_row(r, self.max) for i, r in enumerate(self.rows)]
-        result += tail
+        result.write(''.ljust(num_adj+4) + ''.join(head))
+        result.write(self.newline)
 
-        return self.newline.join(result)
+        for i, r in enumerate(self.rows):
+            result.write(str(i).ljust(num_adj + 4) + make_row(r, self.max))
+            result.write(self.newline)
+
+        return result
 
     def get_column_index(self, col):
         """Gets the column index from a column label.
@@ -167,7 +189,7 @@ class TwoDA:
             m = self.ROW_NUM_RE.match(row)
             if m: row = m.group(1)
 
-        splitter = shlex.shlex(row, posix=True)
+        splitter = shlex.shlex(row, posix=False)
         splitter.whitespace_split = True
         lst = list(splitter)
 
