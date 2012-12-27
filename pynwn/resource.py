@@ -347,6 +347,21 @@ class Container(object):
         """
         return self.filenames.has_key(fname)
 
+class DirectoryContainer(Container):
+    """A Container that directly wraps a directory (e.g. override/).
+    Does not update on changes - caches the directory entries on initialize.
+    """
+    def __init__(self, path, only_nwn=True):
+        super(DirectoryContainer, self).__init__()
+        if not os.path.isdir(path):
+            msg = "Path: %s is not a directory!" % path
+            raise ValueError(msg)
+        self.path = path
+        for dirname, dirnames, filenames in os.walk(self.path):
+            for filename in filenames:
+                if not only_nwn or Extensions.has_key(os.path.splitext(filename)[1][1:]):
+                    self.add_file(os.path.join(dirname, filename))
+
 class ResourceManager(object):
     """A container for Container objects.
     """
