@@ -1,4 +1,4 @@
-import fnmatch
+import fnmatch, os
 
 Extensions = {
     'res': 0,
@@ -233,12 +233,14 @@ class ContentObject(object):
     Either in NWN container (i.e. a hak, mod, or erf) or in a file.
     """
     def __init__(self, resref, res_type, io = None, offset = None, size=None):
-        self.is_file = type(io) == str
+        self.is_file = isinstance(io, str)
 
         self.resref = resref.lower()
 
         if not ResTypes.has_key(res_type): raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
+
+        self.cache = None
 
         self.io = io
         self.offset = offset or 0
@@ -253,6 +255,7 @@ class ContentObject(object):
         abspath = os.path.abspath(filename)
         basename = os.path.basename(abspath)
         basename, ext = os.path.splitext(basename)
+        ext = ext[-3:]
         if not Extensions.has_key(ext): raise ValueError("Invalid Resource Type: %s!" % ext)
 
         size = os.path.getsize(abspath)
@@ -262,12 +265,16 @@ class ContentObject(object):
     def get(self):
         """Returns the actual data.
         """
+        if self.cache: return self.cache
+
         if self.is_file:
             with open(self.io) as f:
-                return f.read(self.size)
+                self.cache = f.read(self.size)
         else:
             self.io.seek(self.offset)
-            return self.io.read(self.size)
+            self.cache = self.io.read(self.size)
+
+        return self.cache
 
     def get_extension(self):
         """Determines the ContentObject's file extention by resource
@@ -281,6 +288,10 @@ class ContentObject(object):
         """
         return "%s.%s" % (self.resref, self.get_extension())
 
+    def write_to(self, path):
+        with open(path, 'wb') as f:
+            f.write(self.get())
+
 class Container(object):
     """A basic container for ContentObjects
     """
@@ -288,11 +299,16 @@ class Container(object):
         self.content = []
         self.filenames = {}
 
-    def __getitem__(self, fname):
-        """Get item by file name or integer index
+    def __getitem__(self, name):
+        """Get a content object associated with a file name or integer
+        index.
         """
-        co = self.get_content_obj(fname)
-        return co.get()
+
+        if isinstance(name, str):
+            if not self.filenames.has_key(name): raise ValueError("No ContentObject exists for %s" % name)
+            return self.filenames[name]
+        elif isinstance(name, int):
+            return self.content[name]
 
     def add(self, content_obj):
         """Add a content object to a container.
@@ -312,20 +328,15 @@ class Container(object):
 
         return self.filenames.keys()
 
-    def get_content_obj(self, name):
-        """Get a content object associated with a file name or integer
-        index.
+    def get_content_data(self, name):
+        """Get content object data by file name or integer index
         """
-
-        if type(name) == str:
-            if not self.filenames.has_key(name): raise ValueError("No ContentObject exists for %s" % name)
-            return self.filenames[name]
-        elif type(name) == int:
-            return self.content[name]
+        co = self[name]
+        return co.get()
 
     def glob(self, glob_pattern):
         """Returns a list of files matching a glob pattern...
-        i.e. Unix shell-style wildcards: *.utc
+        i.e. Unix shell-style wildcards: \*.utc
         Note: all file names are converted to lowercase.
         """
         return fnmatch.filter(self.get_filenames(), glob_pattern.lower())
@@ -350,7 +361,16 @@ class ResourceManager(object):
         self.containers.append(container)
 
     def __getitem__(self, fname):
-        self.get_content_object(fname).get()
+        """Gets a ContentObject by file name.
+        The order of search is the reverse order.  The last container
+        added will be the first searched.
+        """
+        for con in self.containers[::-1]:
+            if con.has_file(fname):
+                return con[fname]
+
+        raise ValueError("No ContentObject exists for %s" % fname)
+
 
     def get_filenames(self):
         """Gets a list of all file names.
@@ -363,14 +383,17 @@ class ResourceManager(object):
 
         return self.filenames
 
-    def get_content_object(self, fname):
-        """Gets a ContentObject by file name.
-        The order of search is the reverse order.  The last container
-        added will be the first searched.
+    def get_content_data(self, fname):
+        self.get_content_object(fname).get()
+
+    def glob(self, glob_pattern):
+        """Returns a list of files matching a glob pattern...
+        i.e. Unix shell-style wildcards: \*.utc
+        Note: all file names are converted to lowercase.
         """
 
-        for con in self.containers[::-1]:
-            if con.has_file(fname):
-                return con.get_content_obj(self, fname)
+        result = []
+        for con in self.containers:
+            result += con.glob(glob_pattern)
 
-        raise ValueError("No ContentObject exists for %s" % fname)
+        return result
