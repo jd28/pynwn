@@ -240,8 +240,6 @@ class ContentObject(object):
         if not ResTypes.has_key(res_type): raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
 
-        self.cache = None
-
         self.io = io
         self.offset = offset or 0
         self.size = size
@@ -265,16 +263,12 @@ class ContentObject(object):
     def get(self):
         """Returns the actual data.
         """
-        if self.cache: return self.cache
-
         if self.is_file:
-            with open(self.io) as f:
-                self.cache = f.read(self.size)
+            with open(self.io, 'rb') as f:
+                return f.read(self.size)
         else:
             self.io.seek(self.offset)
-            self.cache = self.io.read(self.size)
-
-        return self.cache
+            return self.io.read(self.size)
 
     def get_extension(self):
         """Determines the ContentObject's file extention by resource
