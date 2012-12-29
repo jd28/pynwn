@@ -111,6 +111,15 @@ class Gff( object ):
         None,
         "The GFF structure." )
 
+    def get_list_value(self, index, list_name, value_name):
+        """Gets a list value at a particular index."""
+        lst = self.structure[list_name][1][index]
+        return lst[1][value_name][1]
+
+    def get_list_values(self, list_name, value_name):
+        """Gets a list of values associated with a GFF list."""
+        return [st[1][value_name][1] for st in self.structure[list_name][1]]
+
     def load( self ):
         """Loads the source of the associated gff file."""
 
