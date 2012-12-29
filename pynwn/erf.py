@@ -9,9 +9,10 @@ class Erf(res.Container):
     """Reads/Writes NWN ERF formats: erf, hak, and mod.
     """
 
-    def __init__(self):
+    def __init__(self, io):
         super(Erf, self).__init__()
 
+        self.io = io
         self.localized_strings = {}
         self.ftype, self.fversion = "ERF", "V1.0"
         self.desc_strref = 0xffffffff
@@ -149,7 +150,7 @@ class Erf(res.Container):
         _index = -1
         for offset, size in chunks(resourcelist, 2):
             _index += 1
-            co = new_erf.get_content_obj(_index)
+            co = new_erf[_index]
             co.offset = offset
             co.size = size
 
