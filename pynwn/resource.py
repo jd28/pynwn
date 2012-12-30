@@ -231,7 +231,7 @@ ResTypes = {
 class ContentObject(object):
     """A ContentObject is an abstraction of any particular NWN resource object
     either in NWN container (i.e. a hak, mod, or erf) or in a file.
-    
+
     """
     def __init__(self, resref, res_type, io = None, offset = None, size=None):
         self.resref = resref.lower()
@@ -377,6 +377,8 @@ class ResourceManager(object):
 
         raise ValueError("No ContentObject exists for %s" % fname)
 
+    def has_file(self, fname):
+        return fname in self.get_filenames()
 
     def get_filenames(self):
         """Gets a list of all file names.
