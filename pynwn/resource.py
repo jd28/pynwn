@@ -229,15 +229,15 @@ ResTypes = {
 }
 
 class ContentObject(object):
-    """A ContentObject is an abstraction of any particular NWN resource object.
-    Either in NWN container (i.e. a hak, mod, or erf) or in a file.
+    """A ContentObject is an abstraction of any particular NWN resource object
+    either in NWN container (i.e. a hak, mod, or erf) or in a file.
+    
     """
     def __init__(self, resref, res_type, io = None, offset = None, size=None):
-        self.is_file = isinstance(io, str)
-
         self.resref = resref.lower()
 
-        if not ResTypes.has_key(res_type): raise ValueError("Invalid Resource Type: %d!" % res_type)
+        if not ResTypes.has_key(res_type):
+            raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
 
         self.io = io
@@ -263,12 +263,9 @@ class ContentObject(object):
     def get(self):
         """Returns the actual data.
         """
-        if self.is_file:
-            with open(self.io, 'rb') as f:
-                return f.read(self.size)
-        else:
-            self.io.seek(self.offset)
-            return self.io.read(self.size)
+        with open(self.io, 'rb') as f:
+            f.seek(self.offset)
+            return f.read(self.size)
 
     def get_extension(self):
         """Determines the ContentObject's file extention by resource

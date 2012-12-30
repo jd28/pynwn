@@ -78,81 +78,82 @@ class Erf(res.Container):
             io.write(co.get())
 
     @staticmethod
-    def from_io(io):
+    def from_file(fname):
         """Create an Erf from a file handle.
 
         :param io: A file handle.
 
         """
-        new_erf = Erf(io)
+        with open(fname, 'rb') as io:
+            new_erf = Erf(fname)
 
-        header = io.read(160)
-        hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
+            header = io.read(160)
+            hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
-        ftype = hs[0].strip()
-        if not ftype in VALID_TYPES: raise ValueError("Invalid file type!")
-        new_erf.ftype = ftype
+            ftype = hs[0].strip()
+            if not ftype in VALID_TYPES: raise ValueError("Invalid file type!")
+            new_erf.ftype = ftype
 
-        fname_len = Erf.filename_length(hs[1])
-        new_erf.fversion = hs[1]
+            fname_len = Erf.filename_length(hs[1])
+            new_erf.fversion = hs[1]
 
-        lstr_count = hs[2]
-        lstr_size = hs[3]
-        entry_count = hs[4]
-        offset_to_lstr = hs[5]
-        offset_to_keys = hs[6]
-        offset_to_res = hs[7]
-        new_erf.year = hs[8]
-        new_erf.day_of_year = hs[9]
-        new_erf.desc_strref = hs[10]
+            lstr_count = hs[2]
+            lstr_size = hs[3]
+            entry_count = hs[4]
+            offset_to_lstr = hs[5]
+            offset_to_keys = hs[6]
+            offset_to_res = hs[7]
+            new_erf.year = hs[8]
+            new_erf.day_of_year = hs[9]
+            new_erf.desc_strref = hs[10]
 
-        io.seek(offset_to_lstr)
-        lstr = io.read(lstr_size)
+            io.seek(offset_to_lstr)
+            lstr = io.read(lstr_size)
 
-        for ls in range(lstr_count):
-            if len(lstr) == 0:
-                print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls)
-                break
+            for ls in range(lstr_count):
+                if len(lstr) == 0:
+                    print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls)
+                    break
 
-            if len(lstr) < 8:
-                print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr
-                break
+                if len(lstr) < 8:
+                    print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr
+                    break
 
-            lid, strsz = struct.unpack("<L L", lstr[:8])
-            if strsz > len(lstr) - 8:
-                strsz = len(lstr) - 8
+                lid, strsz = struct.unpack("<L L", lstr[:8])
+                if strsz > len(lstr) - 8:
+                    strsz = len(lstr) - 8
 
-            str = struct.unpack("8x %ds" % strsz, lstr)[0] #
-            if strsz != len(str):
-                print "Expected locstr size does not match actual string size"
+                str = struct.unpack("8x %ds" % strsz, lstr)[0] #
+                if strsz != len(str):
+                    print "Expected locstr size does not match actual string size"
 
-            new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
-            lstr = lstr[8 + len(str):]
+                new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
+                lstr = lstr[8 + len(str):]
 
-        keylist_entry_size = fname_len + 4 + 2 + 2
-        io.seek(offset_to_keys)
-        keylist = io.read(keylist_entry_size * entry_count)
+            keylist_entry_size = fname_len + 4 + 2 + 2
+            io.seek(offset_to_keys)
+            keylist = io.read(keylist_entry_size * entry_count)
 
-        fmt = "%ds I h h" % fname_len
-        fmt = fmt * entry_count
-        fmt = '<' + fmt
+            fmt = "%ds I h h" % fname_len
+            fmt = fmt * entry_count
+            fmt = '<' + fmt
 
-        keylist = struct.unpack(fmt, keylist)
+            keylist = struct.unpack(fmt, keylist)
 
-        for resref, res_id, res_type, unused in chunks(keylist, 4):
-            co = res.ContentObject(resref.rstrip(' \t\r\n\0'), res_type, io)
-            new_erf.add(co)
+            for resref, res_id, res_type, unused in chunks(keylist, 4):
+                co = res.ContentObject(resref.rstrip(' \t\r\n\0'), res_type, fname)
+                new_erf.add(co)
 
-        resourcelist_entry_size = 4 + 4
-        io.seek(offset_to_res)
-        resourcelist = io.read(resourcelist_entry_size * entry_count)
-        resourcelist = struct.unpack("I I" * entry_count, resourcelist)
-        _index = -1
-        for offset, size in chunks(resourcelist, 2):
-            _index += 1
-            co = new_erf[_index]
-            co.offset = offset
-            co.size = size
+            resourcelist_entry_size = 4 + 4
+            io.seek(offset_to_res)
+            resourcelist = io.read(resourcelist_entry_size * entry_count)
+            resourcelist = struct.unpack("I I" * entry_count, resourcelist)
+            _index = -1
+            for offset, size in chunks(resourcelist, 2):
+                _index += 1
+                co = new_erf[_index]
+                co.offset = offset
+                co.size = size
 
         return new_erf
 
