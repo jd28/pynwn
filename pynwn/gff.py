@@ -61,8 +61,9 @@
 
 import os, struct
 import chardet
-import StringIO
+import cStringIO
 import pynwn.resource as res
+from pynwn.helper import chunks
 
 class Gff( object ):
     """Represents a GFF file."""
@@ -95,6 +96,9 @@ class Gff( object ):
         self.filetype = self.co.get_extension().upper()
         self._structure = None
 
+    def __getitem__(self, name):
+        return self.structure[name][1]
+
     def getstructure( self ):
         """Gets the structure, loading it if necessary."""
 
@@ -124,7 +128,7 @@ class Gff( object ):
         """Loads the source of the associated gff file."""
 
         # attempt to open the gff file and load its header
-        self.source = StringIO.StringIO(self.co.get())
+        self.source = cStringIO.StringIO(self.co.get())
 
         header = struct.unpack( self.HeaderPattern, self.source.read( struct.calcsize( self.HeaderPattern ) ) )
         if header[ 0 ].rstrip() == self.filetype and header[ 1 ] == self.Version:
@@ -146,9 +150,12 @@ class Gff( object ):
 
         # parse the gff struct array
         size = struct.calcsize( self.StructPattern )
-        for index in range( 0, self.structcount ):
-            type, offset, count = struct.unpack( self.StructPattern, self.source.read( size ) )
-            if count == 1:
+        rd = self.source.read( self.structcount * size )
+        for chunk in chunks(rd, size):
+            type, offset, count = struct.unpack( self.StructPattern, chunk)
+            if offset == 0xffffffff:
+                self.structs.append( [ type, -1 ] )
+            elif count == 1:
                 self.structs.append( [ type, offset ] )
             else:
                 pattern = "%dI" % count
@@ -161,8 +168,9 @@ class Gff( object ):
 
         # parse the gff label array
         size = struct.calcsize( self.LabelPattern )
-        for index in range( 0, self.labelcount ):
-            label = struct.unpack( self.LabelPattern, self.source.read( size ) )[ 0 ]
+        rd = self.source.read( size * self.labelcount )
+        for chunk in chunks(rd, size):
+            label = struct.unpack( self.LabelPattern, chunk )[ 0 ]
             self.labels.append( label.rstrip( '\x00' ) )
 
         # position the source file at the field array and prepare fields list
@@ -292,7 +300,7 @@ class Gff( object ):
         # Modified the following lines.  Python is unable to iterate over
         # int, which is what the struct contains if there is only one field/
         fields = self.structs[ sid ][ 1 ]
-        if type(fields) == int: fields = [fields]
+        if not isinstance(fields, list): fields = [fields]
 
         for field in fields:
             ftype, label, value = self.fields[ field ]
@@ -365,6 +373,9 @@ class Gff( object ):
         position = self.source.tell()
         self.source.seek( self.dataoffset + offset )
         length = struct.unpack( 'B', self.source.read( 1 ) )[ 0 ]
+        if length == 0:
+            self.source.seek( position )
+            return ''
         pattern = "%ds" % length
         data = struct.unpack( pattern, self.source.read( struct.calcsize( pattern ) ) )[ 0 ]
         self.source.seek( position )
