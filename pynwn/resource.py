@@ -378,6 +378,8 @@ class ResourceManager(object):
         raise ValueError("No ContentObject exists for %s" % fname)
 
     def has_file(self, fname):
+        """Determines if a file exists in one of the containers.
+        """
         return fname in self.get_filenames()
 
     def get_filenames(self):
@@ -392,7 +394,10 @@ class ResourceManager(object):
         return self.filenames
 
     def get_content_data(self, fname):
-        self.get_content_object(fname).get()
+        """Gets the contents of a ContentObject that is contained
+        in one of the containers.
+        """
+        return self.get_content_object(fname).get()
 
     def glob(self, glob_pattern):
         """Returns a list of files matching a glob pattern...
