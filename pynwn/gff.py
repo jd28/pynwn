@@ -99,6 +99,9 @@ class Gff( object ):
     def __getitem__(self, name):
         return self.structure[name][1]
 
+    def has_field(self, name):
+        return self.structure.has_key(name)
+    
     def getstructure( self ):
         """Gets the structure, loading it if necessary."""
 
