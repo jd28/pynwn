@@ -18,4 +18,10 @@ ContentObject
 .. autoclass:: pynwn.resource.ContentObject
    :members:
 
+ResourceManager
+===============
+
+.. autoclass:: pynwn.resource.ResourceManager
+   :members:
+
 
