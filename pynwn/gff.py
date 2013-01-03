@@ -65,7 +65,7 @@ import cStringIO
 import pynwn.resource as res
 from pynwn.helper import chunks
 
-class GffElement:
+class GffElement( object ):
     def __init__(self, type, value, struct_id = -1):
         self.type = type
         self.val = value
@@ -316,8 +316,6 @@ class Gff( object ):
             ftype, label, value = self.fields[ field ]
             if ftype == 'struct':
                 stype, sid = self.structs[ value ]
-                print stype, sid
-
                 structure[ label ] = GffElement(stype, self.build_struct( value ), value)
             elif ftype == 'list':
                 group = []
@@ -425,7 +423,6 @@ class Gff( object ):
             return struct.pack( '3I', 8, data[ 0 ], 0 )
         else:
             stringref = data.pop( 0 )
-            print data[0][1]
             content = struct.pack( '2I', stringref, len( data ) )
             for substring in data:
                 length = len( substring[ 1 ] )
