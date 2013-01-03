@@ -1,3 +1,5 @@
+from pynwn.gff import Gff
+
 VARIABLE_TYPE_INT = 1
 VARIABLE_TYPE_FLOAT = 2
 VARIABLE_TYPE_STRING = 3
@@ -31,23 +33,26 @@ class NWVariable(object):
         self.gff = gff_struct
         self.type = var_type
         self.default = default
-        self.has_vars = self.gff.has_field('VarTable')
+
+        if isinstance(self.gff, Gff):
+            self.has_vars = self.gff.has_field('VarTable')
+        else:
+            self.has_vars = 'VarTable' in self.gff.val
 
     def __getitem__(self, name):
         if not self.has_vars: return self.default
-
         vs = self.gff['VarTable']
-        res = [v[1]['Value'][1] for v in vs if v[1]['Type'][1] == self.type and v[1]['Name'][1] == name]
+        res = [v['Value'] for v in vs if v['Type'] == self.type and v['Name'] == name]
         if len(res) == 0: return self.default
 
         return res[0]
 
     def __setitem__(self, name, value):
         if not self.has_vars: return
-        
+
         if self.has_var(name):
             v = self.get_var(name)
-            v[1]['Value'][1] = convert(self.type, value)
+            v['Value'] = convert(self.type, value)
         else:
             res = [0, {'Type': ['dword', self.type],
                        'Name': ['cexostring', name],
@@ -56,15 +61,17 @@ class NWVariable(object):
 
     def get_var(self, name):
         vs = self.gff['VarTable']
-        res = [v for v in vs if v[1]['Type'][1] == self.type and v[1]['Name'][1] == name]
+        res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
         if len(res) == 0:
             raise ValueError("Variable Table has no variable with name %s for type %d" % (name, self.type))
         else:
             return res[0]
 
     def has_var(self, name):
-        vs = self.gff['VarTable']
-        res = [v for v in vs if v[1]['Type'][1] == self.type and v[1]['Name'][1] == name]
+        if not self.has_vars: return false
+        
+        vs = self.gff['VarTable'].val
+        res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
         return len(res) > 0
 
 class NWObjectVarable(object):
