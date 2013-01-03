@@ -65,6 +65,22 @@ import cStringIO
 import pynwn.resource as res
 from pynwn.helper import chunks
 
+class GffElement:
+    def __init__(self, type, value, struct_id = -1):
+        self.type = type
+        self.val = value
+        self.id = struct_id
+
+    def __getitem__(self, name):
+        #print self.val
+        return self.val[name].val
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "{ 'type': %s, 'value': %s }" % (self.type, self.val)
+
 class Gff( object ):
     """Represents a GFF file."""
 
@@ -97,11 +113,11 @@ class Gff( object ):
         self._structure = None
 
     def __getitem__(self, name):
-        return self.structure[name][1]
+        return self.structure[name].val
 
     def has_field(self, name):
-        return self.structure.has_key(name)
-    
+        return name in self.structure
+
     def getstructure( self ):
         """Gets the structure, loading it if necessary."""
 
@@ -117,15 +133,6 @@ class Gff( object ):
         None,
         None,
         "The GFF structure." )
-
-    def get_list_value(self, index, list_name, value_name):
-        """Gets a list value at a particular index."""
-        lst = self.structure[list_name][1][index]
-        return lst[1][value_name][1]
-
-    def get_list_values(self, list_name, value_name):
-        """Gets a list of values associated with a GFF list."""
-        return [st[1][value_name][1] for st in self.structure[list_name][1]]
 
     def load( self ):
         """Loads the source of the associated gff file."""
@@ -222,9 +229,9 @@ class Gff( object ):
         structs, indices = '', ''
         for structtype, structfields in self.structs:
             if len( structfields ) == 1:
-                structs += struct.pack( '3I', structtype, structfields[ 0 ], 1 )
+                structs += struct.pack( '<3I', structtype, structfields[ 0 ], 1 )
             else:
-                structs += struct.pack( '3I', structtype, len( indices ), len( structfields ) )
+                structs += struct.pack( '<3I', structtype, len( indices ), len( structfields ) )
                 for fieldid in structfields:
                     indices += struct.pack( 'I', fieldid )
 
@@ -278,7 +285,7 @@ class Gff( object ):
         content = header + content + lists
 
         # write the gff file
-        target = file( self.filename, 'w+b' )
+        target = file( self.filename, 'wb' )
         target.write( content )
         target.flush()
         target.close()
@@ -309,15 +316,17 @@ class Gff( object ):
             ftype, label, value = self.fields[ field ]
             if ftype == 'struct':
                 stype, sid = self.structs[ value ]
-                structure[ label ] = [ stype, self.build_struct( value ) ]
+                print stype, sid
+
+                structure[ label ] = GffElement(stype, self.build_struct( value ), value)
             elif ftype == 'list':
                 group = []
                 for structid in value:
                     stype, sid = self.structs[ structid ]
-                    group.append( [ stype, self.build_struct( structid ) ] )
-                structure[ label ] = [ 'list', group ]
+                    group.append(GffElement(stype, self.build_struct( structid ), structid))
+                structure[ label ] = GffElement('list', group)
             else:
-                structure[ label ] = [ ftype, value ]
+                structure[ label ] = GffElement(ftype, value)
 
         # return the completed structure
         return structure
@@ -328,10 +337,12 @@ class Gff( object ):
         # identify and parse the fields of the specified structure
         ids = []
         for label, value in structure.iteritems():
-            type, data = value
+            type, data = value.type, value.val
+
             if type == 'list':
                 idlist = []
-                for structid, structdata in data:
+                for d in data:
+                    structid, structdata = d.type, d.val
                     structids = self.build_fields( structdata )
                     self.structs.append( [ structid, structids ] )
                     idlist.append( len( self.structs ) - 1 )
@@ -341,10 +352,10 @@ class Gff( object ):
                 self.fields.append( [ self.Types.index( type ), label, data ] )
                 ids.append( len( self.fields ) - 1 )
             else:
-                structid, structdata = data
+                structid, structdata = type, data
                 structids = self.build_fields( structdata )
                 self.structs.append( [ structid, structids ] )
-                self.fields.append( [ self.Types.index( 'struct' ), label, len( self.structs ) ] )
+                self.fields.append( [ self.Types.index( 'struct' ), label, len( self.structs ) - 1] )
                 ids.append( len( self.fields ) - 1 )
 
         # return the field id list
