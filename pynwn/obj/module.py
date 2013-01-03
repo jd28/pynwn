@@ -42,7 +42,7 @@ class Module(NWObjectVarable):
 
     @property
     def areas(self):
-        return [Area(a, self.container) for a in self.ifo.get_list_values('Mod_Area_list', 'Area_Name')]
+        return [Area(a['Area_Name'], self.container) for a in self.ifo['Mod_Area_list']]
 
     @property
     def description(self):
@@ -65,7 +65,7 @@ class Module(NWObjectVarable):
 
     @property
     def haks(self):
-        return self.ifo.get_list_values('Mod_HakList', 'Mod_Hak')
+        return [hak['Mod_Hak'] for hak in self.ifo['Mod_HakList']]
 
     @property
     def name(self):
@@ -84,22 +84,22 @@ class Module(NWObjectVarable):
 
         lbls = {}
 
-        lbls[EVENT_CUTSCENE_ABORT] = 'Mod_OnCutsnAbort'
-        lbls[EVENT_ENTER] = 'Mod_OnClientEntr'
-        lbls[EVENT_EXIT] = 'Mod_OnClientLeav'
-        lbls[EVENT_HEARTBEAT] = 'Mod_OnHeartbeat'
-        lbls[EVENT_ITEM_ACQUIRED] = 'Mod_OnAcquirItem'
-        lbls[EVENT_ITEM_ACTIVATED] = 'Mod_OnActvtItem'
-        lbls[EVENT_ITEM_EQUIPPED] = 'Mod_OnPlrEqItm'
-        lbls[EVENT_ITEM_UNACQUIRED] = 'Mod_OnUnAqreItem'
-        lbls[EVENT_ITEM_UNEQUIPPED] = 'Mod_OnPlrUnEqItm'
-        lbls[EVENT_LEVELUP] = 'Mod_OnPlrLvlUp'
-        lbls[EVENT_LOAD] = 'Mod_OnModLoad'
-        lbls[EVENT_DEATH] = 'Mod_OnPlrDeath'
-        lbls[EVENT_DYING] = 'Mod_OnPlrDying'
-        lbls[EVENT_RESPAWN] = 'Mod_OnSpawnBtnDn'
-        lbls[EVENT_REST] = 'Mod_OnPlrRest'
-        lbls[EVENT_USER_DEFINED] = 'Mod_OnUsrDefined'
+        lbls[Event.CUTSCENE_ABORT] = 'Mod_OnCutsnAbort'
+        lbls[Event.ENTER] = 'Mod_OnClientEntr'
+        lbls[Event.EXIT] = 'Mod_OnClientLeav'
+        lbls[Event.HEARTBEAT] = 'Mod_OnHeartbeat'
+        lbls[Event.ITEM_ACQUIRED] = 'Mod_OnAcquirItem'
+        lbls[Event.ITEM_ACTIVATED] = 'Mod_OnActvtItem'
+        lbls[Event.ITEM_EQUIPPED] = 'Mod_OnPlrEqItm'
+        lbls[Event.ITEM_UNACQUIRED] = 'Mod_OnUnAqreItem'
+        lbls[Event.ITEM_UNEQUIPPED] = 'Mod_OnPlrUnEqItm'
+        lbls[Event.LEVELUP] = 'Mod_OnPlrLvlUp'
+        lbls[Event.LOAD] = 'Mod_OnModLoad'
+        lbls[Event.DEATH] = 'Mod_OnPlrDeath'
+        lbls[Event.DYING] = 'Mod_OnPlrDying'
+        lbls[Event.RESPAWN] = 'Mod_OnSpawnBtnDn'
+        lbls[Event.REST] = 'Mod_OnPlrRest'
+        lbls[Event.USER_DEFINED] = 'Mod_OnUsrDefined'
 
         self._scripts = NWObjectScripts(self.ifo, lbls)
 
