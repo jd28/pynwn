@@ -14,3 +14,9 @@ def convert_to_number(val):
             return float(val)
         except:
             return val
+
+def enum(*sequential, **named):
+    """Create a sequential Enum type from list of strings
+    """
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
