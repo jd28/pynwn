@@ -131,3 +131,29 @@ class Tlk:
 
         for i in range(start, count):
             self[loc + i] = tlk[i]
+
+class TlkTable(object):
+    def __init__(dialog, custom = None, dialogf = None, customf = None):
+        self.dm = Tlk(dialog)
+        self.df = Tlk(dialogf) if dialogf else self.dm
+        self.cm = Tlk(custom) if custom else None
+        self.cf = Tlk(customf) if customf else self.cm
+
+    def get(self, strref, gender='male'):
+        t = None
+        if strref < 0x01000000:
+            if gender == 'male':
+                t = self.dm
+            else:
+                t = self.df
+        else:
+            strref -= 0x01000000
+            if gender == 'male':
+                t = self.cm
+            else:
+                t = self.cf
+
+        if t is None:
+            raise ValueError("No such TLK")
+        
+        return t[strref]
