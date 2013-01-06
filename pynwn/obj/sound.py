@@ -11,8 +11,8 @@ class Sound(object):
                 resref = resref+'.uts'
 
             if container.has_file(resref):
-                self.uts = container[resref]
-                self.uts = Gff(self.uts)
+                self.gff = container[resref]
+                self.gff = Gff(self.gff)
             else:
                 raise ValueError("Container does not contain: %s" % resref)
         else:
