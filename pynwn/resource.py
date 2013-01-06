@@ -368,10 +368,10 @@ class ResourceManager(object):
 
     def __getitem__(self, fname):
         """Gets a ContentObject by file name.
-        The order of search is the reverse order.  The last container
-        added will be the first searched.
+        The order of search is the order in which add_container was called.
+        I.e. the first added will have the highest priority
         """
-        for con in self.containers[::-1]:
+        for con in self.containers:
             if con.has_file(fname):
                 return con[fname]
 
