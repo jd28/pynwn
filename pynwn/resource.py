@@ -377,6 +377,37 @@ class ResourceManager(object):
 
         raise ValueError("No ContentObject exists for %s" % fname)
 
+    @staticmethod
+    def from_module(mod, use_override=False, include_bioware=True, path = "C:\\NeverwinterNights\\NWN\\"):
+        from pynwn.key import Key
+        from pynwn.erf import Erf
+        from pynwn.obj.module import Module as Mod
+        
+        mgr = ResourceManager()
+
+        # First, all the base data files.
+        if include_bioware:
+            for key in ['chitin.key', 'xp1.key', 'xp2.key', 'xp2patch.key', 'xp3.key']:
+                mgr.add_container(Key(os.path.join(path, key), path))
+
+        # Override
+        if use_override:
+            mgr.add_container(DirectoryContainer(os.path.join(path, 'override')))
+
+        # Module
+        mod = Mod(mod)
+        mgr.add_container(mod.container)
+
+
+        # All custom haks
+        for hak in mod.haks:
+            h = os.path.join(path, 'hak', hak) + '.hak'
+            print "Adding %s..." % h
+            mgr.add_container(Erf.from_file(h))
+
+        return mgr
+
+
     def has_file(self, fname):
         """Determines if a file exists in one of the containers.
         """
