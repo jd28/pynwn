@@ -123,9 +123,13 @@ class Erf(res.Container):
                 if strsz > len(lstr) - 8:
                     strsz = len(lstr) - 8
 
+                # Temporary hack around the fact that the erf.exe adds an extra null to the end of
+                # the description string.
+                fubar = """Created by "erf", the command-line ERF utility.\nCopyright (C) 2003-2009, Gareth Hughes and Doug Swarin"""
+                if fubar in lstr:
+                    strsz += 1
+
                 str = struct.unpack("8x %ds" % strsz, lstr)[0] #
-                if strsz != len(str):
-                    print "Expected locstr size does not match actual string size"
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]
