@@ -39,3 +39,6 @@ class NWObjectScripts:
 
     def __getitem__(self, label):
         return self.gff[self.map[label]]
+
+    def __setitem__(self, label, value):
+        self.gff[self.map[label]] = value

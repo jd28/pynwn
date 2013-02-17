@@ -72,14 +72,19 @@ class GffElement( object ):
         self.id = struct_id
 
     def __getitem__(self, name):
-        #print self.val
         return self.val[name].val
+
+    def __setattr__(self, name, value):
+        object.__setattr__(self, name, value)
+
+    def __setitem__(self, name, value):
+        self.val[name].val = value
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "{ 'type': %s, 'value': %s }" % (self.type, self.val)
+        return "GffElement { 'type': %s, 'value': %s }" % (self.type, self.val)
 
 class Gff( object ):
     """Represents a GFF file."""
@@ -114,6 +119,9 @@ class Gff( object ):
 
     def __getitem__(self, name):
         return self.structure[name].val
+
+    def __setitem__(self, name, value):
+        self.structure[name].val = value
 
     def has_field(self, name):
         return name in self.structure
