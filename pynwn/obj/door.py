@@ -36,10 +36,12 @@ class Door(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag"""
         return self['Tag']
 
     @property
     def name(self):
+        """Localized Name"""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocName'])
 
@@ -54,42 +56,52 @@ class Door(NWObjectVarable):
 
     @property
     def resref(self):
+        """Resref"""
         return self['TemplateResRef']
 
     @property
     def key_auto_remove(self):
+        """Auto-remove key"""
         return self['AutoRemoveKey']
 
     @property
     def lock_close_dc(self):
+        """ """
         return self['CloseLockDC']
 
     @property
     def conversation(self):
+        """Door conversation resref."""
         return self['Conversation']
 
     @property
     def interruptable(self):
+        """Door conversation is interruptable."""
         return self['Interruptable']
 
     @property
     def faction(self):
+        """Door's faction ID"""
         return self['Faction']
 
     @property
     def plot(self):
+        """Door is plot"""
         return self['Plot']
 
     @property
     def key_required(self):
+        """Key required to unlock door."""
         return self['KeyRequired']
 
     @property
     def lockable(self):
+        """Door is lockable."""
         return self['Lockable']
 
     @property
     def locked(self):
+        """Door is locked"""
         return self['Locked']
 
     @property
@@ -98,74 +110,109 @@ class Door(NWObjectVarable):
 
     @property
     def portrait_id(self):
+        """Portrait ID"""
         return self['PortraitId']
 
     @property
     def trap_detectable(self):
+        """Trap is detectable"""
         return self['TrapDetectable']
 
     @property
     def trap_detect_dc(self):
+        """Trap detect DC"""
         return self['TrapDetectDC']
 
     @property
     def trap_disarmable(self):
+        """Trap is disarmable"""
         return self['TrapDisarmable']
 
     @property
     def trap_disarm_dc(self):
+        """Trap disarm DC"""
         return self['DisarmDC']
 
     @property
     def trap_flag(self):
+        """Trap flag."""
         return self['TrapFlag']
 
     @property
     def trap_one_shot(self):
+        """Trap is one-shot."""
         return self['TrapOneShot']
 
     @property
     def trap_type(self):
+        """Trap type"""
         return self['TrapType']
 
     @property
     def key_name(self):
+        """Key tag"""
         return self['KeyName']
 
     @property
     def animation_state(self):
+        """Animation State"""
         return self['AnimationState']
 
     @property
     def appearance(self):
+        """Appearance"""
         return self['Appearance']
 
     @property
     def hp(self):
+        """Maximum Hitpoints"""
         return self['HP']
 
     @property
     def hp_current(self):
+        """Current Hitpoints"""
         return self['CurrentHP']
 
     @property
     def hardness(self):
+        """Hardness"""
         return self['Hardness']
 
     @property
     def save_fortitude(self):
+        """Fortitude Saving Throw"""
         return self['Fort']
 
     @property
     def save_reflex(self):
+        """Reflex Saving Throw"""
         return self['Ref']
 
     @property
     def save_will(self):
+        """Will Saving Throw"""
         return self['Will']
 
     @property
     def script(self):
+        """Scripts: Door responds to the following script events:
+
+        #. Event.CLOSE
+        #. Event.DAMAGED
+        #. Event.DEATH
+        #. Event.TRAP_DISARMED
+        #. Event.HEARTBEAT
+        #. Event.LOCK
+        #. Event.ATTACKED
+        #. Event.OPEN
+        #. Event.SPELL_CAST_AT
+        #. Event.TRAP_TRIGGERED
+        #. Event.UNLOCK
+        #. Event.USER_DEFINED
+        #. Event.CLICK
+        #. Event.FAIL_TO_OPEN
+
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -190,26 +237,35 @@ class Door(NWObjectVarable):
 
     @property
     def linked_to(self):
+        """Linked to tag."""
         return self['LinkedTo']
 
     @property
     def linked_to_flags(self):
+        """Linked to flags."""
         return self['LinkedToFlags']
 
     @property
     def load_screen(self):
+        """Load screen id."""
         return self['LoadScreenID']
 
-    @propety
+    @load_screen.setter
+    def load_screen(self, val):
+        self['LoadScreenID'] = val
+
+    @property
     def generic_type(self):
         return self['GenericType_New']
 
     @property
     def paletted_id(self):
+        """Palette ID"""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment"""
         return self['Comment']
 
 class DoorInstance(Door):

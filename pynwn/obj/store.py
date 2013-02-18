@@ -51,34 +51,35 @@ class Store(NWObjectVarable):
     def tag(self):
         return self['Tag']
 
-    @propety
+    @property
     def mark_up(self):
         return self['MarkUp']
 
-    @propety
+    @property
     def mark_down(self):
         return self['MarkDown']
 
-    @propety
+    @property
     def black_market(self):
         return self['BlackMarket']
 
-    @propety
+    @property
     def mark_down_bm(self):
         return self['BM_MarkDown']
 
-    @propety
+    @property
     def price_id(self):
         return self['IdentifyPrice']
 
-    @propety
+    @property
     def price_max_buy(self):
         return self['MaxBuyPrice']
 
-    @propety
+    @property
     def gold(self):
         return self['StoreGold']
 
+    @property
     def script(self):
         if self._scripts: return self._scripts
 
@@ -90,11 +91,11 @@ class Store(NWObjectVarable):
 
         return self._scripts
 
-    @propety
+    @property
     def will_not_buy(self):
         return [i['BaseItem'] for i in self['WillNotBuy']]
 
-    @propety
+    @property
     def will_only_buy(self):
         return [i['BaseItem'] for i in self['WillOnlyBuy']]
 
@@ -115,11 +116,11 @@ class Store(NWObjectVarable):
 
         return res
 
-    @propety
+    @property
     def palette_id(self):
         return self['ID']
 
-    @propety
+    @property
     def comment(self):
         return self['Comment']
 
