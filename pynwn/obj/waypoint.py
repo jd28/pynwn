@@ -36,14 +36,17 @@ class Waypoint(NWObjectVarable):
 
     @property
     def appearance(self):
+        """Appearance ID."""
         return self['Appearance']
 
     @property
     def comment(self):
+        """Comment."""
         return self['Comment']
 
     @property
     def description(self):
+        """Localized description."""
         if not self._locstr.has_key('description'):
             self._locstr['description'] = LocString(self['Description'])
 
@@ -51,14 +54,17 @@ class Waypoint(NWObjectVarable):
 
     @property
     def has_map_note(self):
+        """Has map note flag."""
         return self['HasMapNote']
 
     @property
     def linked_to(self):
+        """Trap disarmable flag."""
         return self['LinkedTo']
 
     @property
     def map_note(self):
+        """Localized map note."""
         if not self._locstr.has_key('map_note'):
             self._locstr['map_note'] = LocString(self['MapNote'])
 
@@ -66,10 +72,12 @@ class Waypoint(NWObjectVarable):
 
     @property
     def map_note_enabled(self):
+        """Map note enabled flag."""
         return self['MapNoteEnabled']
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self['LocalizedName'])
 
@@ -77,14 +85,17 @@ class Waypoint(NWObjectVarable):
 
     @property
     def palette_id(self):
+        """Palette ID."""
         return self['PaletteID']
 
     @property
     def resref(self):
+        """Resref."""
         return self['TemplateResRef']
 
     @property
     def tag(self):
+        """Tag."""
         return self['Tag']
 
 class WaypointInstance(Waypoint):

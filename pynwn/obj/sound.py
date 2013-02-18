@@ -23,10 +23,10 @@ class Sound(object):
         if name == 'uts':
             if not self._uts: self._uts = self.gff.structure
             return self._uts
-            
+
     def __getitem__(self, name):
         return self.uts[name].val
-            
+
     @property
     def tag(self):
         return self['Tag']
@@ -40,18 +40,22 @@ class Sound(object):
 
     @property
     def resref(self):
+        """Resref."""
         return self['TemplateResRef']
 
     @property
     def active(self):
+        """Active flag."""
         return self['Active']
 
     @property
     def continous(self):
+        """Continuous flag."""
         return self['Continous']
 
     @property
     def looping(self):
+        """Looping flag."""
         return self['Looping']
 
     @property
@@ -120,10 +124,12 @@ class Sound(object):
 
     @property
     def palette_id(self):
+        """Palette ID."""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment."""
         return self['Comment']
 
 class SoundInstance(Sound):

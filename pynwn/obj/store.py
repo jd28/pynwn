@@ -38,10 +38,12 @@ class Store(NWObjectVarable):
 
     @property
     def resref(self):
+        """Resref."""
         return self['ResRef']
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocalizedName'])
 
@@ -49,10 +51,12 @@ class Store(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag."""
         return self['Tag']
 
     @property
     def mark_up(self):
+        """Active flag."""
         return self['MarkUp']
 
     @property
@@ -61,6 +65,7 @@ class Store(NWObjectVarable):
 
     @property
     def black_market(self):
+        """Black market flag."""
         return self['BlackMarket']
 
     @property
@@ -69,18 +74,26 @@ class Store(NWObjectVarable):
 
     @property
     def price_id(self):
+        """Price to identify item.."""
         return self['IdentifyPrice']
 
     @property
     def price_max_buy(self):
+        """Maximum buy price."""
         return self['MaxBuyPrice']
 
     @property
     def gold(self):
+        """Gold."""
         return self['StoreGold']
 
     @property
     def script(self):
+        """Scripts.  Responds to script events:
+
+        #. Event.OPEN
+        #. Event.CLOSE
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -93,16 +106,26 @@ class Store(NWObjectVarable):
 
     @property
     def will_not_buy(self):
+        """Will not buy list.
+
+        :returns: List of baseitem IDs that store will not buy.
+        """
         return [i['BaseItem'] for i in self['WillNotBuy']]
 
     @property
     def will_only_buy(self):
+        """Will only buy list.
+
+        :returns: List of baseitem IDs that store will only buy.
+        """
         return [i['BaseItem'] for i in self['WillOnlyBuy']]
 
     @property
     def items(self):
-        """items returns a two dimensional array with the format:
-        [<store page>][<repository item list>]
+        """Items in inventory.
+
+        :returns: a two dimensional array with the format:
+        [<store page>][<RepositoryItem objects>]
         """
         res = []
         for page in self['StoreList']:
@@ -118,10 +141,12 @@ class Store(NWObjectVarable):
 
     @property
     def palette_id(self):
+        """Palette ID"""
         return self['ID']
 
     @property
     def comment(self):
+        """Comment"""
         return self['Comment']
 
 class StoreInstance(Store):

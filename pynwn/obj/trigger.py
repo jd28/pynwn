@@ -36,14 +36,17 @@ class Trigger(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag"""
         return self['Tag']
 
     @property
     def resref(self):
+        """Resref"""
         return self['TemplateResRef']
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocalizedName'])
 
@@ -51,10 +54,12 @@ class Trigger(NWObjectVarable):
 
     @property
     def key_auto_remove(self):
+        """Auto-remove key flag."""
         return self['AutoRemoveKey']
 
     @property
     def faction(self):
+        """Faction ID"""
         return self['Faction']
 
     @property
@@ -63,30 +68,37 @@ class Trigger(NWObjectVarable):
 
     @property
     def key_auto_remove(self):
+        """Auto-remove key flag."""
         return self['TemplateResRef']
 
     @property
     def highlight_height(self):
+        """Highlight height."""
         return self['HighlightHeight']
 
     @property
     def key_name(self):
+        """Key tag."""
         return self['KeyName']
 
     @property
     def linked_to(self):
+        """Linked to object tag."""
         return self['LinkedTo']
 
     @property
     def linked_to_flags(self):
+        """Linked to flags."""
         return self['LinkedToFlags']
 
     @property
     def load_screen(self):
+        """Load screen ID"""
         return self['LoadScreenID']
 
     @property
     def portrait_id(self):
+        """Portrait ID"""
         return self['PortraitId']
 
     @property
@@ -95,18 +107,22 @@ class Trigger(NWObjectVarable):
 
     @property
     def trap_detectable(self):
+        """Trap detectable flag."""
         return self['TrapDetectable']
 
     @property
     def trap_detect_dc(self):
+        """Trap detect DC"""
         return self['TrapDetectDC']
 
     @property
     def trap_disarmable(self):
+        """Trap disarmable flag."""
         return self['TrapDisarmable']
 
     @property
     def trap_disarm_dc(self):
+        """Trap disarm DC"""
         return self['DisarmDC']
 
     @property
@@ -119,10 +135,21 @@ class Trigger(NWObjectVarable):
 
     @property
     def trap_type(self):
+        """Trap type."""
         return self['TrapType']
 
     @property
     def scripts(self):
+        """Scripts.  Responds to script events:
+
+        #. Event.TRAP_DISARMED
+        #. Event.TRAP_TRIGGERED
+        #. Event.CLICK
+        #. Event.HEARTBEAT
+        #. Event.ENTER
+        #. Event.EXIT
+        #. Event.USER_DEFINED
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -137,13 +164,15 @@ class Trigger(NWObjectVarable):
         self._scripts = NWObjectScripts(self.utt, lbls)
 
         return self._scripts
-    
+
     @property
     def paletted_id(self):
+        """Palette ID"""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment"""
         return self['Comment']
 
 class TriggerInstance(Trigger):

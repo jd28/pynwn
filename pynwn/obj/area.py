@@ -39,18 +39,25 @@ class Area(NWObjectVarable):
 
     @property
     def encounters(self):
+        """Encounters
+
+        :returns: List of EncounterInstance objects.
+        """
         return [EncounterInstance(p) for p in self.git['Encounter List']]
 
     @property
     def fog_clip_distance(self):
+        """Fog clip distance."""
         return self.are['FogClipDist']
 
     @property
     def height(self):
+        """Area height."""
         return self.are['Height']
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['Name'])
 
@@ -58,14 +65,26 @@ class Area(NWObjectVarable):
 
     @property
     def placeables(self):
+        """Encounters
+
+        :returns: List of EncounterInstance objects.
+        """
         return [PlaceableInstance(p) for p in self.git['Placeable List']]
 
     @property
     def resref(self):
+        """Resref."""
         return self.are['ResRef']
 
     @property
     def script(self):
+        """Scripts.  Responds to script events:
+
+        #. Event.ENTER
+        #. Event.EXIT
+        #. Event.HEARTBEAT
+        #. Event.USER_DEFINED
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -80,24 +99,39 @@ class Area(NWObjectVarable):
 
     @property
     def sounds(self):
+        """Sounds
+
+        :returns: List of SoundInstance objects.
+        """
         return [SoundInstance(p) for p in self.git['SoundList']]
 
     @property
     def tag(self):
+        """Tag"""
         return self.are['Tag']
 
     @property
     def tileset(self):
+        """Tileset"""
         return self.are['Tileset']
 
     @property
     def triggers(self):
+        """Triggers
+
+        :returns: List of TriggerInstance objects.
+        """
         return [TriggerInstance(p) for p in self.git['TriggerList']]
 
     @property
     def waypoints(self):
+        """Waypoints
+
+        :returns: List of WaypointInstance objects.
+        """
         return [WaypointInstance(p) for p in self.git['WaypointList']]
 
     @property
     def width(self):
+        """Area width."""
         return self.are['Width']

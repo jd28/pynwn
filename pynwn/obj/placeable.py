@@ -39,10 +39,12 @@ class Placeable(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag"""
         return self['Tag']
 
     @property
     def name(self):
+        """Localized name"""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocName'])
 
@@ -50,6 +52,7 @@ class Placeable(NWObjectVarable):
 
     @property
     def description(self):
+        """Localized description."""
         if not self._locstr.has_key('description'):
             self._locstr['description'] = LocString(self.are['Description'])
 
@@ -57,118 +60,164 @@ class Placeable(NWObjectVarable):
 
     @property
     def resref(self):
+        """Resref"""
         return self['TemplateResRef']
 
     @property
     def key_auto_remove(self):
+        """Auto-remove key."""
         return self['AutoRemoveKey']
 
     @property
     def lock_close_dc(self):
+        """Lock close DC"""
         return self['CloseLockDC']
 
     @property
     def conversation(self):
+        """Dialog resref"""
         return self['Conversation']
 
     @property
     def interruptable(self):
+        """Conversation interruptable flag."""
         return self['Interruptable']
 
     @property
     def faction(self):
+        """Faction ID"""
         return self['Faction']
 
     @property
     def plot(self):
+        """Plot flag."""
         return self['Plot']
 
     @property
     def key_required(self):
+        """Key required flag."""
         return self['KeyRequired']
 
     @property
     def lockable(self):
+        """Lockable flag."""
         return self['Lockable']
 
     @property
     def locked(self):
+        """Locked flag."""
         return self['Locked']
 
     @property
     def lock_open_dc(self):
+        """Lock open DC"""
         return self['OpenLockDC']
 
     @property
     def portrait_id(self):
+        """Portrait ID"""
         return self['PortraitId']
 
     @property
     def trap_detectable(self):
+        """Trap detectable flag."""
         return self['TrapDetectable']
 
     @property
     def trap_detect_dc(self):
+        """Trap detect DC"""
         return self['TrapDetectDC']
 
     @property
     def trap_disarmable(self):
+        """Trap disarmable flag"""
         return self['TrapDisarmable']
 
     @property
     def trap_disarm_dc(self):
+        """Trap disarm DC"""
         return self['DisarmDC']
 
     @property
     def trap_flag(self):
+        """Trap flag."""
         return self['TrapFlag']
 
     @property
     def trap_one_shot(self):
+        """Trap one-shot flag."""
         return self['TrapOneShot']
 
     @property
     def trap_type(self):
+        """Trap type."""
         return self['TrapType']
 
     @property
     def key_name(self):
+        """Key tag."""
         return self['KeyName']
 
     @property
     def animation_state(self):
+        """Animation state."""
         return self['AnimationState']
 
     @property
     def appearance(self):
+        """Appearance ID."""
         return self['Appearance']
 
     @property
     def hp(self):
+        """Hitpoints"""
         return self['HP']
 
     @property
     def hp_current(self):
+        """Current hitpoints"""
         return self['CurrentHP']
 
     @property
     def hardness(self):
+        """Hardness"""
         return self['Hardness']
 
     @property
     def save_fortitude(self):
+        """Fortitude saving throw."""
         return self['Fort']
 
     @property
     def save_reflex(self):
+        """Reflex saving throw."""
         return self['Ref']
 
     @property
     def save_will(self):
+        """Will saving throw."""
         return self['Will']
 
     @property
     def script(self):
+        """Scripts.  Responds to script events:
+
+        #. Event.CLOSE
+        #. Event.DAMAGED
+        #. Event.DEATH
+        #. Event.TRAP_DISARMED
+        #. Event.HEARTBEAT
+        #. Event.LOCK
+        #. Event.ATTACKED
+        #. Event.OPEN
+        #. Event.SPELL_CAST_AT
+        #. Event.TRAP_TRIGGERED
+        #. Event.UNLOCK
+        #. Event.USER_DEFINED
+        #. Event.CLICK
+        #. Event.DISTURBED
+        #. Event.USED
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -194,6 +243,7 @@ class Placeable(NWObjectVarable):
 
     @property
     def has_inventory(self):
+        """Has inventory flag."""
         return self['HasInventory']
 
     @property
@@ -202,6 +252,7 @@ class Placeable(NWObjectVarable):
 
     @property
     def static(self):
+        """Static flag."""
         return self['Static']
 
     @property
@@ -210,10 +261,16 @@ class Placeable(NWObjectVarable):
 
     @property
     def useable(self):
+        """Useable flag."""
         return self['Useable']
 
     @property
     def items(self):
+        """Invenory items.
+
+        :returns: List of RepositoryItem objects or [] if
+        the object does not have an inventory.
+        """
         if self.has_inventory:
             return [RepositoryItem(i) for i in self['ItemList']]
         else:
@@ -221,10 +278,12 @@ class Placeable(NWObjectVarable):
 
     @property
     def paletted_id(self):
+        """Palette ID."""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment."""
         return self['Comment']
 
 class PlaceableInstance(Placeable):

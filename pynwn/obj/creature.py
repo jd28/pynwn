@@ -41,14 +41,17 @@ class Creature(NWObjectVarable):
 
     @property
     def resref(self):
+        """Resref."""
         return self['TemplateResRef']
 
     @property
     def race(self):
+        """Race ID."""
         return self['Race']
 
     @property
     def name_first(self):
+        """Localized first name."""
         if not self._locstr.has_key('namef'):
             self._locstr['namef'] = LocString(self['FirstName'])
 
@@ -56,6 +59,7 @@ class Creature(NWObjectVarable):
 
     @property
     def name_last(self):
+        """Localized last name."""
         if not self._locstr.has_key('namel'):
             self._locstr['namel'] = LocString(self['LastName'])
 
@@ -63,22 +67,27 @@ class Creature(NWObjectVarable):
 
     @property
     def appearance(self):
+        """Appearance ID."""
         return self['Appearance_Type']
 
     @property
     def gender(self):
+        """Gender."""
         return self['Gender']
 
     @property
     def phenotype(self):
+        """Phenotype ID."""
         return self['Phenotype']
 
     @property
     def portrait_id(self):
+        """Portrait ID."""
         return self['PortraitId']
 
     @property
     def description(self):
+        """Localized description."""
         if not self._locstr.has_key('desc'):
             self._locstr['desc'] = LocString(self['Description'])
 
@@ -86,53 +95,67 @@ class Creature(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag."""
         return self['Tag']
 
-    def converesation(self):
+    @property
+    def conversation(self):
+        """Dialog resref."""
         return self['Conversation']
 
     @property
     def is_pc(self):
+        """Player character flag."""
         return self['IsPC']
 
     @property
     def faction(self):
+        """Faction ID."""
         return self['FactionID']
 
     @property
     def disarmable(self):
+        """Disarmable flag."""
         return self['Disarmable']
 
     @property
     def subrace(self):
+        """Subrace."""
         return self['Subrace']
 
     @property
     def diety(self):
+        """Deity."""
         return self['Deity']
 
     @property
     def wings(self):
+        """Wing ID"""
         return self['Wings_New']
 
     @property
     def tail(self):
+        """Tail ID"""
         return self['Tail_New']
 
     @property
     def soundset(self):
+        """Soundset."""
         return self['SoundSetFile']
 
     @property
     def plot(self):
+        """Plot flag."""
         return self['Plot']
 
     @property
     def is_immortal(self):
+        """Immortal flag."""
         return self['IsImmortal']
 
     @property
     def interruptable(self):
+        """Conversation interruptable flag."""
         return self['Interruptable']
 
     @property
@@ -141,6 +164,7 @@ class Creature(NWObjectVarable):
 
     @property
     def no_perm_death(self):
+        """No permenant death flag."""
         return self['NoPermDeath']
 
     @property
@@ -149,34 +173,42 @@ class Creature(NWObjectVarable):
 
     @property
     def starting_package(self):
+        """Starting package ID."""
         return self['StartingPackage']
 
     @property
     def corpse_decay(self):
+        """Corpse decay time."""
         return self['DecayTime']
 
     @property
     def strength(self):
+        """Creature's strength."""
         return self['Str']
 
     @property
     def dexterity(self):
+        """Creature's dexterity."""
         return self['Dex']
 
     @property
     def constitution(self):
+        """Creature's constitution."""
         return self['Con']
 
     @property
     def intelligence(self):
+        """Creature's intelligence."""
         return self['Int']
 
     @property
     def wisdom(self):
+        """Creature's wisdom."""
         return self['Wis']
 
     @property
     def charisma(self):
+        """Creature's charisma."""
         return self['Cha']
 
     @property
@@ -185,6 +217,7 @@ class Creature(NWObjectVarable):
 
     @property
     def natural_ac(self):
+        """Creature's natural AC."""
         return self['NaturalAC']
 
     @property
@@ -193,22 +226,27 @@ class Creature(NWObjectVarable):
 
     @property
     def hp_current(self):
+        """Creature's current hitpoints."""
         return self['CurrentHitPoints']
 
     @property
     def hp_max(self):
+        """Creature's maximum hitpoints."""
         return self['MaxHitPoints']
 
     @property
     def save_fortitude(self):
+        """Creature's fortitude saving throw."""
         return self['fortbonus']
 
     @property
     def save_reflex(self):
+        """Creature's reflex saving throw."""
         return self['refbonus']
 
     @property
     def save_will(self):
+        """Creature's will saving throw."""
         return self['willbonus']
 
     @property
@@ -221,10 +259,12 @@ class Creature(NWObjectVarable):
 
     @property
     def cr(self):
+        """Creature's challenge rating."""
         return self['ChallengeRating']
 
     @property
     def cr_adjust(self):
+        """Creature's challenge rating adjustment."""
         return self['CRAdjust']
 
     @property
@@ -233,6 +273,22 @@ class Creature(NWObjectVarable):
 
     @property
     def scripts(self):
+        """Creature's scripts.  Responds to script events:
+
+        #. Event.HEARTBEAT
+        #. Event.PERCEPTION
+        #. Event.SPELL_CAST_AT
+        #. Event.ATTACKED
+        #. Event.DAMAGED
+        #. Event.DISTURBED
+        #. Event.END_COMBAT_ROUND
+        #. Event.CONVERSATION
+        #. Event.SPAWN
+        #. Event.REST
+        #. Event.DEATH
+        #. Event.USER_DEFINED
+        #. Event.BLOCKED
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -256,10 +312,18 @@ class Creature(NWObjectVarable):
 
     @property
     def skills(self):
+        """Creature's skills
+
+        :returns: List of skill ranks in order of skill ID.
+        """
         return [sk['Rank'] for sk in self['SkillList']]
 
     @property
     def feats(self):
+        """Creature's feats.
+
+        :returns: List of feat IDs.
+        """
         return [sk['Feat'] for sk in self['FeatList']]
 
     @property
@@ -269,25 +333,39 @@ class Creature(NWObjectVarable):
             res.append( (s['Spell'], s['SpellFlags'], s['SpellCasterLevel']) )
 
         return res
-    
+
     @property
     def classes(self):
+        """Creature's classes.
+
+        :returns: List of tuples containing class ID and level.
+        """
         return [(cl['Class'], cl['ClassLevel']) for cl in self['ClassList']]
 
     @property
     def items(self):
+        """Creature's inventory items.
+
+        :returns: List of RepositoryItems.
+        """
         return [RepositoryItem(i) for i in self['ItemList']]
 
     @property
     def equips(self):
+        """ Creature's equipment list.
+
+        :returns: List of tuples containing equipment ID and resref.
+        """
         return [(e.type, e['EquippedRes']) for e in self['Equip_ItemList']]
 
     @property
     def palette_id(self):
+        """Palette ID"""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment"""
         return self['Comment']
 
 class CreatureInstance(Creature):

@@ -10,20 +10,31 @@ class RepositoryItem(object):
 
     @property
     def resref(self):
+        """Resref"""
         return self.gff['InventoryRes']
 
     @property
     def position(self):
+        """Position in inventory
+
+        :returns: Tuple of x and y coordinates.
+        """
         return (self.gff['Repos_PosX'], self.gff['Repos_Posy'])
 
     @property
     def dropable(self):
-        """Field only occurs in creature item lists"""
+        """Dropable flag.
+
+        NOTE: Field only occurs in creature item lists
+        """
         return self.gff['Dropable']
 
     @property
     def infinite(self):
-        """Field only occurs in store item lists"""
+        """Infinite flag.
+
+        NOTE: Field only occurs in store item lists
+        """
         return self.gff['Infinite']
 
 
@@ -85,14 +96,19 @@ class Item(NWObjectVarable):
 
     @property
     def resref(self):
+        """Resref"""
         return self['TemplateResRef']
 
     @property
     def base_type(self):
+        """Base item ID.
+
+        """
         return self['BaseItem']
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocalizedName'])
 
@@ -100,6 +116,7 @@ class Item(NWObjectVarable):
 
     @property
     def description(self):
+        """Localized unidentified description."""
         if not self._locstr.has_key('description'):
             self._locstr['description'] = LocString(self.are['Description'])
 
@@ -107,6 +124,7 @@ class Item(NWObjectVarable):
 
     @property
     def description_id(self):
+        """Localized identified description."""
         if not self._locstr.has_key('description_id'):
             self._locstr['description_id'] = LocString(self.are['DescIdentified'])
 
@@ -114,38 +132,47 @@ class Item(NWObjectVarable):
 
     @property
     def tag(self):
+        """Tag"""
         return self['Tag']
 
     @property
     def charges(self):
+        """Charges"""
         return self['Charges']
 
     @property
     def cost(self):
+        """Cost"""
         return self['cost']
 
     @property
     def stolen(self):
+        """Stolen flag"""
         return self['stolen']
 
     @property
     def stack_size(self):
+        """Stack size"""
         return self['StackSize']
 
     @property
     def plot(self):
+        """Plot flag."""
         return self['Plot']
 
     @property
     def cost_additional(self):
+        """Additional Cost"""
         return self['AddCost']
 
     @property
     def identified(self):
+        """Identified flag."""
         return self['Identified']
 
     @property
     def cursed(self):
+        """Cursed flag."""
         return self['Cursed']
 
     @property
@@ -155,14 +182,20 @@ class Item(NWObjectVarable):
 
     @property
     def properties(self):
+        """Item properties
+
+        :returns: List of ItemProperty objects.
+        """
         return [ItemProperty(ip) for ip in self['PropertiesList']]
 
     @property
     def palette_id(self):
+        """Palette ID"""
         return self['PaletteID']
 
     @property
     def comment(self):
+        """Comment"""
         return self['Comment']
 
 class ItemInstance(Item):

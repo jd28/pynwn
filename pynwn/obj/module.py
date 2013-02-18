@@ -42,10 +42,15 @@ class Module(NWObjectVarable):
 
     @property
     def areas(self):
+        """Areas.
+
+        :returns: List of Area objects.
+        """
         return [Area(a['Area_Name'], self.container) for a in self.ifo['Mod_Area_list']]
 
     @property
     def description(self):
+        """Localized description"""
         if not self._locstr.has_key('description'):
             self._locstr['description'] = LocString(self.ifo['Mod_Description'])
 
@@ -53,22 +58,30 @@ class Module(NWObjectVarable):
 
     @property
     def entry_area(self):
+        """Entry area resref"""
         return Area(self.ifo['Mod_Entry_Area'], self.container)
 
     @property
     def entry_location(self):
+        """Entry location.
+
+        :returns: Tuple of the X, Y, Z coordinates.
+        """
         return (self.ifo['Mod_Entry_X'], self.ifo['Mod_Entry_Y'], self.ifo['Mod_Entry_Z'])
 
     @property
     def expansion_pack(self):
+        """Expansion pack."""
         return self.ifo['Expansion_Pack']
 
     @property
     def haks(self):
+        """List of HAK files."""
         return [hak['Mod_Hak'] for hak in self.ifo['Mod_HakList']]
 
     @property
     def name(self):
+        """Localized name"""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.ifo['Mod_Name'])
 
@@ -76,10 +89,30 @@ class Module(NWObjectVarable):
 
     @property
     def game_version(self):
+        """Game version"""
         return self.ifo['Mod_MinGameVer']
 
     @property
     def script(self):
+        """Scripts.  Responds to script events:
+
+        #. Event.CUTSCENE_ABORT
+        #. Event.ENTER
+        #. Event.EXIT
+        #. Event.HEARTBEAT
+        #. Event.ITEM_ACQUIRED
+        #. Event.ITEM_ACTIVATED
+        #. Event.ITEM_EQUIPPED
+        #. Event.ITEM_UNACQUIRED
+        #. Event.ITEM_UNEQUIPPED
+        #. Event.LEVELUP
+        #. Event.LOAD
+        #. Event.DEATH
+        #. Event.DYING
+        #. Event.RESPAWN
+        #. Event.REST
+        #. Event.USER_DEFINED
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -107,8 +140,10 @@ class Module(NWObjectVarable):
 
     @property
     def tlk(self):
+        """Custom TLK file."""
         return self.ifo['Mod_CustomTlk']
 
     @property
     def xp_scale(self):
+        """Experience point scale."""
         return self.ifo['Mod_XPScale']

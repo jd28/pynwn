@@ -103,10 +103,12 @@ class Dialog(object):
 
     @property
     def script_abort(self):
+        """Conversation abort script"""
         return self.dlg['EndConverAbort']
 
     @property
     def script_end(self):
+        """Conversation end script"""
         return self.dlg['EndConversation']
 
     @property
@@ -115,4 +117,5 @@ class Dialog(object):
 
     @property
     def word_count(self):
+        """Conversation word count."""
         return self.dlg['NumWords']
