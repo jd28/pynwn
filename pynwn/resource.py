@@ -232,21 +232,20 @@ class ContentObject(object):
     """A ContentObject is an abstraction of any particular NWN resource object
     either in NWN container (i.e. a hak, mod, or erf) or in a file.
 
-    """
-    def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
-        """Initialize content object
+    NOTE: Parameter abspath is ONLY used when the content object is in a DirectoryContainer.  Since
+    modifications to content objects are not immediately written to disk, if ``io``
+    is changed from a file to cStringIO, it's necessary to know where to write
+    the file when DirectoryContainer.save() is called.
 
-        :param resref: Template resref name.
-        :param res_type: Resource type.
-        :param io: Either a file name or cStringIO.
-        :param offset: Data offest in io.
-        :param size: Data size.
-        :param abspath: Absolute path to the file if one is contained in io.  NOTE:
-        this is ONLY used when the content object is in a DirectoryContainer.  Since
-        modifications to content objects are not immediately written to disk, if io
-        is changed from a file to cStringIO, it's necessary to know where to write
-        the file when DirectoryContainer.save() is called.
-        """
+    :param resref: Template resref name.
+    :param res_type: Resource type.
+    :param io: Either a file name or cStringIO.
+    :param offset: Data offest in ``io``.
+    :param size: Data size.
+    :param abspath: Absolute path to the file if one is contained in ``io``.
+    """
+    
+    def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
         self.resref = resref.lower()
 
         if not ResTypes.has_key(res_type):
