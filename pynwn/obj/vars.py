@@ -1,9 +1,9 @@
 from pynwn.gff import Gff
 
-VARIABLE_TYPE_INT = 1
-VARIABLE_TYPE_FLOAT = 2
-VARIABLE_TYPE_STRING = 3
-VARIABLE_TYPE_OBJECT = 4
+VARIABLE_TYPE_INT      = 1
+VARIABLE_TYPE_FLOAT    = 2
+VARIABLE_TYPE_STRING   = 3
+VARIABLE_TYPE_OBJECT   = 4
 VARIABLE_TYPE_LOCATION = 5
 
 def convert(vartype, val):
@@ -68,12 +68,19 @@ class NWVariable(object):
             return res[0]
 
     def has_var(self, name):
-        if not self.has_vars: return false
+        if not self.has_vars: return False
         
-        vs = self.gff['VarTable'].val
+        vs = self.gff['VarTable']
         res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
         return len(res) > 0
 
+    def list_vars(self):
+        if not self.has_vars: return []
+        
+        vs = self.gff['VarTable']
+        res = [(v['Name'], v['Value']) for v in vs if v['Type'] == self.type]
+        return res
+    
 class NWObjectVarable(object):
     """NWObjectVarable is an interface for other objects to inherit the ability to \
     read / write local variables stored in a GFF.
