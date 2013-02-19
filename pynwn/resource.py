@@ -233,13 +233,27 @@ class ContentObject(object):
     either in NWN container (i.e. a hak, mod, or erf) or in a file.
 
     """
-    def __init__(self, resref, res_type, io = None, offset = None, size=None):
+    def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
+        """Initialize content object
+
+        :param resref: Template resref name.
+        :param res_type: Resource type.
+        :param io: Either a file name or cStringIO.
+        :param offset: Data offest in io.
+        :param size: Data size.
+        :param abspath: Absolute path to the file if one is contained in io.  NOTE:
+        this is ONLY used when the content object is in a DirectoryContainer.  Since
+        modifications to content objects are not immediately written to disk, if io
+        is changed from a file to cStringIO, it's necessary to know where to write
+        the file when DirectoryContainer.save() is called.
+        """
         self.resref = resref.lower()
 
         if not ResTypes.has_key(res_type):
             raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
-
+        self.modified = False
+        self.abspath = abspath
         self.io = io
         self.offset = offset or 0
         self.size = size
@@ -258,14 +272,17 @@ class ContentObject(object):
 
         size = os.path.getsize(abspath)
 
-        return ContentObject(basename, Extensions[ext], abspath, 0, size)
+        return ContentObject(basename, Extensions[ext], abspath, 0, size, abspath)
 
     def get(self):
         """Returns the actual data.
         """
-        with open(self.io, 'rb') as f:
-            f.seek(self.offset)
-            return f.read(self.size)
+        if isinstance(self.io, str):
+            with open(self.io, 'rb') as f:
+                f.seek(self.offset)
+                return f.read(self.size)
+        else:
+            return self.io.getvalue()
 
     def get_extension(self):
         """Determines the ContentObject's file extention by resource
@@ -313,6 +330,12 @@ class Container(object):
 
         self.add(ContentObject.from_file(fname))
 
+    def has_modified_content_objects(self):
+        for co in self.content:
+            if co.modified: return True
+
+        return False
+
     def get_filenames(self):
         """Gets a list of the filenames of all content objects.
         """
@@ -353,6 +376,11 @@ class DirectoryContainer(Container):
                 if not only_nwn or Extensions.has_key(os.path.splitext(filename)[1][1:]):
                     self.add_file(os.path.join(dirname, filename))
 
+    def save(self):
+        if self.has_modified_content_objects():
+            for co in self.content:
+                co.write_to(co.abspath)
+
 class ResourceManager(object):
     """A container for Container objects.
     """
@@ -382,7 +410,7 @@ class ResourceManager(object):
         from pynwn.key import Key
         from pynwn.erf import Erf
         from pynwn.obj.module import Module as Mod
-        
+
         mgr = ResourceManager()
 
         # First, all the base data files.

@@ -21,6 +21,10 @@ class Erf(res.Container):
         self.year = now.year - 1900
         self.day_of_year = now.timetuple().tm_yday
 
+    def save(self):
+        if self.has_modified_content_objects():
+            with open(self.io, 'rb+') as f:
+                self.write_to(f)
 
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
@@ -35,7 +39,6 @@ class Erf(res.Container):
         lstr_iter = iter(sorted(self.localized_strings.iteritems()))
         locstr = []
         for k, v in lstr_iter:
-            print(repr(v))
             locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
         locstr = ''.join(locstr)
 

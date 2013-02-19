@@ -122,6 +122,7 @@ class Gff( object ):
 
     def __setitem__(self, name, value):
         self.structure[name].val = value
+        self.save()
 
     def has_field(self, name):
         return name in self.structure
@@ -292,11 +293,11 @@ class Gff( object ):
         header += struct.pack( '2I', ( 56 + len( content ) ), len( lists ) )
         content = header + content + lists
 
-        # write the gff file
-        target = file( self.filename, 'wb' )
-        target.write( content )
-        target.flush()
-        target.close()
+        self.co.io = cStringIO.StringIO(content)
+        self.co.offset = 0
+        self.co.size = len(content)
+        self.co.modified = True
+        #print "Saving cStringIO of length %d" % self.co.size
         return True
 
     def scan( self, offset, length ):
