@@ -244,7 +244,7 @@ class ContentObject(object):
     :param size: Data size.
     :param abspath: Absolute path to the file if one is contained in ``io``.
     """
-    
+
     def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
         self.resref = resref.lower()
 
@@ -362,7 +362,11 @@ class Container(object):
 
 class DirectoryContainer(Container):
     """A Container that directly wraps a directory (e.g. override/).
-    Does not update on changes - caches the directory entries on initialize.
+
+    :param path: Directory path.
+    :param only_nwn: default ``True``, If ``False`` the ``DirectoryContainer`` will attempt to load all files,
+                     even those that are not NWN resource types.
+
     """
     def __init__(self, path, only_nwn=True):
         super(DirectoryContainer, self).__init__()
@@ -406,6 +410,25 @@ class ResourceManager(object):
 
     @staticmethod
     def from_module(mod, use_override=False, include_bioware=True, path = "C:\\NeverwinterNights\\NWN\\"):
+        """Creates a ResourceManager object from a module or module director.
+
+        :param mod: Path to module or module directory.
+        :param use_override: default False, If true the overried directory in ``path`` will be used.
+        :param include_bioware: default True, If false Bioware NWN BIF files will not be used.
+        :param path: default "C:\\NeverwinterNights\\NWN\\", Path to NWN directory.
+
+        **NOTES:**
+
+        * If a directory is passed in ``mod`` it **must** contain a ``module.ifo`` file.
+        * If ``include_bioware`` is ``False``, ``path`` can be any working directory
+          that has the same directory stucture as the default NWN installation. I.e.
+          hak files are in the subdirectory 'hak', overrides in directory 'override'.
+        * When loading the module's HAKs .hak files will attempt to be loaded first.
+          If no file exists, then a directory with the ``.hak`` files name will attempt
+          to be loaded.
+
+
+        """
         from pynwn.key import Key
         from pynwn.erf import Erf
         from pynwn.obj.module import Module as Mod
@@ -428,9 +451,15 @@ class ResourceManager(object):
 
         # All custom haks
         for hak in mod.haks:
-            h = os.path.join(path, 'hak', hak) + '.hak'
-            print "Adding %s..." % h
-            mgr.add_container(Erf.from_file(h))
+            h_path = os.path.join(path, 'hak', hak)
+            if os.path.isfile(h_path + '.hak'):
+                print "Adding HAK %s..." % h
+                mgr.add_container(Erf.from_file(h) + '.hak')
+            elif os.path.isdir(h_path):
+                mgr.add_container(DirectoryContainer(h_path))
+                print "Adding HAK directory %s..." % h
+            else:
+                print "Error no HAK file or HAK directory found: %s" % hak
 
         return mgr
 
