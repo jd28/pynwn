@@ -125,7 +125,7 @@ class Store(NWObjectVarable):
         """Items in inventory.
 
         :returns: a two dimensional array with the format:
-        [<store page>][<RepositoryItem objects>]
+                  [<store page>][<RepositoryItem objects>]
         """
         res = []
         for page in self['StoreList']:

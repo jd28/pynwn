@@ -6,7 +6,6 @@ from pynwn.obj.locstring import *
 
 from pynwn.obj.item import RepositoryItem
 
-
 class Placeable(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
@@ -269,7 +268,7 @@ class Placeable(NWObjectVarable):
         """Invenory items.
 
         :returns: List of RepositoryItem objects or [] if
-        the object does not have an inventory.
+                  the object does not have an inventory.
         """
         if self.has_inventory:
             return [RepositoryItem(i) for i in self['ItemList']]

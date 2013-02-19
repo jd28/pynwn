@@ -65,9 +65,9 @@ class Area(NWObjectVarable):
 
     @property
     def placeables(self):
-        """Encounters
+        """Placeables
 
-        :returns: List of EncounterInstance objects.
+        :returns: List of PlaceableInstance objects.
         """
         return [PlaceableInstance(p) for p in self.git['Placeable List']]
 
