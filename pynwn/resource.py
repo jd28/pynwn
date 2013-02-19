@@ -382,7 +382,9 @@ class DirectoryContainer(Container):
     def save(self):
         if self.has_modified_content_objects():
             for co in self.content:
-                co.write_to(co.abspath)
+                if co.modified:
+                    co.write_to(co.abspath)
+                    co.modified = False
 
 class ResourceManager(object):
     """A container for Container objects.
