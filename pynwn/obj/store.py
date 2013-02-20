@@ -1,4 +1,4 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
@@ -119,4 +119,4 @@ class StoreInstance(Store):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Creature, key, make_gff_property('utm', val))
+    setattr(Store, key, make_gff_property('utm', val))
