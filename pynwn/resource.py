@@ -450,16 +450,16 @@ class ResourceManager(object):
         mod = Mod(mod)
         mgr.add_container(mod.container)
 
-
         # All custom haks
         for hak in mod.haks:
             h_path = os.path.join(path, 'hak', hak)
-            if os.path.isfile(h_path + '.hak'):
-                print "Adding HAK %s..." % h
-                mgr.add_container(Erf.from_file(h) + '.hak')
+            h_file = h_path + '.hak'
+            if os.path.isfile(h_file):
+                print "Adding HAK %s..." % (h_file)
+                mgr.add_container(Erf.from_file(h_file))
             elif os.path.isdir(h_path):
                 mgr.add_container(DirectoryContainer(h_path))
-                print "Adding HAK directory %s..." % h
+                print "Adding HAK directory %s..." % h_path
             else:
                 print "Error no HAK file or HAK directory found: %s" % hak
 
@@ -492,10 +492,21 @@ class ResourceManager(object):
         """Returns a list of files matching a glob pattern...
         i.e. Unix shell-style wildcards: \*.utc
         Note: all file names are converted to lowercase.
+
+        :returns: List of tuples (<container>, <list of files>)
         """
 
-        result = []
-        for con in self.containers:
-            result += con.glob(glob_pattern)
+        return [(con, con.glob(glob_pattern)) for con in self.containers]
 
+    def creatures(self, glob = None):
+        """Returns a list of Creature objects contained in
+        all of the resource managers containers."""
+        
+        from pynwn.obj.creature import Creature
+
+        glob = glob or '*.utc'
+        res = self.glob(glob)
+
+        result = [Creature(x, cont) for cont, xs in res
+                  for x in xs]
         return result
