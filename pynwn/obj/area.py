@@ -1,4 +1,4 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.encounter import EncounterInstance
 from pynwn.obj.placeable import PlaceableInstance
@@ -9,6 +9,15 @@ from pynwn.obj.waypoint import WaypointInstance
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+
+ARE_TRANSLATION_TABLE = {
+    'fog_clip_distance' : ('FogClipDist', "Fog clip distance."),
+    'height'            : ('Height', "Area height."),
+    'resref'            : ('ResRef', "Resref."),
+    'tag'               : ('Tag', "Tag."),
+    'tileset'           : ('Tileset', "Tileset."),
+    'width'             : ('Width', "Area width.")
+}
 
 class Area(NWObjectVarable):
     def __init__(self, resref, container):
@@ -37,6 +46,16 @@ class Area(NWObjectVarable):
         self._scripts = None
         self._locstr = {}
 
+    def save(self):
+        if self.are.is_loaded():
+            self.are.save()
+
+        if self.git.is_loaded():
+            self.git.save()
+
+        if self.gic.is_loaded():
+            self.gic.save()
+
     @property
     def encounters(self):
         """Encounters
@@ -44,16 +63,6 @@ class Area(NWObjectVarable):
         :returns: List of EncounterInstance objects.
         """
         return [EncounterInstance(p) for p in self.git['Encounter List']]
-
-    @property
-    def fog_clip_distance(self):
-        """Fog clip distance."""
-        return self.are['FogClipDist']
-
-    @property
-    def height(self):
-        """Area height."""
-        return self.are['Height']
 
     @property
     def name(self):
@@ -69,12 +78,7 @@ class Area(NWObjectVarable):
 
         :returns: List of PlaceableInstance objects.
         """
-        return [PlaceableInstance(p) for p in self.git['Placeable List']]
-
-    @property
-    def resref(self):
-        """Resref."""
-        return self.are['ResRef']
+        return [PlaceableInstance(p, self.git) for p in self.git['Placeable List']]
 
     @property
     def script(self):
@@ -106,16 +110,6 @@ class Area(NWObjectVarable):
         return [SoundInstance(p) for p in self.git['SoundList']]
 
     @property
-    def tag(self):
-        """Tag"""
-        return self.are['Tag']
-
-    @property
-    def tileset(self):
-        """Tileset"""
-        return self.are['Tileset']
-
-    @property
     def triggers(self):
         """Triggers
 
@@ -131,7 +125,14 @@ class Area(NWObjectVarable):
         """
         return [WaypointInstance(p) for p in self.git['WaypointList']]
 
-    @property
-    def width(self):
-        """Area width."""
-        return self.are['Width']
+def make_are_property(gff_name):
+    def getter(self):
+        return self.are[gff_name[0]].val
+
+    def setter(self, val):
+        self.are[gff_name[0]].val = val
+
+    return property(getter, setter, None, gff_name[1])
+
+for key, val in ARE_TRANSLATION_TABLE.iteritems():
+    setattr(Area, key, make_gff_property('are', val))

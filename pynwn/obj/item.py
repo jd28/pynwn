@@ -1,4 +1,4 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
@@ -64,6 +64,22 @@ class ItemProperty(object):
     def chance(self):
         return self.gff['ChanceAppear']
 
+TRANSLATION_TABLE = {
+    'resref'           : ('TemplateResRef', "Resref."),
+    'base_type'        : ('BaseItem', "Base item ID."),
+    'tag'              : ('Tag', "Tag."),
+    'charges'          : ('Charges', "Charges."),
+    'cost'             : ('cost', "Cost."),
+    'stolen'           : ('stolen', "Stolen flag."),
+    'stack_size'       : ('StackSize', "Stack size."),
+    'plot'             : ('Plot', "Plot flag."),
+    'cost_additional'  : ('AddCost', "Additional Cost."),
+    'identified'       : ('Identified', "Identified flag."),
+    'cursed'           : ('Cursed', "Cursed flag."),
+    'palette_id'       : ('PaletteID', "Palette ID."),
+    'comment'           : ('Comment', "Comment."),    
+}
+
 class Item(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
@@ -94,17 +110,8 @@ class Item(NWObjectVarable):
     def __getitem__(self, name):
         return self.uti[name].val
 
-    @property
-    def resref(self):
-        """Resref"""
-        return self['TemplateResRef']
-
-    @property
-    def base_type(self):
-        """Base item ID.
-
-        """
-        return self['BaseItem']
+    def __setitem__(self, name, val):
+        self.uti[name].val = val
 
     @property
     def name(self):
@@ -131,51 +138,6 @@ class Item(NWObjectVarable):
         return self._locstr['description_id']
 
     @property
-    def tag(self):
-        """Tag"""
-        return self['Tag']
-
-    @property
-    def charges(self):
-        """Charges"""
-        return self['Charges']
-
-    @property
-    def cost(self):
-        """Cost"""
-        return self['cost']
-
-    @property
-    def stolen(self):
-        """Stolen flag"""
-        return self['stolen']
-
-    @property
-    def stack_size(self):
-        """Stack size"""
-        return self['StackSize']
-
-    @property
-    def plot(self):
-        """Plot flag."""
-        return self['Plot']
-
-    @property
-    def cost_additional(self):
-        """Additional Cost"""
-        return self['AddCost']
-
-    @property
-    def identified(self):
-        """Identified flag."""
-        return self['Identified']
-
-    @property
-    def cursed(self):
-        """Cursed flag."""
-        return self['Cursed']
-
-    @property
     def model(self):
         # It will probably be best to encapsulate this...
         pass
@@ -188,16 +150,6 @@ class Item(NWObjectVarable):
         """
         return [ItemProperty(ip) for ip in self['PropertiesList']]
 
-    @property
-    def palette_id(self):
-        """Palette ID"""
-        return self['PaletteID']
-
-    @property
-    def comment(self):
-        """Comment"""
-        return self['Comment']
-
 class ItemInstance(Item):
     """A item instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
@@ -205,3 +157,6 @@ class ItemInstance(Item):
     def __init__(self, gff):
         Item.__init__(self, gff, None, True)
         self.is_instance = True
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Item, key, make_gff_property('uti', val))

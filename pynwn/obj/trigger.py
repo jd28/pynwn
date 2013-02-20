@@ -1,8 +1,31 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+
+TRANSLATION_TABLE = {
+    'tag'              : ('Tag', "Tag."),
+    'resref'           : ('TemplateResRef', "Resref."),
+    'key_auto_remove'  : ('AutoRemoveKey', "Auto-remove key flag."),
+    'faction'          : ('Faction', "Faction ID."),
+    'highlight_height' : ('HighlightHeight', "Cursor."),
+    'key_tag'          : ('KeyName', "Key tag."),
+    'linked_to'        : ('LinkedTo', "Linked to object tag."),
+    'linked_to_flags'  : ('LinkedToFlags', "Linked to flags."),
+    'load_screen'      : ('LoadScreenID', "Load screen ID."),
+    'portrait_id'      : ('PortraitId', "Portrait ID."),
+    'type'             : ('Type', "Type."),
+    'trap_detectable'  : ('TrapDetectable', "Trap detectable flag."),
+    'trap_detect_dc'   : ('TrapDetectDC', "Trap detect DC."),
+    'trap_disarmable'  : ('TrapDisarmable', "Trap disarmable flag."),
+    'trap_disarm_dc'   : ('DisarmDC', "Trap disarm DC."),
+    'trap_flag'        : ('TrapFlag', "Trap flag."),
+    'trap_one_shot'    : ('TrapOneShot', "Trap one shot flag."),
+    'trap_type'        : ('TrapType', "Trap type."),
+    'paletted_id'      : ('PaletteID', "Palette ID."),
+    'comment'          : ('Comment', "Comment."),
+}
 
 class Trigger(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
@@ -31,112 +54,13 @@ class Trigger(NWObjectVarable):
             if not self._utt: self._utt = self.gff.structure
             return self._utt
 
-    def __getitem__(self, name):
-        return self.utt[name].val
-
-    @property
-    def tag(self):
-        """Tag"""
-        return self['Tag']
-
-    @property
-    def resref(self):
-        """Resref"""
-        return self['TemplateResRef']
-
     @property
     def name(self):
         """Localized name."""
         if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.are['LocalizedName'])
+            self._locstr['name'] = LocString(self.utt['LocalizedName'])
 
         return self._locstr['name']
-
-    @property
-    def key_auto_remove(self):
-        """Auto-remove key flag."""
-        return self['AutoRemoveKey']
-
-    @property
-    def faction(self):
-        """Faction ID"""
-        return self['Faction']
-
-    @property
-    def cursor(self):
-        return self['Cursor']
-
-    @property
-    def key_auto_remove(self):
-        """Auto-remove key flag."""
-        return self['TemplateResRef']
-
-    @property
-    def highlight_height(self):
-        """Highlight height."""
-        return self['HighlightHeight']
-
-    @property
-    def key_name(self):
-        """Key tag."""
-        return self['KeyName']
-
-    @property
-    def linked_to(self):
-        """Linked to object tag."""
-        return self['LinkedTo']
-
-    @property
-    def linked_to_flags(self):
-        """Linked to flags."""
-        return self['LinkedToFlags']
-
-    @property
-    def load_screen(self):
-        """Load screen ID"""
-        return self['LoadScreenID']
-
-    @property
-    def portrait_id(self):
-        """Portrait ID"""
-        return self['PortraitId']
-
-    @property
-    def type(self):
-        return self['Type']
-
-    @property
-    def trap_detectable(self):
-        """Trap detectable flag."""
-        return self['TrapDetectable']
-
-    @property
-    def trap_detect_dc(self):
-        """Trap detect DC"""
-        return self['TrapDetectDC']
-
-    @property
-    def trap_disarmable(self):
-        """Trap disarmable flag."""
-        return self['TrapDisarmable']
-
-    @property
-    def trap_disarm_dc(self):
-        """Trap disarm DC"""
-        return self['DisarmDC']
-
-    @property
-    def trap_flag(self):
-        return self['TrapFlag']
-
-    @property
-    def trap_one_shot(self):
-        return self['TrapOneShot']
-
-    @property
-    def trap_type(self):
-        """Trap type."""
-        return self['TrapType']
 
     @property
     def scripts(self):
@@ -165,16 +89,6 @@ class Trigger(NWObjectVarable):
 
         return self._scripts
 
-    @property
-    def paletted_id(self):
-        """Palette ID"""
-        return self['PaletteID']
-
-    @property
-    def comment(self):
-        """Comment"""
-        return self['Comment']
-
 class TriggerInstance(Trigger):
     """A trigger instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
@@ -182,3 +96,6 @@ class TriggerInstance(Trigger):
     def __init__(self, gff):
         Trigger.__init__(self, gff, None, True)
         self.is_instance = True
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Trigger, key, make_gff_property('utt', val))

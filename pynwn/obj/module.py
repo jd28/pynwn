@@ -8,6 +8,7 @@ from pynwn.obj.area import Area
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+from pynwn.obj.placeable import Placeable
 
 class Module(NWObjectVarable):
     """Module abstracts over MOD ERF files and directories containing the contents of
@@ -39,6 +40,12 @@ class Module(NWObjectVarable):
 
         # Generate Structure.
         self.struct = self.ifo.structure
+
+    @property
+    def placeables(self):
+        p = [plc for area in self.areas for plc in area.placeables]
+        p += [Placeable(plc, self.container) for plc in self.container.glob("*.utp")]
+        return p
 
     @property
     def areas(self):

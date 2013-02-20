@@ -1,6 +1,17 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+
+TRANSLATION_TABLE = {
+    'tag'              : ('Tag', "Tag."),
+    'resref'           : ('TemplateResRef', "Resref."),
+    'appearance'       : ('Appearance', 'Appearance ID'),
+    'comment'          : ('Comment', "Comment."),
+    'has_map_note'     : ('HasMapNote', "Has map note flag."),
+    'linked_to'        : ('LinkedTo', "Linked to."),
+    'map_note_enabled' : ('MapNoteEnabled', "Map note enabled."),
+    'palette_id'       : ('PaletteID', "Palette ID."),
+}
 
 class Waypoint(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
@@ -29,20 +40,10 @@ class Waypoint(NWObjectVarable):
             return self._utw
 
     def __getitem__(self, name):
-        if not self._utw:
-            self._utw = self.gff.structure
-
         return self.utw[name].val
 
-    @property
-    def appearance(self):
-        """Appearance ID."""
-        return self['Appearance']
-
-    @property
-    def comment(self):
-        """Comment."""
-        return self['Comment']
+    def __getitem__(self, name, val):
+        self.utw[name].val = val
 
     @property
     def description(self):
@@ -53,27 +54,12 @@ class Waypoint(NWObjectVarable):
         return self._locstr['description']
 
     @property
-    def has_map_note(self):
-        """Has map note flag."""
-        return self['HasMapNote']
-
-    @property
-    def linked_to(self):
-        """Trap disarmable flag."""
-        return self['LinkedTo']
-
-    @property
     def map_note(self):
         """Localized map note."""
         if not self._locstr.has_key('map_note'):
             self._locstr['map_note'] = LocString(self['MapNote'])
 
         return self._locstr['map_note']
-
-    @property
-    def map_note_enabled(self):
-        """Map note enabled flag."""
-        return self['MapNoteEnabled']
 
     @property
     def name(self):
@@ -83,21 +69,9 @@ class Waypoint(NWObjectVarable):
 
         return self._locstr['name']
 
-    @property
-    def palette_id(self):
-        """Palette ID."""
-        return self['PaletteID']
-
-    @property
-    def resref(self):
-        """Resref."""
-        return self['TemplateResRef']
-
-    @property
-    def tag(self):
-        """Tag."""
-        return self['Tag']
-
 class WaypointInstance(Waypoint):
     def __init__(self, gff):
         Waypoint.__init__(self, gff, None, True)
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Waypoint, key, make_gff_property('utw', val))

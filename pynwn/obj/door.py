@@ -1,8 +1,46 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+
+TRANSLATION_TABLE = {
+    'tag'             : ('Tag', "Tag."),
+    'resref'          : ('TemplateResRef', "Resref."),
+    'key_auto_remove' : ('AutoRemoveKey', "Auto-remove key."),
+    'lock_close_dc'   : ('CloseLockDC', "Close lock DC."),
+    'conversation'    : ('Conversation', "Conversation resref."),
+    'interruptable'   : ('Interruptable', "Conversation interruptable flag."),
+    'faction'         : ('Faction', "Faction ID."),
+    'plot'            : ('Plot', "Plot flag."),
+    'key_required'    : ('KeyRequired', "Key required flag."),
+    'lockable'        : ('Lockable', "Lockable flag."),
+    'locked'          : ('Locked', "Locked flag."),
+    'lock_open_dc'    : ('OpenLockDC', "Open lock DC."),
+    'portrait_id'     : ('PortraitId', "Portrait ID."),
+    'trap_detectable' : ('TrapDetectable', "Trap detectable flag."),
+    'trap_detect_dc'  : ('TrapDetectDC', "Trap detect DC."),
+    'trap_disarmable' : ('TrapDisarmable', "Trap disarmable flag."),
+    'trap_disarm_dc'  : ('DisarmDC', "Trap disarm DC."),
+    'trap_flag'       : ('TrapFlag', "Trap flag."),
+    'trap_one_shot'   : ('TrapOneShot', "Trap is one-shot."),
+    'trap_type'       : ('TrapType', "Trap type."),
+    'key_tag'         : ('KeyName', "Key tag."),
+    'animation_state' : ('AnimationState', "Animation State."),
+    'appearance'      : ('Appearance', "Appearance ID."),
+    'hp'              : ('HP', "Maximum Hitpoints."),
+    'hp_current'      : ('CurrentHP', "Current Hitpoints."),
+    'hardness'        : ('Hardness', "Hardness."),
+    'save_fortitude'  : ('Fort', "Fortitude Saving Throw."),
+    'save_reflex'     : ('Ref', "Reflex Saving Throw."),
+    'save_will'       : ('Will', "Will Saving Throw."),
+    'linked_to'       : ('LinkedTo', "Linked to tag."),
+    'linked_to_flags' : ('LinkedToFlags', "Linked to flags."),
+    'load_screen'     : ('LoadScreenID', "Load screen ID."),
+    'generic_type'    : ('GenericType_New', "Generic type."),
+    'paletted_id'     : ('PaletteID', "Palette ID."),
+    'comment'         : ('Comment', "Comment."),
+}
 
 class Door(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
@@ -34,10 +72,8 @@ class Door(NWObjectVarable):
     def __getitem__(self, name):
         return self.utd[name].val
 
-    @property
-    def tag(self):
-        """Tag"""
-        return self['Tag']
+    def __setitem__(self, name, val):
+        self.utd[name].val = val
 
     @property
     def name(self):
@@ -53,145 +89,6 @@ class Door(NWObjectVarable):
             self._locstr['description'] = LocString(self.are['Description'])
 
         return self._locstr['description']
-
-    @property
-    def resref(self):
-        """Resref"""
-        return self['TemplateResRef']
-
-    @property
-    def key_auto_remove(self):
-        """Auto-remove key"""
-        return self['AutoRemoveKey']
-
-    @property
-    def lock_close_dc(self):
-        """ """
-        return self['CloseLockDC']
-
-    @property
-    def conversation(self):
-        """Door conversation resref."""
-        return self['Conversation']
-
-    @property
-    def interruptable(self):
-        """Door conversation is interruptable."""
-        return self['Interruptable']
-
-    @property
-    def faction(self):
-        """Door's faction ID"""
-        return self['Faction']
-
-    @property
-    def plot(self):
-        """Door is plot"""
-        return self['Plot']
-
-    @property
-    def key_required(self):
-        """Key required to unlock door."""
-        return self['KeyRequired']
-
-    @property
-    def lockable(self):
-        """Door is lockable."""
-        return self['Lockable']
-
-    @property
-    def locked(self):
-        """Door is locked"""
-        return self['Locked']
-
-    @property
-    def lock_open_dc(self):
-        return self['OpenLockDC']
-
-    @property
-    def portrait_id(self):
-        """Portrait ID"""
-        return self['PortraitId']
-
-    @property
-    def trap_detectable(self):
-        """Trap is detectable"""
-        return self['TrapDetectable']
-
-    @property
-    def trap_detect_dc(self):
-        """Trap detect DC"""
-        return self['TrapDetectDC']
-
-    @property
-    def trap_disarmable(self):
-        """Trap is disarmable"""
-        return self['TrapDisarmable']
-
-    @property
-    def trap_disarm_dc(self):
-        """Trap disarm DC"""
-        return self['DisarmDC']
-
-    @property
-    def trap_flag(self):
-        """Trap flag."""
-        return self['TrapFlag']
-
-    @property
-    def trap_one_shot(self):
-        """Trap is one-shot."""
-        return self['TrapOneShot']
-
-    @property
-    def trap_type(self):
-        """Trap type"""
-        return self['TrapType']
-
-    @property
-    def key_name(self):
-        """Key tag"""
-        return self['KeyName']
-
-    @property
-    def animation_state(self):
-        """Animation State"""
-        return self['AnimationState']
-
-    @property
-    def appearance(self):
-        """Appearance"""
-        return self['Appearance']
-
-    @property
-    def hp(self):
-        """Maximum Hitpoints"""
-        return self['HP']
-
-    @property
-    def hp_current(self):
-        """Current Hitpoints"""
-        return self['CurrentHP']
-
-    @property
-    def hardness(self):
-        """Hardness"""
-        return self['Hardness']
-
-    @property
-    def save_fortitude(self):
-        """Fortitude Saving Throw"""
-        return self['Fort']
-
-    @property
-    def save_reflex(self):
-        """Reflex Saving Throw"""
-        return self['Ref']
-
-    @property
-    def save_will(self):
-        """Will Saving Throw"""
-        return self['Will']
 
     @property
     def script(self):
@@ -235,39 +132,6 @@ class Door(NWObjectVarable):
 
         return self._scripts
 
-    @property
-    def linked_to(self):
-        """Linked to tag."""
-        return self['LinkedTo']
-
-    @property
-    def linked_to_flags(self):
-        """Linked to flags."""
-        return self['LinkedToFlags']
-
-    @property
-    def load_screen(self):
-        """Load screen id."""
-        return self['LoadScreenID']
-
-    @load_screen.setter
-    def load_screen(self, val):
-        self['LoadScreenID'] = val
-
-    @property
-    def generic_type(self):
-        return self['GenericType_New']
-
-    @property
-    def paletted_id(self):
-        """Palette ID"""
-        return self['PaletteID']
-
-    @property
-    def comment(self):
-        """Comment"""
-        return self['Comment']
-
 class DoorInstance(Door):
     """A door instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
@@ -275,3 +139,6 @@ class DoorInstance(Door):
     def __init__(self, gff):
         Door.__init__(self, gff, None, True)
         self.is_instance = True
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Door, key, make_gff_property('utd', val))

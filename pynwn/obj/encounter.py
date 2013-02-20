@@ -1,8 +1,26 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 
 from pynwn.obj.scripts import *
 from pynwn.obj.vars import *
 from pynwn.obj.locstring import *
+
+TRANSLATION_TABLE = {
+    'tag'              : ('Tag', "Tag."),
+    'resref'           : ('TemplateResRef', "Resref."),
+    'active'           : ('Active', "Active flag."),
+    'difficulty'       : ('Difficulty', "Difficulty."),
+    'difficulty_index' : ('DifficultyIndex', "Difficulty Index."),
+    'faction'          : ('Faction', "Faction ID."),
+    'max_creatures'    : ('MaxCreatures', "Maximum creatures."),
+    'player_only'      : ('PlayerOnly', "Triggered by player only."),
+    'rec_creatures'    : ('RecCreatures', "rec_creatures."),
+    'reset'            : ('Reset', "Resets flag."),
+    'reset_time'       : ('ResetTime', "Reset time."),
+    'respawns'         : ('Respawns', "Respawns."),
+    'spawn_option'     : ('SpawnOption', "Spawn option."),
+    'palette_id'       : ('PaletteID', "Palette ID."),
+    'comment'          : ('Comment', "Comment."),
+}
 
 class EncounterCreature(object):
     def __init__(self, gff):
@@ -55,67 +73,28 @@ class Encounter(NWObjectVarable):
     def __getitem__(self, name):
         return self.ute[name].val
 
-    @property
-    def tag(self):
-        return self['Tag']
+    def __setitem__(self, name):
+        return self.ute[name].val
 
     @property
     def name(self):
+        """Localized name."""
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self.are['LocalizedName'])
 
         return self._locstr['name']
 
     @property
-    def resref(self):
-        return self['TemplateResRef']
-
-    @property
-    def active(self):
-        return self['Active']
-
-    @property
-    def difficulty(self):
-        return self['Difficulty']
-
-    @property
-    def difficulty_index(self):
-        return self['DifficultyIndex']
-
-    @property
-    def faction(self):
-        return self['Faction']
-
-    @property
-    def max_creatures(self):
-        return self['MaxCreatures']
-
-    @property
-    def player_only(self):
-        return self['PlayerOnly']
-
-    @property
-    def rec_creatures(self):
-        return self['RecCreatures']
-
-    @property
-    def reset(self):
-        return self['Reset']
-
-    @property
-    def reset_time(self):
-        return self['ResetTime']
-
-    @property
-    def respawns(self):
-        return self['Respawns']
-
-    @property
-    def spawn_option(self):
-        return self['SpawnOption']
-
-    @property
     def scripts(self):
+        """Scripts. Responts to script events:
+
+        * Event.ENTER
+        * Event.EXIT
+        * Event.EXHAUSTED
+        * Event.HEARTBEAT
+        * Event.USER_DEFINED
+
+        """
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -131,16 +110,11 @@ class Encounter(NWObjectVarable):
 
     @property
     def creatures(self):
+        """Creatures in the encounter.
+
+        :returns: List of EncounterCreature objects.
+        """
         return [EncounterCreature(c) for c in self['CreatureList']]
-
-    @property
-    def palette_id(self):
-        return self['PaletteID']
-
-    @property
-    def comment(self):
-        return self['Comment']
-
 
 class EncounterInstance(Encounter):
     """A encounter instance is one placed in an area in the toolset.
@@ -149,3 +123,6 @@ class EncounterInstance(Encounter):
     def __init__(self, gff):
         Encounter.__init__(self, gff, None, True)
         self.is_instance = True
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Encounter, key, make_gff_property('ute', val))

@@ -1,5 +1,29 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, make_gff_property
 from pynwn.obj.locstring import *
+
+TRANSLATION_TABLE = {
+    'tag'                : ('Tag', "Tag."),
+    'resref'             : ('TemplateResRef', "Resref."),
+    'active'             : ('Active', "Active flag."),
+    'continous'          : ('Continous', "Continuous flag."),
+    'looping'            : ('Looping', "Looping flag."),
+    'positional'         : ('Positional', "Positional."),
+    'random_position'    : ('RandomPosition', "Random position."),
+    'random'             : ('Random', "Random."),
+    'elevation'          : ('Elevation', "Elevation."),
+    'distance_max'       : ('MaxDistance', "Maximum distance."),
+    'distance_min'       : ('MinDistance', "Minimum distance."),
+    'interval'           : ('Interval', "Interval."),
+    'interval_variation' : ('IntervalVrtn', "Interval variation."),
+    'pitch_variation'    : ('PitchVariation', "Pitch variation."),
+    'priority'           : ('Priority', "Priority."),
+    'hours'              : ('Hours', "Hours."),
+    'times'              : ('Times', "Times."),
+    'volume'             : ('Volume', "Volume."),
+    'volume_variation'   : ('VolumeVrtn', "Volume variation."),
+    'palette_id'         : ('PaletteID', "Palette ID."),
+    'comment'            : ('Comment', "Comment."),
+}
 
 class Sound(object):
     def __init__(self, resref, container, instance=False):
@@ -28,10 +52,6 @@ class Sound(object):
         return self.uts[name].val
 
     @property
-    def tag(self):
-        return self['Tag']
-
-    @property
     def name(self):
         if not self._locstr.has_key('name'):
             self._locstr['name'] = LocString(self['LocName'])
@@ -39,98 +59,12 @@ class Sound(object):
         return self._locstr['name']
 
     @property
-    def resref(self):
-        """Resref."""
-        return self['TemplateResRef']
-
-    @property
-    def active(self):
-        """Active flag."""
-        return self['Active']
-
-    @property
-    def continous(self):
-        """Continuous flag."""
-        return self['Continous']
-
-    @property
-    def looping(self):
-        """Looping flag."""
-        return self['Looping']
-
-    @property
-    def positional(self):
-        return self['Positional']
-
-    @property
-    def random_position(self):
-        return self['RandomPosition']
-
-    @property
-    def random(self):
-        return self['Random']
-
-    @property
-    def elevation(self):
-        return self['Elevation']
-
-    @property
-    def distance_max(self):
-        return self['MaxDistance']
-
-    @property
-    def distance_min(self):
-        return self['MinDistance']
-
-    @property
     def random_range(self):
         return (self['RandomRangeX'], self['RandomRangeY'])
 
     @property
-    def interval(self):
-        return self['Interval']
-
-    @property
-    def interval_variation(self):
-        return self['IntervalVrtn']
-
-    @property
-    def pitch_variation(self):
-        return self['PitchVariation']
-
-    @property
-    def priority(self):
-        return self['Priority']
-
-    @property
-    def hours(self):
-        return self['Hours']
-
-    @property
-    def times(self):
-        return self['Times']
-
-    @property
-    def volume(self):
-        return self['Volume']
-
-    @property
-    def volume_variation(self):
-        return self['VolumeVrtn']
-
-    @property
     def sounds(self):
         return [s['Sound'] for s in self['Sounds']]
-
-    @property
-    def palette_id(self):
-        """Palette ID."""
-        return self['PaletteID']
-
-    @property
-    def comment(self):
-        """Comment."""
-        return self['Comment']
 
 class SoundInstance(Sound):
     """A sound instance is one placed in an area in the toolset.
@@ -139,3 +73,6 @@ class SoundInstance(Sound):
     def __init__(self, gff):
         Sound.__init__(self, gff, None, True)
         self.is_instance = True
+
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Sound, key, make_gff_property('uts', val))
