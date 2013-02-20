@@ -35,6 +35,16 @@ import cStringIO
 import pynwn.resource as res
 from pynwn.helper import chunks
 
+def make_gff_property(attr, name):
+    def getter(self):
+        return getattr(self, attr)[name[0]].val
+
+    def setter(self, val):
+        getattr(self, attr)[name[0]].val = val
+
+    return property(getter, setter, None, name[1])
+ 
+
 class GffElement( object ):
     def __init__(self, type, value, struct_id, parent_gff):
         self.type = type
@@ -60,7 +70,7 @@ class GffElement( object ):
         return self.__str__()
 
     def __str__(self):
-        return "GffElement { 'type': %s, 'value': %s }" % (self.type, self.val)
+        return "GffElement { 'type': %s, 'value': %s, struct id: %d }" % (self.type, self.val, self.id)
 
 class Gff( object ):
     """Represents a GFF file."""
@@ -94,6 +104,7 @@ class Gff( object ):
         self._structure = None
 
     def __getitem__(self, name):
+        if not self.is_loaded: self.load()
         return self.structure[name].val
 
     def __setitem__(self, name, value):
@@ -101,6 +112,10 @@ class Gff( object ):
 
     def has_field(self, name):
         return name in self.structure
+
+    def get_field(self, name):
+        if not self.is_loaded: self.load()
+        return self.structure[name]
 
     @property
     def structure(self):
