@@ -1,4 +1,5 @@
-from pynwn.gff import Gff
+from pynwn.gff import Gff, GffElement
+import pprint
 
 VARIABLE_TYPE_INT      = 1
 VARIABLE_TYPE_FLOAT    = 2
@@ -48,16 +49,26 @@ class NWVariable(object):
         return res[0]
 
     def __setitem__(self, name, value):
-        if not self.has_vars: return
+        if not self.has_vars:
+            if isinstance(self.gff, Gff):
+                self.gff.structure['VarTable'] = GffElement('list', [], -1, self.gff)
+            else:
+                self.gff.val['VarTable'] = GffElement('list', [], -1, self.gff)
 
         if self.has_var(name):
             v = self.get_var(name)
             v['Value'] = convert(self.type, value)
         else:
-            res = [0, {'Type': ['dword', self.type],
-                       'Name': ['cexostring', name],
-                       'Value': [get_name(self.type), convert(self.type, value)] }]
+            res = GffElement(0,
+                             {'Type': GffElement('dword', self.type, -1, self.gff),
+                              'Name': GffElement('cexostring', name, -1, self.gff),
+                              'Value': GffElement(get_name(self.type),
+                                                  convert(self.type, value),
+                                                  -1, self.gff)},
+                            0, self.gff)
+
             self.gff['VarTable'].append(res)
+
 
     def get_var(self, name):
         vs = self.gff['VarTable']
@@ -69,18 +80,18 @@ class NWVariable(object):
 
     def has_var(self, name):
         if not self.has_vars: return False
-        
+
         vs = self.gff['VarTable']
         res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
         return len(res) > 0
 
     def list_vars(self):
         if not self.has_vars: return []
-        
+
         vs = self.gff['VarTable']
         res = [(v['Name'], v['Value']) for v in vs if v['Type'] == self.type]
         return res
-    
+
 class NWObjectVarable(object):
     """NWObjectVarable is an interface for other objects to inherit the ability to \
     read / write local variables stored in a GFF.
