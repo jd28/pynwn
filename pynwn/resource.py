@@ -305,6 +305,7 @@ class Container(object):
     def __init__(self):
         self.content = []
         self.filenames = {}
+        self.saves = set([])
 
     def __getitem__(self, name):
         """Get a content object associated with a file name or integer
@@ -328,6 +329,16 @@ class Container(object):
         """
 
         self.add(ContentObject.from_file(fname))
+
+    def add_to_saves(self, obj):
+        print "Adding to saves...", obj
+        self.saves.add(obj)
+
+    def pre_save(self):
+        for obj in self.saves:
+            print "Saving...", obj
+            obj.save()
+        saves = set([])
 
     def has_modified_content_objects(self):
         for co in self.content:
@@ -501,7 +512,7 @@ class ResourceManager(object):
     def creatures(self, glob = None):
         """Returns a list of Creature objects contained in
         all of the resource managers containers."""
-        
+
         from pynwn.obj.creature import Creature
 
         glob = glob or '*.utc'

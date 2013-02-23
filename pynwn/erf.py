@@ -22,6 +22,8 @@ class Erf(res.Container):
         self.day_of_year = now.timetuple().tm_yday
 
     def save(self):
+        self.pre_save()
+
         if self.has_modified_content_objects():
             with open(self.io, 'rb+') as f:
                 self.write_to(f)
