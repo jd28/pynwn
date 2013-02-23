@@ -1,5 +1,4 @@
-from pynwn.gff import Gff, make_gff_property
-from pynwn.obj.locstring import *
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 
 TRANSLATION_TABLE = {
     'tag'                : ('Tag', "Tag."),
@@ -25,6 +24,10 @@ TRANSLATION_TABLE = {
     'comment'            : ('Comment', "Comment."),
 }
 
+LOCSTRING_TABLE = {
+    'name'           : ('LocName', "Localized name."),
+}
+
 class Sound(object):
     def __init__(self, resref, container, instance=False):
         self._locstr = {}
@@ -35,29 +38,18 @@ class Sound(object):
                 resref = resref+'.uts'
 
             if container.has_file(resref):
+                self.container = container
                 self.gff = container[resref]
                 self.gff = Gff(self.gff)
             else:
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._uts = resref.val
 
-    def __getattr__(self, name):
-        if name == 'uts':
-            if not self._uts: self._uts = self.gff.structure
-            return self._uts
-
-    def __getitem__(self, name):
-        return self.uts[name].val
-
-    @property
-    def name(self):
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self['LocName'])
-
-        return self._locstr['name']
-
+    def save(self):
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
+            
     @property
     def random_range(self):
         return (self['RandomRangeX'], self['RandomRangeY'])
@@ -75,4 +67,11 @@ class SoundInstance(Sound):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Sound, key, make_gff_property('uts', val))
+    setattr(Sound, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Sound, 'get_'+key, getter)
+    setattr(Sound, 'set_'+key, setter)

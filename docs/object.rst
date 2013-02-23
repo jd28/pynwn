@@ -8,7 +8,7 @@ PyNWN Objects
 Area
 ====
 
-.. autoclass:: pynwn.obj.area.Area
+.. autoclass:: pynwn.area.Area
    :members:
    :special-members:
    :undoc-members:
@@ -16,35 +16,35 @@ Area
 Creature
 ========
 
-.. autoclass:: pynwn.obj.creature.Creature
+.. autoclass:: pynwn.creature.Creature
    :members:
    :undoc-members:
 
 CreatureInstance
 ================
 
-.. autoclass:: pynwn.obj.creature.CreatureInstance
+.. autoclass:: pynwn.creature.CreatureInstance
    :members:
    :undoc-members:
 
 Dialog
 ======
 
-.. autoclass:: pynwn.obj.dialog.Dialog
+.. autoclass:: pynwn.dialog.Dialog
    :members:
    :undoc-members:
 
 Door
 ====
 
-.. autoclass:: pynwn.obj.door.Door
+.. autoclass:: pynwn.door.Door
    :members:
    :undoc-members:
 
 DoorInstance
 ============
 
-.. autoclass:: pynwn.obj.door.DoorInstance
+.. autoclass:: pynwn.door.DoorInstance
    :members:
    :undoc-members:
 
@@ -52,14 +52,14 @@ DoorInstance
 Encounter
 =========
 
-.. autoclass:: pynwn.obj.encounter.Encounter
+.. autoclass:: pynwn.encounter.Encounter
    :members:
    :undoc-members:
 
 EncounterInstance
 =================
 
-.. autoclass:: pynwn.obj.encounter.EncounterInstance
+.. autoclass:: pynwn.encounter.EncounterInstance
    :members:
    :undoc-members:
 
@@ -67,111 +67,125 @@ EncounterInstance
 Faction
 =======
 
-.. autoclass:: pynwn.obj.faction.Faction
+.. autoclass:: pynwn.faction.Faction
    :members:
    :undoc-members:
 
 Item
 ====
 
-.. autoclass:: pynwn.obj.item.Item
+.. autoclass:: pynwn.item.Item
    :members:
    :undoc-members:
 
 ItemInstance
 ============
 
-.. autoclass:: pynwn.obj.item.ItemInstance
+.. autoclass:: pynwn.item.ItemInstance
+   :members:
+   :undoc-members:
+
+ItemProperty
+============
+
+.. autoclass:: pynwn.item.ItemProperty
+   :members:
+   :undoc-members:
+
+RepositoryItem
+==============
+
+.. autoclass:: pynwn.item.RepositoryItem
    :members:
    :undoc-members:
 
 Journal
 =======
 
-.. autoclass:: pynwn.obj.journal.Journal
+.. autoclass:: pynwn.journal.Journal
    :members:
    :undoc-members:
 
 Module
 ======
 
-.. autoclass:: pynwn.obj.module.Module
+.. autoclass:: pynwn.module.Module
    :members:
    :undoc-members:
 
 Palette
 =======
 
-.. autoclass:: pynwn.obj.palette.Palette
+.. autoclass:: pynwn.palette.Palette
    :members:
    :undoc-members:
 
 Placeable
 =========
 
-.. autoclass:: pynwn.obj.placeable.Placeable
+.. autoclass:: pynwn.placeable.Placeable
    :members:
    :undoc-members:
 
 PlaceableInstance
 =================
 
-.. autoclass:: pynwn.obj.placeable.PlaceableInstance
+.. autoclass:: pynwn.placeable.PlaceableInstance
    :members:
    :undoc-members:
 
 Sound
 =====
 
-.. autoclass:: pynwn.obj.sound.Sound
+.. autoclass:: pynwn.sound.Sound
    :members:
    :undoc-members:
 
 SoundInstance
 =============
 
-.. autoclass:: pynwn.obj.sound.SoundInstance
+.. autoclass:: pynwn.sound.SoundInstance
    :members:
    :undoc-members:
 
 Store
 =============
 
-.. autoclass:: pynwn.obj.store.Store
+.. autoclass:: pynwn.store.Store
    :members:
    :undoc-members:
 
 StoreInstance
 =============
 
-.. autoclass:: pynwn.obj.store.StoreInstance
+.. autoclass:: pynwn.store.StoreInstance
    :members:
    :undoc-members:
 
 Trigger
 =============
 
-.. autoclass:: pynwn.obj.trigger.Trigger
+.. autoclass:: pynwn.trigger.Trigger
    :members:
    :undoc-members:
 
 TriggerInstance
 ===============
 
-.. autoclass:: pynwn.obj.trigger.TriggerInstance
+.. autoclass:: pynwn.trigger.TriggerInstance
    :members:
    :undoc-members:
 
 Waypoint
 ========
 
-.. autoclass:: pynwn.obj.waypoint.Waypoint
+.. autoclass:: pynwn.waypoint.Waypoint
    :members:
    :undoc-members:
 
 WaypointInstance
 ================
 
-.. autoclass:: pynwn.obj.waypoint.WaypointInstance
+.. autoclass:: pynwn.waypoint.WaypointInstance
    :members:
    :undoc-members:

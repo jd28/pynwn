@@ -1,5 +1,4 @@
-from pynwn.gff import Gff
-from pynwn.obj.locstring import *
+from pynwn.file.gff import Gff
 
 class DialogNode(object):
     def __init__(self, gff, pointer_type):
@@ -48,6 +47,7 @@ class DialogNode(object):
     @property
     def pointers(self):
         return [DialogPointer(p, self.pointer) for p in self.gff[self.pointer]]
+
 
 class DialogPointer(object):
     def __init__(self, gff, pointer_type):

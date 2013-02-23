@@ -1,4 +1,4 @@
-from pynwn.gff import Gff
+from pynwn.file.gff import Gff
 
 class PaletteNode(object):
     def __init__(self, gff):

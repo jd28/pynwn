@@ -1,4 +1,4 @@
-from pynwn.helper import enum
+from pynwn.util.helper import enum
 
 Event = enum('ATTACKED',
              'BLOCKED',

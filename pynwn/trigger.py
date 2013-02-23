@@ -1,8 +1,7 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
+from pynwn.scripts import *
+from pynwn.vars import *
 
 TRANSLATION_TABLE = {
     'tag'              : ('Tag', "Tag."),
@@ -27,11 +26,14 @@ TRANSLATION_TABLE = {
     'comment'          : ('Comment', "Comment."),
 }
 
+LOCSTRING_TABLE = {
+    'name'        : ('LocalizedName', "Localized name."),
+}
+
 class Trigger(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
@@ -39,28 +41,19 @@ class Trigger(NWObjectVarable):
                 resref = resref+'.utt'
 
             if container.has_file(resref):
+                self.container - container
                 self.gff = container[resref]
                 self.gff = Gff(self.gff)
             else:
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._utt = resref.val
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def __getattr__(self, name):
-        if name == 'utt':
-            if not self._utt: self._utt = self.gff.structure
-            return self._utt
-
-    @property
-    def name(self):
-        """Localized name."""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.utt['LocalizedName'])
-
-        return self._locstr['name']
+    def save(self):
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
     @property
     def scripts(self):
@@ -85,7 +78,7 @@ class Trigger(NWObjectVarable):
         lbls[Event.EXIT] = 'ScriptOnExit'
         lbls[Event.USER_DEFINED] = 'ScriptUserDefine'
 
-        self._scripts = NWObjectScripts(self.utt, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -98,4 +91,11 @@ class TriggerInstance(Trigger):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Trigger, key, make_gff_property('utt', val))
+    setattr(Trigger, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Trigger, 'get_'+key, getter)
+    setattr(Trigger, 'set_'+key, setter)

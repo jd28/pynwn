@@ -1,26 +1,11 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
+from pynwn.scripts import *
+from pynwn.vars import *
 
-TRANSLATION_TABLE = {
-    'tag'              : ('Tag', "Tag."),
-    'resref'           : ('TemplateResRef', "Resref."),
-    'active'           : ('Active', "Active flag."),
-    'difficulty'       : ('Difficulty', "Difficulty."),
-    'difficulty_index' : ('DifficultyIndex', "Difficulty Index."),
-    'faction'          : ('Faction', "Faction ID."),
-    'max_creatures'    : ('MaxCreatures', "Maximum creatures."),
-    'player_only'      : ('PlayerOnly', "Triggered by player only."),
-    'rec_creatures'    : ('RecCreatures', "rec_creatures."),
-    'reset'            : ('Reset', "Resets flag."),
-    'reset_time'       : ('ResetTime', "Reset time."),
-    'respawns'         : ('Respawns', "Respawns."),
-    'spawn_option'     : ('SpawnOption', "Spawn option."),
-    'palette_id'       : ('PaletteID', "Palette ID."),
-    'comment'          : ('Comment', "Comment."),
-}
+__all__ = ['Encounter',
+           'EncounterInstance',
+           'EncounterCreature']
 
 class EncounterCreature(object):
     def __init__(self, gff):
@@ -42,6 +27,28 @@ class EncounterCreature(object):
     def unique(self):
         return self.gff['SingleSpawn']
 
+
+TRANSLATION_TABLE = {
+    'tag'              : ('Tag', "Tag."),
+    'resref'           : ('TemplateResRef', "Resref."),
+    'active'           : ('Active', "Active flag."),
+    'difficulty'       : ('Difficulty', "Difficulty."),
+    'difficulty_index' : ('DifficultyIndex', "Difficulty Index."),
+    'faction'          : ('Faction', "Faction ID."),
+    'max_creatures'    : ('MaxCreatures', "Maximum creatures."),
+    'player_only'      : ('PlayerOnly', "Triggered by player only."),
+    'rec_creatures'    : ('RecCreatures', "rec_creatures."),
+    'reset'            : ('Reset', "Resets flag."),
+    'reset_time'       : ('ResetTime', "Reset time."),
+    'respawns'         : ('Respawns', "Respawns."),
+    'spawn_option'     : ('SpawnOption', "Spawn option."),
+    'palette_id'       : ('PaletteID', "Palette ID."),
+    'comment'          : ('Comment', "Comment."),
+}
+
+LOCSTRING_TABLE = {
+    'name'        : ('LocalizedName', "Localized name."),
+}
 
 class Encounter(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
@@ -75,14 +82,6 @@ class Encounter(NWObjectVarable):
 
     def __setitem__(self, name):
         return self.ute[name].val
-
-    @property
-    def name(self):
-        """Localized name."""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.are['LocalizedName'])
-
-        return self._locstr['name']
 
     @property
     def scripts(self):
@@ -125,4 +124,11 @@ class EncounterInstance(Encounter):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Encounter, key, make_gff_property('ute', val))
+    setattr(Encounter, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Encounter, 'get_'+key, getter)
+    setattr(Encounter, 'set_'+key, setter)

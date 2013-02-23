@@ -1,8 +1,8 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
+from pynwn.scripts import *
+from pynwn.vars import *
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
+__all__ = ['Door', 'DoorInstance']
 
 TRANSLATION_TABLE = {
     'tag'             : ('Tag', "Tag."),
@@ -42,6 +42,11 @@ TRANSLATION_TABLE = {
     'comment'         : ('Comment', "Comment."),
 }
 
+LOCSTRING_TABLE = {
+    'name'        : ('LocName', "Localized name."),
+    'description' : ('Description', "Localized description."),
+}
+
 class Door(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
@@ -54,6 +59,7 @@ class Door(NWObjectVarable):
                 resref = resref+'.utd'
 
             if container.has_file(resref):
+                self.container = container
                 self.gff = container[resref]
                 self.gff = Gff(self.gff)
             else:
@@ -64,31 +70,9 @@ class Door(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def __getattr__(self, name):
-        if name == 'utd':
-            if not self._utd: self._utd = self.gff.structure
-            return self._utd
-
-    def __getitem__(self, name):
-        return self.utd[name].val
-
-    def __setitem__(self, name, val):
-        self.utd[name].val = val
-
-    @property
-    def name(self):
-        """Localized Name"""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.are['LocName'])
-
-        return self._locstr['name']
-
-    @property
-    def description(self):
-        if not self._locstr.has_key('description'):
-            self._locstr['description'] = LocString(self.are['Description'])
-
-        return self._locstr['description']
+    def save(self):
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
     @property
     def script(self):
@@ -128,7 +112,7 @@ class Door(NWObjectVarable):
         lbls[Event.CLICK] = 'OnClick'
         lbls[Event.FAIL_TO_OPEN] = 'OnFailToOpen'
 
-        self._scripts = NWObjectScripts(self.utd, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -141,4 +125,11 @@ class DoorInstance(Door):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Door, key, make_gff_property('utd', val))
+    setattr(Door, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Door, 'get_'+key, getter)
+    setattr(Door, 'set_'+key, setter)

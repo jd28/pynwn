@@ -1,14 +1,18 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, GffInstance, make_gff_locstring_property
+from pynwn.file.gff import make_gff_property
 
-from pynwn.obj.encounter import EncounterInstance
-from pynwn.obj.placeable import PlaceableInstance
-from pynwn.obj.sound import SoundInstance
-from pynwn.obj.trigger import TriggerInstance
-from pynwn.obj.waypoint import WaypointInstance
+from pynwn.creature import CreatureInstance
+from pynwn.encounter import EncounterInstance
+from pynwn.placeable import PlaceableInstance
+from pynwn.sound import SoundInstance
+from pynwn.store import StoreInstance
+from pynwn.trigger import TriggerInstance
+from pynwn.waypoint import WaypointInstance
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
+from pynwn.scripts import *
+from pynwn.vars import *
+
+__all__ = ['Area']
 
 ARE_TRANSLATION_TABLE = {
     'fog_clip_distance' : ('FogClipDist', "Fog clip distance."),
@@ -19,9 +23,15 @@ ARE_TRANSLATION_TABLE = {
     'width'             : ('Width', "Area width.")
 }
 
+LOCSTRING_TABLE = {
+    'name'        : ('Name', "Localized name."),
+}
+
 class Area(NWObjectVarable):
     def __init__(self, resref, container):
         are = resref+'.are'
+
+        self.container = container
         if container.has_file(are):
             self.are = container[are]
             self.are = Gff(self.are)
@@ -48,13 +58,29 @@ class Area(NWObjectVarable):
 
     def save(self):
         if self.are.is_loaded():
-            self.are.save()
+            self.container.add_to_saves(self.are)
 
         if self.git.is_loaded():
-            self.git.save()
+            self.container.add_to_saves(self.git)
 
         if self.gic.is_loaded():
-            self.gic.save()
+            self.container.add_to_saves(self.gic)
+
+    @property
+    def creatures(self):
+        """Creature instances.
+
+        :returns: List of CreatureInstance objects.
+        """
+        result = []
+        i = 0
+        for p in self.git['Creature List']:
+            gff_inst = GffInstance(self, self.git, 'Creature List', i)
+            st_inst  = CreatureInstance(gff_inst)
+            result.append(st_inst)
+            i += 1
+
+        return result
 
     @property
     def encounters(self):
@@ -63,14 +89,6 @@ class Area(NWObjectVarable):
         :returns: List of EncounterInstance objects.
         """
         return [EncounterInstance(p) for p in self.git['Encounter List']]
-
-    @property
-    def name(self):
-        """Localized name."""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.are['Name'])
-
-        return self._locstr['name']
 
     @property
     def placeables(self):
@@ -110,6 +128,23 @@ class Area(NWObjectVarable):
         return [SoundInstance(p) for p in self.git['SoundList']]
 
     @property
+    def stores(self):
+        """Stores
+
+        :returns: List of StoreInstance objects.
+        """
+
+        result = []
+        i = 0
+        for p in self.git['StoreList']:
+            gff_inst = GffInstance(self.git, 'StoreList', i)
+            st_inst  = StoreInstance(gff_inst)
+            result.append(st_inst)
+            i += 1
+
+        return result
+
+    @property
     def triggers(self):
         """Triggers
 
@@ -125,14 +160,12 @@ class Area(NWObjectVarable):
         """
         return [WaypointInstance(p) for p in self.git['WaypointList']]
 
-def make_are_property(gff_name):
-    def getter(self):
-        return self.are[gff_name[0]].val
-
-    def setter(self, val):
-        self.are[gff_name[0]].val = val
-
-    return property(getter, setter, None, gff_name[1])
-
 for key, val in ARE_TRANSLATION_TABLE.iteritems():
     setattr(Area, key, make_gff_property('are', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('are', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Area, 'get_'+key, getter)
+    setattr(Area, 'set_'+key, setter)

@@ -1,14 +1,25 @@
 import os
 
-from pynwn.erf import Erf
-from pynwn.gff import Gff
-import pynwn.resource as RES
-from pynwn.obj.area import Area
+from pynwn.file.erf import Erf
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
-from pynwn.obj.placeable import Placeable
+from pynwn.area import Area
+from pynwn.placeable import Placeable
+import pynwn.resource as RES
+from pynwn.scripts import *
+from pynwn.vars import *
+
+TRANSLATION_TABLE = {
+    'game_version'   : ('Mod_MinGameVer', 'Game version'),
+    'expansion_pack' : ('Expansion_Pack', 'Expansion pack.'),
+    'tlk'            : ('Mod_CustomTlk', 'Custom TLK file.'),
+    'xp_scale'       : ('Mod_XPScale', 'Experience point scale.'),
+}
+
+LOCSTRING_TABLE = {
+    'name'  : ('Mod_Name', "Localized name."),
+    'description' : ('Mod_Description', "Localized description.")
+}
 
 class Module(NWObjectVarable):
     """Module abstracts over MOD ERF files and directories containing the contents of
@@ -53,15 +64,12 @@ class Module(NWObjectVarable):
 
         :returns: List of Area objects.
         """
-        return [Area(a['Area_Name'], self.container) for a in self.ifo['Mod_Area_list']]
 
-    @property
-    def description(self):
-        """Localized description"""
-        if not self._locstr.has_key('description'):
-            self._locstr['description'] = LocString(self.ifo['Mod_Description'])
+        res = []
+        for a in self.ifo['Mod_Area_list']:
+            res.append(Area(a['Area_Name'].val, self.container))
 
-        return self._locstr['description']
+        return res
 
     @property
     def entry_area(self):
@@ -76,28 +84,11 @@ class Module(NWObjectVarable):
         """
         return (self.ifo['Mod_Entry_X'], self.ifo['Mod_Entry_Y'], self.ifo['Mod_Entry_Z'])
 
-    @property
-    def expansion_pack(self):
-        """Expansion pack."""
-        return self.ifo['Expansion_Pack']
 
     @property
     def haks(self):
         """List of HAK files."""
         return [hak['Mod_Hak'] for hak in self.ifo['Mod_HakList']]
-
-    @property
-    def name(self):
-        """Localized name"""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.ifo['Mod_Name'])
-
-        return self._locstr['name']
-
-    @property
-    def game_version(self):
-        """Game version"""
-        return self.ifo['Mod_MinGameVer']
 
     @property
     def script(self):
@@ -145,12 +136,13 @@ class Module(NWObjectVarable):
 
         return self._scripts
 
-    @property
-    def tlk(self):
-        """Custom TLK file."""
-        return self.ifo['Mod_CustomTlk']
 
-    @property
-    def xp_scale(self):
-        """Experience point scale."""
-        return self.ifo['Mod_XPScale']
+for key, val in TRANSLATION_TABLE.iteritems():
+    setattr(Module, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('ifo', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Module, 'get_'+key, getter)
+    setattr(Module, 'set_'+key, setter)

@@ -1,10 +1,9 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
+from pynwn.item import RepositoryItem
+from pynwn.scripts import *
+from pynwn.vars import *
 
-from pynwn.obj.item import RepositoryItem
-
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
+__all__ = ['Creature', 'CreatureInstance']
 
 TRANSLATION_TABLE = {
     'resref'           : ('TemplateResRef', "Resref."),
@@ -50,6 +49,12 @@ TRANSLATION_TABLE = {
     'comment'          : ('Comment', "Comment.")
 }
 
+LOCSTRING_TABLE = {
+    'name_first'  : ('FirstName', "Localized first name"),
+    'name_last'   : ('LastName', "Localized last name"),
+    'description' : ('Description', "Localized description")
+}
+
 class Creature(NWObjectVarable):
     """This abstracts over UTCs only... It doesn't handle all the additional
     fields one finds in BICs
@@ -57,7 +62,6 @@ class Creature(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
@@ -65,74 +69,39 @@ class Creature(NWObjectVarable):
                 resref = resref+'.utc'
 
             if container.has_file(resref):
+                self.container = container
                 self.gff = container[resref]
                 self.gff = Gff(self.gff)
             else:
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._utc = resref.val
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def __getattr__(self, name):
-        if name == 'utc':
-            if not self._utc: self._utc = self.gff.structure
-            return self._utc
-
-    def __getitem__(self, name):
-        return self.utc[name].val
-
-    def __setitem__(self, name, val):
-        self.utc[name].val = val
-
     def save(self):
-        if not self.is_instance:
-            self.gff.save()
-
-        
-    @property
-    def name_first(self):
-        """Localized first name."""
-        if not self._locstr.has_key('namef'):
-            self._locstr['namef'] = LocString(self['FirstName'])
-
-        return self._locstr['namef']
-
-    @property
-    def name_last(self):
-        """Localized last name."""
-        if not self._locstr.has_key('namel'):
-            self._locstr['namel'] = LocString(self['LastName'])
-
-        return self._locstr['namel']
-
-    @property
-    def description(self):
-        """Localized description."""
-        if not self._locstr.has_key('desc'):
-            self._locstr['desc'] = LocString(self['Description'])
-
-        return self._locstr['desc']
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
     @property
     def scripts(self):
         """Creature's scripts.  Responds to script events:
 
-        #. Event.HEARTBEAT
-        #. Event.PERCEPTION
-        #. Event.SPELL_CAST_AT
-        #. Event.ATTACKED
-        #. Event.DAMAGED
-        #. Event.DISTURBED
-        #. Event.END_COMBAT_ROUND
-        #. Event.CONVERSATION
-        #. Event.SPAWN
-        #. Event.REST
-        #. Event.DEATH
-        #. Event.USER_DEFINED
-        #. Event.BLOCKED
+        * Event.HEARTBEAT
+        * Event.PERCEPTION
+        * Event.SPELL_CAST_AT
+        * Event.ATTACKED
+        * Event.DAMAGED
+        * Event.DISTURBED
+        * Event.END_COMBAT_ROUND
+        * Event.CONVERSATION
+        * Event.SPAWN
+        * Event.REST
+        * Event.DEATH
+        * Event.USER_DEFINED
+        * Event.BLOCKED
         """
+        
         if self._scripts: return self._scripts
 
         lbls = {}
@@ -150,7 +119,7 @@ class Creature(NWObjectVarable):
         lbls[Event.USER_DEFINED] = 'ScriptUserDefine'
         lbls[Event.BLOCKED] = 'ScriptOnBlocked'
 
-        self._scripts = NWObjectScripts(self.utc, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -211,4 +180,11 @@ class CreatureInstance(Creature):
         self.is_instance = True
 
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Creature, key, make_gff_property('utc', val))
+    setattr(Creature, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Creature, 'get_'+key, getter)
+    setattr(Creature, 'set_'+key, setter)

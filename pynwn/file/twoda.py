@@ -2,9 +2,8 @@ import re
 import shlex
 import itertools
 import os, shutil, cStringIO
-import yaml
-from helper import convert_to_number
-from resource import ContentObject
+from pynwn.util.helper import convert_to_number
+from pynwn.resource import ContentObject
 
 def make_row(lst, max):
     return ''.join([s.ljust(m + 4) for s, m in itertools.izip(lst, max)])

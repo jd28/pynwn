@@ -1,13 +1,12 @@
-from pynwn.gff import Gff, make_gff_property
+from pynwn.file.gff import Gff, GffInstance, make_gff_locstring_property
+from pynwn.file.gff import make_gff_property
 
-from pynwn.obj.scripts import *
-from pynwn.obj.vars import *
-from pynwn.obj.locstring import *
-
-from pynwn.obj.item import RepositoryItem
+from pynwn.item import RepositoryItem, ItemInstance
+from pynwn.scripts import *
+from pynwn.vars import *
 
 TRANSLATION_TABLE = {
-    'resref'          : ('TemplateResRef', "Resref."),
+    'resref'          : ('ResRef', "Resref."),
     'tag'             : ('Tag', "Tag."),
     'mark_up'         : ('MarkUp', "Mark up."),
     'mark_down'       : ('MarkDown', "Mark down."),
@@ -20,43 +19,38 @@ TRANSLATION_TABLE = {
     'comment'         : ('Comment', "Comment."),
 }
 
+LOCSTRING_TABLE = {
+    'name'           : ('LocName', "Localized name."),
+    'description'    : ('Description', "Localized unidentified description."),
+    'description_id' : ('DescIdentified', "Localized identified description."),
+}
+
 class Store(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
+            self.container = container
             if resref[-4:] != '.utm':
                 resref = resref+'.utm'
 
             if container.has_file(resref):
+                self.container = container
                 self.gff = container[resref]
                 self.gff = Gff(self.gff)
             else:
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._utm = resref.val
+            self._utm = resref
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def __getattr__(self, name):
-        if name == 'utm':
-            if not self._utm: self._utm = self.gff.structure
-            return self._utm
-
-    def __getitem__(self, name):
-        return self.utm[name].val
-
-    @property
-    def name(self):
-        """Localized name."""
-        if not self._locstr.has_key('name'):
-            self._locstr['name'] = LocString(self.are['LocalizedName'])
-
-        return self._locstr['name']
+    def save(self):
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
     @property
     def script(self):
@@ -71,7 +65,7 @@ class Store(NWObjectVarable):
         lbls[Event.OPEN] = 'OnOpenStore'
         lbls[Event.CLOSE] = 'OnStoreClosed'
 
-        self._scripts = NWObjectScripts(self.utm, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -102,11 +96,15 @@ class Store(NWObjectVarable):
         for page in self['StoreList']:
             items = []
             try:
-                items = [RepositoryItem(i) for i in page['ItemList']]
+                for p in self.gff['ItemList']:
+                    gff_inst = GffInstance(self.gff, 'ItemList', i)
+                    st_inst  = RepositoryItem(gff_inst)
+                    items.append(st_inst)
+                    i += 1
             except Exception:
                 pass
 
-            res.append( items )
+            res.append(items)
 
         return res
 
@@ -118,5 +116,36 @@ class StoreInstance(Store):
         Store.__init__(self, gff, None, True)
         self.is_instance = True
 
+    @property
+    def items(self):
+        """Items in inventory.
+
+        :returns: a two dimensional array with the format:
+                  [<store page>][<ItemInstance objects>]
+        """
+        res = []
+        for page in self['StoreList']:
+            items = []
+            try:
+                for p in self.gff['ItemList']:
+                    gff_inst = GffInstance(self.gff, 'ItemList', i)
+                    st_inst  = ItemInstance(gff_inst)
+                    items.append(st_inst)
+                    i += 1
+
+            except Exception, e:
+                pass
+
+            res.append( items )
+
+        return res
+
 for key, val in TRANSLATION_TABLE.iteritems():
-    setattr(Store, key, make_gff_property('utm', val))
+    setattr(Store, key, make_gff_property('gff', val))
+
+for key, val in LOCSTRING_TABLE.iteritems():
+    getter, setter = make_gff_locstring_property('gff', val)
+    setattr(getter, '__doc__', val[1])
+    setattr(setter, '__doc__', val[1])
+    setattr(Store, 'get_'+key, getter)
+    setattr(Store, 'set_'+key, setter)

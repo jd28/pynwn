@@ -1,6 +1,7 @@
-import resource as res
 import struct, os
-from helper import chunks
+
+import pynwn.resource as res
+from pynwn.util.helper import chunks
 
 class Bif:
     """A Bif object encapsulates an open file handle pointing

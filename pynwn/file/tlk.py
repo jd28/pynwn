@@ -1,6 +1,6 @@
 import struct
 
-from pynwn.consts import *
+from pynwn.nwn.consts import *
 
 class Tlk:
     """Loads a TLK file from a file handle.

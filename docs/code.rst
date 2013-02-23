@@ -8,7 +8,7 @@ PyNWN Class Library
 2da
 ===
 
-.. autoclass:: pynwn.twoda.TwoDA
+.. autoclass:: pynwn.file.twoda.TwoDA
    :members:
 
 Bif
@@ -17,30 +17,36 @@ Bif
 The Key class abstracts over Bif classes, so there would never be any reason
 to instantiate this class directly.
 
-.. autoclass:: pynwn.key.Bif
+.. autoclass:: pynwn.file.key.Bif
    :members:
 
 Erf
 ===
 
-.. autoclass:: pynwn.erf.Erf
+.. autoclass:: pynwn.file.erf.Erf
    :members:
 
 Gff
 ===
 
-.. autoclass:: pynwn.gff.Gff
+.. autoclass:: pynwn.file.gff.Gff
+   :members:
+
+GffInstance
+===========
+
+.. autoclass:: pynwn.file.gff.GffInstance
    :members:
 
 Key
 ===
 
-.. autoclass:: pynwn.key.Key
+.. autoclass:: pynwn.file.key.Key
    :members:
 
 Tlk
 ===
 
-.. autoclass:: pynwn.tlk.Tlk
+.. autoclass:: pynwn.file.tlk.Tlk
    :members:
    :special-members:

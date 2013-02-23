@@ -1,5 +1,4 @@
-from pynwn.gff import Gff
-from pynwn.obj.locstring import *
+from pynwn.file.gff import Gff
 
 class QuestEntry(object):
     def __init__(self, gff):

@@ -1,7 +1,7 @@
-import resource as res
+import pynwn.resource as res
 import datetime
 import struct
-from helper import chunks
+from pynwn.util.helper import chunks
 
 VALID_TYPES = ['ERF', 'HAK', 'MOD']
 

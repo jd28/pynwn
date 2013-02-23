@@ -1,4 +1,6 @@
-from pynwn.gff import Gff, GffElement
+from pynwn.file.gff import Gff
+from pynwn.nwn.types import *
+
 import pprint
 
 VARIABLE_TYPE_INT      = 1
@@ -30,66 +32,62 @@ class NWVariable(object):
     """NWVariable abstracts over a particular type of local variable type.
     Currently it can only access values, not set them.
     """
-    def __init__(self, gff_struct, var_type, default):
-        self.gff = gff_struct
-        self.type = var_type
-        self.default = default
+    def __init__(self, gff_struct, var_type, class_type, default):
+        self.gff        = gff_struct
+        self.type       = var_type
+        self.class_type = class_type
+        self.default    = default
 
-        if isinstance(self.gff, Gff):
-            self.has_vars = self.gff.has_field('VarTable')
-        else:
-            self.has_vars = 'VarTable' in self.gff.val
+        self.has_vars = self.gff.has_field('VarTable')
 
     def __getitem__(self, name):
         if not self.has_vars: return self.default
-        vs = self.gff['VarTable']
-        res = [v['Value'] for v in vs if v['Type'] == self.type and v['Name'] == name]
-        if len(res) == 0: return self.default
-
-        return res[0]
+        v = self.get_var(name)
+        if v is None:
+            return default
+        else:
+            return v['Value'].val
 
     def __setitem__(self, name, value):
         if not self.has_vars:
             if isinstance(self.gff, Gff):
-                self.gff.structure['VarTable'] = GffElement('list', [], -1, self.gff)
+                self.gff['VarTable'] = []
             else:
-                self.gff.val['VarTable'] = GffElement('list', [], -1, self.gff)
+                self.gff['VarTable'] = []
 
         if self.has_var(name):
             v = self.get_var(name)
-            v['Value'] = convert(self.type, value)
+            v['Value'] = self.class_type(value)
         else:
-            res = GffElement(0,
-                             {'Type': GffElement('dword', self.type, -1, self.gff),
-                              'Name': GffElement('cexostring', name, -1, self.gff),
-                              'Value': GffElement(get_name(self.type),
-                                                  convert(self.type, value),
-                                                  -1, self.gff)},
-                            0, self.gff)
+            res = { '_STRUCT_TYPE_' : 0,
+                    '_STRUCT_ID_' : -1,
+                    'Type' : NWDword(self.type),
+                    'Name' : NWString(name),
+                    'Value' : self.class_type(value) }
 
             self.gff['VarTable'].append(res)
 
 
     def get_var(self, name):
         vs = self.gff['VarTable']
-        res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
-        if len(res) == 0:
-            raise ValueError("Variable Table has no variable with name %s for type %d" % (name, self.type))
-        else:
-            return res[0]
+        res = []
+        for v in vs:
+            if v['Type'].val == self.type and v['Name'].val == name:
+                return v
+
+        return None
 
     def has_var(self, name):
-        if not self.has_vars: return False
-
-        vs = self.gff['VarTable']
-        res = [v for v in vs if v['Type'] == self.type and v['Name'] == name]
-        return len(res) > 0
+        return not self.get_var(name) is None
 
     def list_vars(self):
         if not self.has_vars: return []
-
         vs = self.gff['VarTable']
-        res = [(v['Name'], v['Value']) for v in vs if v['Type'] == self.type]
+        res = []
+        for v in vs:
+            if v['Type'].val == self.type:
+                res.append((v['Name'].val, v['Value'].val))
+
         return res
 
 class NWObjectVarable(object):
@@ -109,26 +107,26 @@ class NWObjectVarable(object):
     def local_floats(self):
         if self._floats: return self._floats
 
-        self._floats = NWVariable(self.gff, VARIABLE_TYPE_FLOAT, 0.0)
+        self._floats = NWVariable(self.gff, VARIABLE_TYPE_FLOAT, NWFloat, 0.0)
         return self._floats
 
     @property
     def local_ints(self):
         if self._ints: return self._ints
 
-        self._ints = NWVariable(self.gff, VARIABLE_TYPE_INT, 0)
+        self._ints = NWVariable(self.gff, VARIABLE_TYPE_INT, NWInt, 0)
         return self._ints
 
     @property
     def local_locations(self):
         if self._locs: return self._locs
 
-        self._locs = NWVariable(self.gff, VARIABLE_TYPE_LOCATION, 0)
+        self._locs = NWVariable(self.gff, VARIABLE_TYPE_LOCATION, None, 0)
         return self._locs
 
     @property
     def local_strings(self):
         if self._strings: return self._strings
 
-        self._strings = NWVariable(self.gff, VARIABLE_TYPE_STRING, '')
+        self._strings = NWVariable(self.gff, VARIABLE_TYPE_STRING, NWString, '')
         return self._strings
