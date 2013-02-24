@@ -2,12 +2,14 @@ from pynwn.file.gff import Gff, GffInstance, make_gff_locstring_property
 from pynwn.file.gff import make_gff_property
 
 from pynwn.creature import CreatureInstance
+from pynwn.door import DoorInstance
 from pynwn.encounter import EncounterInstance
 from pynwn.placeable import PlaceableInstance
 from pynwn.sound import SoundInstance
 from pynwn.store import StoreInstance
 from pynwn.trigger import TriggerInstance
 from pynwn.waypoint import WaypointInstance
+from pynwn.tile import TileInstance
 
 from pynwn.scripts import *
 from pynwn.vars import *
@@ -66,21 +68,33 @@ class Area(NWObjectVarable):
         if self.gic.is_loaded():
             self.container.add_to_saves(self.gic)
 
+    def get_instances(self, list_name, instance_class):
+        result = []
+        i = 0
+        for p in self.git[list_name]:
+            gff_inst = GffInstance(self, self.git, list_name, i)
+            st_inst  = instance_class(gff_inst)
+            result.append(st_inst)
+            i += 1
+
+        return result
+
+    @property
+    def doors(self):
+        """Door instances.
+
+        :returns: List of DoorInstance objects.
+        """
+        return self.get_instances('Door List', DoorInstance)
+
+
     @property
     def creatures(self):
         """Creature instances.
 
         :returns: List of CreatureInstance objects.
         """
-        result = []
-        i = 0
-        for p in self.git['Creature List']:
-            gff_inst = GffInstance(self, self.git, 'Creature List', i)
-            st_inst  = CreatureInstance(gff_inst)
-            result.append(st_inst)
-            i += 1
-
-        return result
+        return self.get_instances('Creature List',  CreatureInstance)
 
     @property
     def encounters(self):
@@ -88,7 +102,7 @@ class Area(NWObjectVarable):
 
         :returns: List of EncounterInstance objects.
         """
-        return [EncounterInstance(p) for p in self.git['Encounter List']]
+        return self.get_instances('Encounter List', EncounterInstance)
 
     @property
     def placeables(self):
@@ -96,7 +110,7 @@ class Area(NWObjectVarable):
 
         :returns: List of PlaceableInstance objects.
         """
-        return [PlaceableInstance(p, self.git) for p in self.git['Placeable List']]
+        return self.get_instances('Placeable List', PlaceableInstance)
 
     @property
     def script(self):
@@ -125,7 +139,22 @@ class Area(NWObjectVarable):
 
         :returns: List of SoundInstance objects.
         """
-        return [SoundInstance(p) for p in self.git['SoundList']]
+        return self.get_instances('SoundList', SoundInstance)
+
+    @property
+    def tiles(self):
+        """Tiles
+        :returns: List of TileInstance objects.
+        """
+        result = []
+        i = 0
+        for p in self.are['Tile_List']:
+            gff_inst = GffInstance(self, self.are, 'Tile_List', i)
+            st_inst  = TileInstance(gff_inst)
+            result.append(st_inst)
+            i += 1
+
+        return result
 
     @property
     def stores(self):
@@ -133,16 +162,7 @@ class Area(NWObjectVarable):
 
         :returns: List of StoreInstance objects.
         """
-
-        result = []
-        i = 0
-        for p in self.git['StoreList']:
-            gff_inst = GffInstance(self.git, 'StoreList', i)
-            st_inst  = StoreInstance(gff_inst)
-            result.append(st_inst)
-            i += 1
-
-        return result
+        return self.get_instances('StoreList', StoreInstance)
 
     @property
     def triggers(self):
@@ -150,7 +170,7 @@ class Area(NWObjectVarable):
 
         :returns: List of TriggerInstance objects.
         """
-        return [TriggerInstance(p) for p in self.git['TriggerList']]
+        return self.get_instances('TriggerList', TriggerInstance)
 
     @property
     def waypoints(self):
@@ -158,7 +178,7 @@ class Area(NWObjectVarable):
 
         :returns: List of WaypointInstance objects.
         """
-        return [WaypointInstance(p) for p in self.git['WaypointList']]
+        return self.get_instances('WaypointList', WaypointInstance)
 
 for key, val in ARE_TRANSLATION_TABLE.iteritems():
     setattr(Area, key, make_gff_property('are', val))
