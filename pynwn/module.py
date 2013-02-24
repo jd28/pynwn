@@ -88,7 +88,7 @@ class Module(NWObjectVarable):
     @property
     def haks(self):
         """List of HAK files."""
-        return [hak['Mod_Hak'] for hak in self.ifo['Mod_HakList']]
+        return [hak['Mod_Hak'].value for hak in self.ifo['Mod_HakList']]
 
     @property
     def script(self):
