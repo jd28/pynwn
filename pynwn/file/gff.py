@@ -76,7 +76,7 @@ def make_gff_locstring_property(attr, name):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
-        ls = self.gff[name[0]]
+        ls = gff[name[0]]
         if lang is None:
             return ls.strref
         else:
@@ -92,7 +92,7 @@ def make_gff_locstring_property(attr, name):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
-        ls = self.utc[name[0]]
+        ls = gff[name[0]]
         if string is None:
             ls.strref = lang
         else:
