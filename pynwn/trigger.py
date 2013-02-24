@@ -90,6 +90,11 @@ class TriggerInstance(Trigger):
         Trigger.__init__(self, gff, None, True)
         self.is_instance = True
 
+    @property
+    def position(self):
+        return (self.gff['XPosition'], self.gff['YPosition'],
+                self.gff['ZPosition'])
+        
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Trigger, key, make_gff_property('gff', val))
 

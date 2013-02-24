@@ -150,6 +150,10 @@ class PlaceableInstance(Placeable):
         Placeable.__init__(self, gff, None, True, orignal)
         self.is_instance = True
 
+    @property
+    def position(self):
+        return (self.gff['X'], self.gff['Y'], self.gff['Z'])
+
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Placeable, key, make_gff_property('gff', val))
 

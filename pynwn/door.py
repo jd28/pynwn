@@ -66,7 +66,6 @@ class Door(NWObjectVarable):
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._utd = resref.val
 
         NWObjectVarable.__init__(self, self.gff)
 
@@ -123,6 +122,10 @@ class DoorInstance(Door):
     def __init__(self, gff):
         Door.__init__(self, gff, None, True)
         self.is_instance = True
+
+    @property
+    def position(self):
+        return (self.gff['X'], self.gff['Y'], self.gff['Z'])
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Door, key, make_gff_property('gff', val))

@@ -47,6 +47,11 @@ class WaypointInstance(Waypoint):
     def __init__(self, gff):
         Waypoint.__init__(self, gff, None, True)
 
+    @property
+    def position(self):
+        return (self.gff['XPosition'], self.gff['YPosition'],
+                self.gff['ZPosition'])
+
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Waypoint, key, make_gff_property('gff', val))
 
