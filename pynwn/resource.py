@@ -1,4 +1,5 @@
 import fnmatch, os
+import cStringIO
 
 Extensions = {
     'res': 0,
@@ -283,6 +284,12 @@ class ContentObject(object):
         else:
             return self.io.getvalue()
 
+    def to_io(self):
+        if isinstance(self.io, str):
+            return cStringIO.StringIO(self.get())
+        else:
+            return io
+
     def get_extension(self):
         """Determines the ContentObject's file extention by resource
         type.
@@ -442,27 +449,22 @@ class ResourceManager(object):
 
 
         """
-        from pynwn.key import Key
-        from pynwn.erf import Erf
-        from pynwn.obj.module import Module as Mod
+        from pynwn.file.key import Key
+        from pynwn.file.erf import Erf
+        from pynwn.module import Module as Mod
 
         mgr = ResourceManager()
-
-        # First, all the base data files.
-        if include_bioware:
-            for key in ['chitin.key', 'xp1.key', 'xp2.key', 'xp2patch.key', 'xp3.key']:
-                mgr.add_container(Key(os.path.join(path, key), path))
 
         # Override
         if use_override:
             mgr.add_container(DirectoryContainer(os.path.join(path, 'override')))
 
         # Module
-        mod = Mod(mod)
-        mgr.add_container(mod.container)
+        mgr.module = Mod(mod)
+        mgr.add_container(mgr.module.container)
 
         # All custom haks
-        for hak in mod.haks:
+        for hak in mgr.module.haks:
             h_path = os.path.join(path, 'hak', hak)
             h_file = h_path + '.hak'
             if os.path.isfile(h_file):
@@ -473,6 +475,12 @@ class ResourceManager(object):
                 print "Adding HAK directory %s..." % h_path
             else:
                 print "Error no HAK file or HAK directory found: %s" % hak
+
+
+        # First, all the base data files.
+        if include_bioware:
+            for key in ['chitin.key', 'xp1.key', 'xp2.key', 'xp2patch.key', 'xp3.key']:
+                mgr.add_container(Key(os.path.join(path, key), path))
 
         return mgr
 
