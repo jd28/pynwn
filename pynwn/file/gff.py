@@ -58,11 +58,7 @@ def make_gff_property(attr, name):
                              Gffs and GffInstances!""")
 
         gff[name[0]] = val
-
-        if self.is_instance:
-            gff.save()
-        else:
-            self.save()
+        self.save()
 
     return property(getter, setter, None, name[1])
 
@@ -97,11 +93,8 @@ def make_gff_locstring_property(attr, name):
             ls.strref = lang
         else:
             ls[lang] = string
-
-        if self.is_instance:
-            gff.save()
-        else:
-             self.save()
+            
+        self.save()
 
     return (getter, setter)
 
@@ -111,8 +104,7 @@ class GffInstance(object):
 
     This object creats a view into a parent GFF
     """
-    def __init__(self, parent_obj, parent_gff, list_name, list_index):
-        self.object = parent_obj
+    def __init__(self, parent_gff, list_name, list_index):
         self.parent = parent_gff
         self.field  = list_name
         self.index  = list_index
@@ -135,16 +127,12 @@ class GffInstance(object):
                              NWLocalizedString types""")
 
         res.value = value
-        self.parent.save()
 
     def has_field(self, name):
         return name in self.parent[self.field][self.index]
 
     def get_structure(self):
         return self.parent[self.field][self.index]
-
-    def save(self):
-        self.object.save()
 
 class Gff(object):
     """Represents a GFF file."""
