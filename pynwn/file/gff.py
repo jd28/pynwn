@@ -93,7 +93,7 @@ def make_gff_locstring_property(attr, name):
             ls.strref = lang
         else:
             ls[lang] = string
-            
+
         self.save()
 
     return (getter, setter)
@@ -127,6 +127,9 @@ class GffInstance(object):
                              NWLocalizedString types""")
 
         res.value = value
+
+    def add_field(self, name, value):
+        self.parent[self.field][self.index][name] = value
 
     def has_field(self, name):
         return name in self.parent[self.field][self.index]
@@ -193,8 +196,15 @@ class Gff(object):
         return name in self.structure
 
     def get_field(self, name):
-        if not self.is_loaded: self.load()
+        if not self.is_loaded:
+            self.load()
         return self.structure[name]
+
+    def add_field(self, name, value):
+        if not self.is_loaded:
+            self.load()
+        self.structure[name] = value
+
 
     @property
     def structure(self):
@@ -312,7 +322,7 @@ class Gff(object):
         file.
         """
 
-        #print "Attempting to save %s" % (self.co.get_filename())
+        print "Attempting to save %s" % (self.co.get_filename())
 
         # prepare the intermediate lists and parse the gff structure into the
         # fields and structs lists
