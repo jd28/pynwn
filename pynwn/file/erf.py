@@ -1,6 +1,6 @@
+import datetime, os, struct, shutil
+
 import pynwn.resource as res
-import datetime
-import struct
 from pynwn.util.helper import chunks
 
 VALID_TYPES = ['ERF', 'HAK', 'MOD']
@@ -25,8 +25,10 @@ class Erf(res.Container):
         self.pre_save()
 
         if self.has_modified_content_objects():
-            with open(self.io, 'rb+') as f:
+            with open(self.io + '.tmp', 'wb') as f:
                 self.write_to(f)
+                
+            shutil.move(self.io + '.tmp', self.io)
 
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
