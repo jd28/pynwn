@@ -32,8 +32,7 @@ Gff
 .. autoclass:: pynwn.file.gff.Gff
    :members:
 
-GffInstance
-===========
+---------
 
 .. autoclass:: pynwn.file.gff.GffInstance
    :members:
