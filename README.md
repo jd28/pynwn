@@ -8,15 +8,15 @@ Reader/Writer and a port of a large part of Elven's
 [nwn-lib](https://github.com/niv/nwn-lib) into Python 2.7.
 
 ## Status
-Alpha
+Alpha - Some documentation is out of date...
 
 ## File Formats
-    * GFF files: BIC, UTI, UTC, et al.
-	* MDL files: Binary and ASCII models.  (NOTE: this requires the NumPy
-      library).  Source: The old neveredit project.
-	* ERF files: HAK, MOD, ERF
-	* TLK
-	* 2DA
+* GFF files: BIC, UTI, UTC, et al.
+* MDL files: Binary and ASCII models.  (NOTE: this requires the NumPy
+  library).  Source: The old neveredit project.
+* ERF files: HAK, MOD, ERF
+* TLK
+* 2DA
 
 ## Objects
 All NWN1 GFF types have classes that provide an abstracted interface
