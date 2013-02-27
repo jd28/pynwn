@@ -13,8 +13,14 @@ REPO_TRANSLATION_TABLE = {
 }
 
 class RepositoryItem(object):
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         self.gff = gff
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to parent object's GFF structure
+        """
+        self.parent_obj.stage()
 
     @property
     def position(self):
@@ -88,7 +94,9 @@ class Item(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
+        """Stages changes to the item's GFF structure.
+        """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
@@ -117,9 +125,15 @@ class ItemInstance(Item):
     """A item instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Item.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to the encounter creature instances parent object.
+        """
+        self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Item, key, make_gff_property('gff', val))

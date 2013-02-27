@@ -46,10 +46,10 @@ class Sound(object):
         else:
             self.gff = resref
 
-    def save(self):
+    def stage(self):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
-            
+
     @property
     def random_range(self):
         return (self['RandomRangeX'], self['RandomRangeY'])
@@ -62,9 +62,15 @@ class SoundInstance(Sound):
     """A sound instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Sound.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to parent GFF structure.
+        """
+        self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Sound, key, make_gff_property('gff', val))

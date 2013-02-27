@@ -1,7 +1,7 @@
 from pynwn.file.gff import Gff, GffInstance, make_gff_locstring_property
 from pynwn.file.gff import make_gff_property
 
-from pynwn.item import RepositoryItem
+from pynwn.item import RepositoryItem, ItemInstance
 from pynwn.scripts import *
 from pynwn.vars import *
 
@@ -71,13 +71,11 @@ class Placeable(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
+        """ Stage changes to the placeable's GFF structure.
+        """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
-
-    def save(self):
-        if not self.is_instance:
-            self.gff.save()
 
     @property
     def script(self):
@@ -149,6 +147,36 @@ class PlaceableInstance(Placeable):
     def __init__(self, gff, orignal):
         Placeable.__init__(self, gff, None, True, orignal)
         self.is_instance = True
+        self.parent_obj = orignal
+
+    def stage(self):
+        """ Stage changes to the placeable instance's parent GFF structure.
+        """
+        self.parent_obj.stage()
+        
+    @property
+    def items(self):
+        """Inventory items.
+
+        :returns: List of Tupels contiain repository position
+                  and the ItemInstance.
+        """
+
+        result = []
+        i = 0
+        # If the creature doesn't have inventory items they won't
+        # have an 'ItemList' field in their gff structure.
+        try:
+            for p in self.gff['ItemList']:
+                gff_inst = GffInstance(self.parent_obj, self.gff, 'ItemList', i)
+                st_inst  = ItemInstance(gff_inst)
+                repo_pos = (p['Repos_PosX'], p['Repos_Posy'])
+                result.append((repo_pos, st_inst))
+                i += 1
+        except KeyError:
+            pass
+
+        return result
 
     @property
     def position(self):

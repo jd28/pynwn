@@ -73,7 +73,6 @@ TRANSLATION_TABLE = {
     'corpse_decay'       : ('DecayTime', "Corpse decay time."),
 }
 
-
 LOCSTRING_TABLE = {
     'name_first'  : ('FirstName', "Localized first name"),
     'name_last'   : ('LastName', "Localized last name"),
@@ -83,8 +82,6 @@ LOCSTRING_TABLE = {
 class PlayerCharacter( object ):
     def __init__(self, resref, container):
         self._scripts = None
-        self._locstr = {}
-        self._bic = None
 
         if resref[-4:] != '.bic':
             resref = resref+'.bic'
@@ -95,16 +92,11 @@ class PlayerCharacter( object ):
         else:
             raise ValueError("Container does not contain: %s" % resref)
 
-    def __getattr__(self, name):
-        if name == 'bic':
-            if not self._bic: self._bic = self.gff.structure
-            return self._bic
-
-    def __getitem__(self, name):
-        return self.bic[name].val
-
-    def __setitem__(self, name, val):
-        self.bic[name].val = val
+    def stage(self):
+        """ Stage changes to the placeable's GFF structure.
+        """
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(PlayerCharacter, key, make_gff_property('gff', val))

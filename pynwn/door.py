@@ -69,7 +69,9 @@ class Door(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
+        """Stages changes to door's GFF structure.
+        """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
@@ -119,12 +121,22 @@ class DoorInstance(Door):
     """A door instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Door.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to the door instances parent object.
+        """
+        self.parent_obj.stage()
 
     @property
     def position(self):
+        """Position
+
+        :returns: Tuple of x, y, z coordinates.
+        """
         return (self.gff['X'], self.gff['Y'], self.gff['Z'])
 
 for key, val in TRANSLATION_TABLE.iteritems():

@@ -41,23 +41,19 @@ class Module(NWObjectVarable):
         if not self.container.has_file('module.ifo'):
             raise ValueError("The %s Container has no module.ifo!" % module)
 
-        self.ifo = Gff(self.container['module.ifo'])
+        self.gff = Gff(self.container['module.ifo'])
 
-        NWObjectVarable.__init__(self, self.ifo)
+        NWObjectVarable.__init__(self, self.gff)
 
         self._scripts = None
         self._vars = None
         self._locstr = {}
 
-        # Generate Structure.
-        self.struct = self.ifo.structure
-
-    @property
-    def placeables(self):
-        p = [plc for area in self.areas for plc in area.placeables]
-        p += [Placeable(plc, self.container) for plc in self.container.glob("*.utp")]
-        return p
-
+    def stage(self):
+        """Stages changes to the modules IFO GFF structure."""
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
+            
     @property
     def areas(self):
         """Areas.
@@ -66,7 +62,7 @@ class Module(NWObjectVarable):
         """
 
         res = []
-        for a in self.ifo['Mod_Area_list']:
+        for a in self.gff['Mod_Area_list']:
             res.append(Area(a['Area_Name'].val, self.container))
 
         return res
@@ -74,7 +70,7 @@ class Module(NWObjectVarable):
     @property
     def entry_area(self):
         """Entry area resref"""
-        return Area(self.ifo['Mod_Entry_Area'], self.container)
+        return Area(self.gff['Mod_Entry_Area'], self.container)
 
     @property
     def entry_location(self):
@@ -82,13 +78,13 @@ class Module(NWObjectVarable):
 
         :returns: Tuple of the X, Y, Z coordinates.
         """
-        return (self.ifo['Mod_Entry_X'], self.ifo['Mod_Entry_Y'], self.ifo['Mod_Entry_Z'])
+        return (self.gff['Mod_Entry_X'], self.gff['Mod_Entry_Y'], self.gff['Mod_Entry_Z'])
 
 
     @property
     def haks(self):
         """List of HAK files."""
-        return [hak['Mod_Hak'].value for hak in self.ifo['Mod_HakList']]
+        return [hak['Mod_Hak'].value for hak in self.gff['Mod_HakList']]
 
     @property
     def script(self):
@@ -132,7 +128,7 @@ class Module(NWObjectVarable):
         lbls[Event.REST] = 'Mod_OnPlrRest'
         lbls[Event.USER_DEFINED] = 'Mod_OnUsrDefined'
 
-        self._scripts = NWObjectScripts(self.ifo, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -141,7 +137,7 @@ for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Module, key, make_gff_property('gff', val))
 
 for key, val in LOCSTRING_TABLE.iteritems():
-    getter, setter = make_gff_locstring_property('ifo', val)
+    getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])
     setattr(Module, 'get_'+key, getter)

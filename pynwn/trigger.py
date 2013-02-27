@@ -51,7 +51,9 @@ class Trigger(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
+        """Stages changes to GFF structure.
+        """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
@@ -86,15 +88,21 @@ class TriggerInstance(Trigger):
     """A trigger instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Trigger.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to parent GFF structure.
+        """
+        self.parent_obj.stage()
 
     @property
     def position(self):
         return (self.gff['XPosition'], self.gff['YPosition'],
                 self.gff['ZPosition'])
-        
+
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Trigger, key, make_gff_property('gff', val))
 

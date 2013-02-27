@@ -44,11 +44,10 @@ class Store(NWObjectVarable):
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._utm = resref
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
@@ -97,7 +96,7 @@ class Store(NWObjectVarable):
             items = []
             try:
                 for p in self.gff['ItemList']:
-                    gff_inst = GffInstance(self.gff, 'ItemList', i)
+                    gff_inst = GffInstance(self, self.gff, 'ItemList', i)
                     st_inst  = RepositoryItem(gff_inst)
                     items.append(st_inst)
                     i += 1
@@ -112,9 +111,15 @@ class StoreInstance(Store):
     """A store instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Store.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to parent GFF structure.
+        """
+        self.parent_obj.stage()
 
     @property
     def items(self):
@@ -128,7 +133,7 @@ class StoreInstance(Store):
             items = []
             try:
                 for p in self.gff['ItemList']:
-                    gff_inst = GffInstance(self.gff, 'ItemList', i)
+                    gff_inst = GffInstance(self.parent_obj, self.gff, 'ItemList', i)
                     st_inst  = ItemInstance(gff_inst)
                     items.append(st_inst)
                     i += 1

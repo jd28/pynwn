@@ -338,12 +338,11 @@ class Container(object):
         self.add(ContentObject.from_file(fname))
 
     def add_to_saves(self, obj):
-        print "Adding to saves...", obj
+        print "Save type...", type(obj)
         self.saves.add(obj)
 
     def pre_save(self):
         for obj in self.saves:
-            print "Saving...", obj
             obj.save()
         saves = set([])
 

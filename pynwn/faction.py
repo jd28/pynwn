@@ -11,26 +11,28 @@ class Faction(object):
         else:
             raise ValueError("Container does not contain: %s" % resref)
 
-    def __getattr__(self, name):
-        if name == 'fac':
-            if not self._fac: self._fac = self.gff.structure
-            return self._fac
-
-    def __getitem__(self, name):
-        return self.fac[name].val
+    def stage(self):
+        """Stages changes to GFF structure.
+        """
+        if self.gff.is_loaded():
+            self.container.add_to_saves(self.gff)
 
     @property
     def factions(self):
         res = []
-        for f in self['FactionList']:
-            res.append( (f['FactionParentID'], f['FactionName'], f['FactionGlobal']) )
+        for f in self.gff['FactionList']:
+            res.append( (f['FactionParentID'],
+                         f['FactionName'],
+                         f['FactionGlobal']) )
 
         return res
-    
+
     @property
     def reputations(self):
         res = []
-        for f in self['RepList']:
-            res.append( (f['FactionID1'], f['FactionID2'], f['FactionRep']) )
+        for f in self.gff['RepList']:
+            res.append( (f['FactionID1'],
+                         f['FactionID2'],
+                         f['FactionRep']) )
 
         return res

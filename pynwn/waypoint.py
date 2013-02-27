@@ -39,18 +39,26 @@ class Waypoint(NWObjectVarable):
 
         NWObjectVarable.__init__(self, self.gff)
 
-    def save(self):
+    def stage(self):
+        """Stage changes to GFF structure.
+        """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
 class WaypointInstance(Waypoint):
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Waypoint.__init__(self, gff, None, True)
+        self.parent_obj = parent_obj
 
     @property
     def position(self):
         return (self.gff['XPosition'], self.gff['YPosition'],
                 self.gff['ZPosition'])
+
+    def stage(self):
+        """Stages changes to parent GFF structure.
+        """
+        self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Waypoint, key, make_gff_property('gff', val))

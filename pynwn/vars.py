@@ -60,7 +60,6 @@ class NWVariable(object):
             v['Value'] = self.class_type(value)
         else:
             res = { '_STRUCT_TYPE_' : 0,
-                    '_STRUCT_ID_' : -1,
                     'Type' : NWDword(self.type),
                     'Name' : NWString(name),
                     'Value' : self.class_type(value) }

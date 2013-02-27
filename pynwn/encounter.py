@@ -1,4 +1,5 @@
 from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
+from pynwn.file.gff import GffInstance
 
 from pynwn.scripts import *
 from pynwn.vars import *
@@ -8,25 +9,25 @@ __all__ = ['Encounter',
            'EncounterCreature']
 
 class EncounterCreature(object):
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         self.gff = gff
+        self.parent_obj = parent_obj
+        self.is_instance = True
 
-    @property
-    def appearance(self):
-        return self.gff['Appearance']
+    def stage(self):
+        """Stages changes to the encounter creature instances parent object.
+        """        
+        self.parent_obj.stage()
 
-    @property
-    def cr(self):
-        return self.gff['CR']
+ENC_CRE_TABLE = {
+    'appearance' : ('Appearance', 'Appearance'),
+    'cr'         : ('CR', 'Challenge rating'),
+    'resref'     : ('ResRef', 'Resref'),
+    'unique'     : ('SingleSpawn', 'Unique spawn.')
+}
 
-    @property
-    def resref(self):
-        return self.gff['ResRef']
-
-    @property
-    def unique(self):
-        return self.gff['SingleSpawn']
-
+for key, val in ENC_CRE_TABLE.iteritems():
+    setattr(EncounterCreature, key, make_gff_property('gff', val))
 
 TRANSLATION_TABLE = {
     'tag'              : ('Tag', "Tag."),
@@ -54,7 +55,6 @@ class Encounter(NWObjectVarable):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
@@ -68,20 +68,8 @@ class Encounter(NWObjectVarable):
                 raise ValueError("Container does not contain: %s" % resref)
         else:
             self.gff = resref
-            self._ute = resref.val
 
         NWObjectVarable.__init__(self, self.gff)
-
-    def __getattr__(self, name):
-        if name == 'ute':
-            if not self._ute: self._ute = self.gff.structure
-            return self._ute
-
-    def __getitem__(self, name):
-        return self.ute[name].val
-
-    def __setitem__(self, name):
-        return self.ute[name].val
 
     @property
     def scripts(self):
@@ -103,7 +91,7 @@ class Encounter(NWObjectVarable):
         lbls[Event.HEARTBEAT] = 'OnHeartbeat'
         lbls[Event.USER_DEFINED] = 'OnUserDefined'
 
-        self._scripts = NWObjectScripts(self.utt, lbls)
+        self._scripts = NWObjectScripts(self.gff, lbls)
 
         return self._scripts
 
@@ -113,15 +101,29 @@ class Encounter(NWObjectVarable):
 
         :returns: List of EncounterCreature objects.
         """
-        return [EncounterCreature(c) for c in self['CreatureList']]
+        result = []
+        i = 0
+        for p in self.gff['CreatureList']:
+            gff_inst = GffInstance(self.gff, 'CreatureList', i)
+            st_inst  = EncounterCreature(gff_inst, self)
+            result.append(st_inst)
+            i += 1
+
+        return result
 
 class EncounterInstance(Encounter):
     """A encounter instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
     """
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         Encounter.__init__(self, gff, None, True)
         self.is_instance = True
+        self.parent_obj = parent_obj
+
+    def stage(self):
+        """Stages changes to the encounter instances parent object.
+        """
+        self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.iteritems():
     setattr(Encounter, key, make_gff_property('gff', val))

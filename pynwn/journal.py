@@ -3,7 +3,6 @@ from pynwn.file.gff import Gff
 class QuestEntry(object):
     def __init__(self, gff):
         self.gff = gff
-        self._locstr = {}
 
     @property
     def end(self):
@@ -23,7 +22,6 @@ class QuestEntry(object):
 class JournalQuest(object):
     def __init__(self, gff):
         self.gff = gff
-        self._locstr = {}
 
     @property
     def comment(self):
@@ -64,8 +62,8 @@ class Journal(object):
             resref = resref+'.jrl'
 
         if container.has_file(resref):
-            self.jrl = container[resref]
-            self.jrl = Gff(self.jrl)
+            self.gff = container[resref]
+            self.gff = Gff(self.gff)
         else:
             raise ValueError("Container does not contain: %s" % resref)
 

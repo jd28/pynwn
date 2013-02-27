@@ -8,9 +8,10 @@ TRANSLATION_TABLE = {
 
 class TileInstance(object):
     """There is no base Tile class, Tiles can only be instances"""
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         self.gff = gff
         self.is_intance = True
+        self.parent_obj = parent_obj
 
     @property
     def main_lights(self):

@@ -58,7 +58,9 @@ class Area(NWObjectVarable):
         self._scripts = None
         self._locstr = {}
 
-    def save(self):
+    def stage(self):
+        """Stages changes to the Area's GFF structures.
+        """
         if self.are.is_loaded():
             self.container.add_to_saves(self.are)
 
@@ -72,8 +74,8 @@ class Area(NWObjectVarable):
         result = []
         i = 0
         for p in self.git[list_name]:
-            gff_inst = GffInstance(self, self.git, list_name, i)
-            st_inst  = instance_class(gff_inst)
+            gff_inst = GffInstance(self.git, list_name, i)
+            st_inst  = instance_class(gff_inst, self)
             result.append(st_inst)
             i += 1
 
@@ -149,8 +151,8 @@ class Area(NWObjectVarable):
         result = []
         i = 0
         for p in self.are['Tile_List']:
-            gff_inst = GffInstance(self, self.are, 'Tile_List', i)
-            st_inst  = TileInstance(gff_inst)
+            gff_inst = GffInstance(self.are, 'Tile_List', i)
+            st_inst  = TileInstance(gff_inst, self)
             result.append(st_inst)
             i += 1
 
