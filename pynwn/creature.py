@@ -138,7 +138,7 @@ class Creature(object):
 
         :returns: List of skill ranks in order of skill ID.
         """
-        return [sk['Rank'] for sk in self['SkillList']]
+        return [sk['Rank'].val for sk in self.gff['SkillList']]
 
     @property
     def feats(self):
@@ -146,15 +146,15 @@ class Creature(object):
 
         :returns: List of feat IDs.
         """
-        return [sk['Feat'] for sk in self['FeatList']]
+        return [sk['Feat'].val for sk in self.gff['FeatList']]
 
     @property
     def special_abilities(self):
         res = []
-        for s in self['SpecAbilityList']:
-            res.append( (s['Spell'],
-                         s['SpellFlags'],
-                         s['SpellCasterLevel']) )
+        for s in self.gff['SpecAbilityList']:
+            res.append( (s['Spell'].val,
+                         s['SpellFlags'].val,
+                         s['SpellCasterLevel'].val) )
 
         return res
 
@@ -164,7 +164,7 @@ class Creature(object):
 
         :returns: List of tuples containing class ID and level.
         """
-        return [(cl['Class'], cl['ClassLevel']) for cl in self['ClassList']]
+        return [(cl['Class'].val, cl['ClassLevel'].val) for cl in self.gff['ClassList']]
 
     @property
     def items(self):
@@ -189,7 +189,7 @@ class Creature(object):
         :returns: List of tuples containing equipment ID and resref.
         """
         return [(e['_STRUCT_TYPE_'], e['EquippedRes'])
-                for e in self['Equip_ItemList']]
+                for e in self.gff['Equip_ItemList']]
 
 class CreatureInstance(Creature):
     """A creature instance is one placed in an area in the toolset.
