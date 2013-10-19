@@ -306,6 +306,40 @@ class ContentObject(object):
         with open(path, 'wb') as f:
             f.write(self.get())
 
+def construct(co, cont):
+    if co.res_type == 2027:
+        from pynwn.creature import Creature
+        return Creature((co, cont))
+    elif co.res_type == 2025:
+        from pynwn.item import Item
+        return Item((co, cont))
+    elif co.res_type == 2042:
+        from pynwn.door import Door
+        return Door((co, cont))
+    elif co.res_type == 2032:
+        from pynwn.trigger import Trigger
+        return Trigger((co, cont))
+    elif co.res_type == 2035:
+        from pynwn.sound import Sound
+        return Sound((co, cont))
+    elif co.res_type == 2040:
+        from pynwn.encounter import Encounter
+        return Encounter((co, cont))
+    elif co.res_type == 2044:
+        from pynwn.placeable import Placeable
+        return Placeable((co, cont))
+    elif co.res_type == 2051:
+        from pynwn.store import Store
+        return Store((co, cont))
+    elif co.res_type == 2058:
+        from pynwn.waypoint import Waypoint
+        return Waypoint((co, cont))
+    elif co.res_type == 2029:
+        from pynwn.dialog import Dialog
+        return Dialog((co, cont))
+    
+    return None
+
 class Container(object):
     """A basic container for ContentObjects
     """
@@ -318,12 +352,16 @@ class Container(object):
         """Get a content object associated with a file name or integer
         index.
         """
-
+        co = None
         if isinstance(name, str):
-            if not self.filenames.has_key(name): raise ValueError("No ContentObject exists for %s" % name)
-            return self.filenames[name]
+            if not self.filenames.has_key(name):
+                raise ValueError("No ContentObject exists for %s" % name)
+            co = self.filenames[name]
         elif isinstance(name, int):
-            return self.content[name]
+            co = self.content[name]
+
+        res = construct(co, self)
+        return res if res else co
 
     def add(self, content_obj):
         """Add a content object to a container.
