@@ -45,24 +45,18 @@ class PaletteNode(object):
 class Palette(object):
     """ This is a very rough absraction over ITPs.
     """
-    def __init__(self, resref, container):
-        if resref[-4:] != '.itp':
-            resref = resref+'.itp'
+    def __init__(self, resource):
+        self.is_file = False
 
-        if container.has_file(resref):
-            self.gff = container[resref]
-            self.gff = Gff(self.gff)
+        if isinstance(resource, str):
+            from resource import ContentObject
+            co = ContentObject.from_file(resource)
+            self.gff = Gff(co)
+            self.is_file = True
         else:
-            raise ValueError("Container does not contain: %s" % resref)
-
-    def __getattr__(self, name):
-        if name == 'itp':
-            if not self._itp: self._itp = self.gff.structure
-            return self._itp
-
-    def __getitem__(self, name):
-        return self.itp[name].val
+            self.container = resource[1]
+            self.gff = Gff(resource[0])
 
     @property
     def nodes(self):
-        return [PaletteNode(p) for p in self['MAIN']]
+        return [PaletteNode(p) for p in self.gff['MAIN']]

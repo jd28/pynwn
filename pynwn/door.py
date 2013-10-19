@@ -48,24 +48,21 @@ LOCSTRING_TABLE = {
 }
 
 class Door(object):
-    def __init__(self, resref, container, instance=False):
+    def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
-            if resref[-4:] != '.utd':
-                resref = resref+'.utd'
-
-            if container.has_file(resref):
-                self.container = container
-                self.gff = container[resref]
-                self.gff = Gff(self.gff)
+            if isinstance(resource, str):
+                from resource import ContentObject
+                co = ContentObject.from_file(resource)
+                self.gff = Gff(co)
             else:
-                raise ValueError("Container does not contain: %s" % resref)
+                self.container = resource[1]
+                self.gff = Gff(resource[0])
         else:
-            self.gff = resref
+            self.gff = resource
 
     def stage(self):
         """Stages changes to door's GFF structure.
@@ -127,7 +124,7 @@ class DoorInstance(Door):
     As such it's values are derived from its parent GFF structure.
     """
     def __init__(self, gff, parent_obj):
-        Door.__init__(self, gff, None, True)
+        Door.__init__(self, gff, True)
         self.is_instance = True
         self.parent_obj = parent_obj
 

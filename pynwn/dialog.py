@@ -101,20 +101,22 @@ for key, val in DIALOG_NODE_LOCSTRINGS.iteritems():
 class Dialog(object):
     """Abstracts .dlg GFF files.
     """
-    def __init__(self, resref, container):
+    def __init__(self, resource):
+        self.is_file = False
         self.reply_cache = None
         self.entry_cache = None
-        if resref[-4:] != '.dlg':
-            self._resref = resref
-            resref = resref+'.dlg'
-        else:
-            self._resref = resref[:-4]
 
-        if container.has_file(resref):
-            self.gff = container[resref]
-            self.gff = Gff(self.gff)
+        if isinstance(resource, str):
+            from resource import ContentObject
+            co = ContentObject.from_file(resource)
+            self.gff = Gff(co)
+            self.is_file = True
         else:
-            raise ValueError("Container does not contain: %s" % resref)
+            self.container = resource[1]
+            co = resource[0]
+            self.gff = Gff(co)
+
+        self._resref = co.resref
 
     def stage(self):
         """Stages changes to the dialog's GFF structure.

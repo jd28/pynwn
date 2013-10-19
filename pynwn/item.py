@@ -44,8 +44,9 @@ IP_TRANSLATION_TABLE = {
 }
 
 class ItemProperty(object):
-    def __init__(self, gff):
+    def __init__(self, gff, parent_obj):
         self.gff = gff
+        self.parent_obj = parent_obj
 
 for key, val in IP_TRANSLATION_TABLE.iteritems():
     setattr(ItemProperty, key, make_gff_property('gff', val))
@@ -63,7 +64,7 @@ TRANSLATION_TABLE = {
     'identified'       : ('Identified', "Identified flag."),
     'cursed'           : ('Cursed', "Cursed flag."),
     'palette_id'       : ('PaletteID', "Palette ID."),
-    'comment'           : ('Comment', "Comment."),
+    'comment'          : ('Comment', "Comment."),
 }
 
 LOCSTRING_TABLE = {
@@ -73,24 +74,21 @@ LOCSTRING_TABLE = {
 }
 
 class Item(object):
-    def __init__(self, resref, container, instance=False):
+    def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None
-        self._locstr = {}
 
         self.is_instance = instance
         if not instance:
-            if resref[-4:] != '.uti':
-                resref = resref+'.uti'
-
-            if container.has_file(resref):
-                self.container = container
-                self.gff = container[resref]
-                self.gff = Gff(self.gff)
+            if isinstance(resource, str):
+                from resource import ContentObject
+                co = ContentObject.from_file(resource)
+                self.gff = Gff(co)
             else:
-                raise ValueError("Container does not contain: %s" % resref)
+                self.container = resource[1]
+                self.gff = Gff(resource[0])
         else:
-            self.gff = resref
+            self.gff = resource
 
     def stage(self):
         """Stages changes to the item's GFF structure.
@@ -120,7 +118,7 @@ class Item(object):
         i = 0
         for p in self.gff['PropertiesList']:
             gff_inst = GffInstance(self.gff, 'PropertiesList', i)
-            st_inst  = ItemProperty(gff_inst)
+            st_inst  = ItemProperty(gff_inst, self)
             result.append(st_inst)
             i += 1
 
@@ -131,7 +129,7 @@ class ItemInstance(Item):
     As such it's values are derived from its parent GFF structure.
     """
     def __init__(self, gff, parent_obj):
-        Item.__init__(self, gff, None, True)
+        Item.__init__(self, gff, True)
         self.is_instance = True
         self.parent_obj = parent_obj
 

@@ -1,15 +1,17 @@
 from pynwn.file.gff import Gff
 
 class Faction(object):
-    def __init__(self, resref, container):
-        if resref[-4:] != '.fac':
-            resref = resref+'.fac'
+    def __init__(self, resource):
+        self.is_file = False
 
-        if container.has_file(resref):
-            self.gff = container[resref]
-            self.gff = Gff(self.gff)
+        if isinstance(resource, str):
+            from resource import ContentObject
+            co = ContentObject.from_file(resource)
+            self.gff = Gff(co)
+            self.is_file = True
         else:
-            raise ValueError("Container does not contain: %s" % resref)
+            self.container = resource[1]
+            self.gff = Gff(resource[0])
 
     def stage(self):
         """Stages changes to GFF structure.

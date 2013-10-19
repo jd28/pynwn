@@ -52,22 +52,23 @@ LOCSTRING_TABLE = {
 }
 
 class Encounter(object):
-    def __init__(self, resref, container, instance=False):
+    def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None
+        self.is_file = False
 
         self.is_instance = instance
         if not instance:
-            if resref[-4:] != '.ute':
-                resref = resref+'.ute'
-
-            if container.has_file(resref):
-                self.gff = container[resref]
-                self.gff = Gff(self.gff)
+            if isinstance(resource, str):
+                from resource import ContentObject
+                co = ContentObject.from_file(resource)
+                self.gff = Gff(co)
+                self.is_file = True
             else:
-                raise ValueError("Container does not contain: %s" % resref)
+                self.container = resource[1]
+                self.gff = Gff(resource[0])
         else:
-            self.gff = resref
+            self.gff = resource
 
     @property
     def vars(self):
@@ -121,7 +122,7 @@ class EncounterInstance(Encounter):
     As such it's values are derived from its parent GFF structure.
     """
     def __init__(self, gff, parent_obj):
-        Encounter.__init__(self, gff, None, True)
+        Encounter.__init__(self, gff, True)
         self.is_instance = True
         self.parent_obj = parent_obj
 

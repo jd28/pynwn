@@ -29,23 +29,22 @@ LOCSTRING_TABLE = {
 }
 
 class Sound(object):
-    def __init__(self, resref, container, instance=False):
-        self._locstr = {}
+    def __init__(self, resource, instance=False):
+        self.is_file = False
 
         self.is_instance = instance
         if not instance:
-            if resref[-4:] != '.uts':
-                resref = resref+'.uts'
-
-            if container.has_file(resref):
-                self.container = container
-                self.gff = container[resref]
-                self.gff = Gff(self.gff)
+            if isinstance(resource, str):
+                from resource import ContentObject
+                co = ContentObject.from_file(resource)
+                self.gff = Gff(co)
+                self.is_file = True
             else:
-                raise ValueError("Container does not contain: %s" % resref)
+                self.container = resource[1]
+                self.gff = Gff(resource[0])
         else:
-            self.gff = resref
-
+            self.gff = resource
+            
     def stage(self):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)

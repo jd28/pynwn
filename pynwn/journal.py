@@ -57,21 +57,24 @@ class JournalQuest(object):
 class Journal(object):
     """ There is only one journal file.
     """
-    def __init__(self, resref, container):
-        if resref[-4:] != '.jrl':
-            resref = resref+'.jrl'
+    def __init__(self, resource):
+        self.is_file = False
 
-        if container.has_file(resref):
-            self.gff = container[resref]
-            self.gff = Gff(self.gff)
+        if isinstance(resource, str):
+            from resource import ContentObject
+            co = ContentObject.from_file(resource)
+            self.gff = Gff(co)
+            self.is_file = True
         else:
-            raise ValueError("Container does not contain: %s" % resref)
+            self.container = resource[1]
+            self.gff = Gff(resource[0])
+
 
     def __getitem__(self, name):
-        for c in self.jrl['Categories']:
+        for c in self.gff['Categories']:
             if c['Tag'] == name:
                 return JournalQuest(c)
 
     @property
     def quests(self):
-        return [JournalQuest(c) for c in self.jrl['Categories']]
+        return [JournalQuest(c) for c in self.gff['Categories']]
