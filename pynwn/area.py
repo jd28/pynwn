@@ -88,7 +88,7 @@ class Area(object):
         if self._vars: return self._vars
         self._vars = NWObjectVarable(self, self.git)
         return self._vars
-    
+
     @property
     def doors(self):
         """Door instances.
@@ -113,6 +113,14 @@ class Area(object):
         :returns: List of EncounterInstance objects.
         """
         return self.get_instances('Encounter List', EncounterInstance)
+
+    @property
+    def items(self):
+        """Item instance list.
+
+        :returns: List of ItemInstance objects.
+        """
+        return self.get_instances('List', ItemInstance)
 
     @property
     def placeables(self):
