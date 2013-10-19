@@ -58,7 +58,7 @@ def make_gff_property(attr, name):
                              Gffs and GffInstances!""")
 
         gff[name[0]] = val
-        self.save()
+        self.stage()
 
     return property(getter, setter, None, name[1])
 
@@ -94,7 +94,7 @@ def make_gff_locstring_property(attr, name):
         else:
             ls[lang] = string
 
-        self.save()
+        self.stage()
 
     return (getter, setter)
 
