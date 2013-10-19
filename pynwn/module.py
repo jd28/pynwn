@@ -47,6 +47,13 @@ class Module(object):
         self._vars = None
         self._locstr = {}
 
+    def glob(self, glob_pattern):
+        """Returns a list of (ContentObject, Container) tuples for file names matching the glob pattern.
+        i.e. Unix shell-style wildcards: \*.utc
+        Note: all file names are converted to lowercase.
+        """
+        return self.container.glob(glob_pattern)
+        
     def stage(self):
         """Stages changes to the modules IFO GFF structure."""
         if self.gff.is_loaded():
