@@ -162,7 +162,7 @@ class Erf(res.Container):
             _index = -1
             for offset, size in chunks(resourcelist, 2):
                 _index += 1
-                co = new_erf[_index]
+                co = new_erf.content[_index]
                 co.offset = offset
                 co.size = size
 
