@@ -4,12 +4,13 @@ from pynwn.file.gff import make_gff_property
 from pynwn.creature import CreatureInstance
 from pynwn.door import DoorInstance
 from pynwn.encounter import EncounterInstance
+from pynwn.item import ItemInstance
 from pynwn.placeable import PlaceableInstance
 from pynwn.sound import SoundInstance
 from pynwn.store import StoreInstance
+from pynwn.tile import TileInstance
 from pynwn.trigger import TriggerInstance
 from pynwn.waypoint import WaypointInstance
-from pynwn.tile import TileInstance
 
 from pynwn.scripts import *
 from pynwn.vars import *
