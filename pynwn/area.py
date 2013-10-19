@@ -18,12 +18,39 @@ from pynwn.vars import *
 __all__ = ['Area']
 
 ARE_TRANSLATION_TABLE = {
-    'fog_clip_distance' : ('FogClipDist', "Fog clip distance."),
-    'height'            : ('Height', "Area height."),
-    'resref'            : ('ResRef', "Resref."),
-    'tag'               : ('Tag', "Tag."),
-    'tileset'           : ('Tileset', "Tileset."),
-    'width'             : ('Width', "Area width.")
+    'lightning'           : ('ChanceLightning', 'Chance of lighting [0,100]'),
+    'rain'                : ('ChanceRain', 'Chance of rain [0,100]'),
+    'snow'                : ('ChanceSnow', 'Chance of snow [0,100]'),
+    'day_night_cycle'     : ('DayNightCycle', "1 if day/night transitions occur, 0 otherwise."),
+    'fog_clip_distance'   : ('FogClipDist', "Fog clip distance."),
+    'flags'               : ('Flags', "Bit flags specifying area terrain type."),
+    'is_night'            : ('IsNight', "1 if always night, 0 if always day."),
+    'lighting_scheme'     : ('LightingScheme', 'Index into environment.2da'),
+    'load_screen'         : ('LoadScreenID', 'Load screen ID'),
+    'listen_modifier'     : ('ModListenCheck', 'Modifier to Listen skill checks made in area'),
+    'spot_modifier'       : ('ModSpotCheck', 'Modifier to Spot skill checks made in area'),
+    'night_ambient_color' : ('MoonAmbientColor', 'Nighttime ambient color.'),
+    'night_diffuse_color' : ('MoonDiffuseColor', 'Nighttime diffuse color.'),
+    'night_fog_color'     : ('MoonFogColor', 'Nighttime fog color.'),
+    'night_fog_amount'    : ('MoonFogAmount', 'Nighttime fog amount (0-15)'),
+    'night_shadows'       : ('MoonShadows', '1 if shadows appear at night, 0 otherwise'),
+    'pvp'                 : ('PlayerVsPlayer', 'Area PvP setting.'),
+    'skybox'              : ('SkyBox', 'Index into skyboxes.2da.'),
+    'shadow_opacity'      : ('ShadowOpacity', 'Opacity of shadows (0-100).'),
+    'day_ambient_color'   : ('SunAmbientColor', 'Day ambient color.'),
+    'day_diffuse_color'   : ('SunDiffuseColor', 'Day diffuse color.'),
+    'day_fog_color'       : ('SunFogColor', 'Daytime fog color (BGR format) '),
+    'day_fog_amount'      : ('SunFogAmount', 'Daytime fog amount (0-15) '),
+    'day_shadows'         : ('SunShadows', '1 if shadows appear during the day, 0 otherwise.'),
+    'version'             : ('Version', 'Area version'),
+    'no_rest'             : ('NoRest', '1 if resting is not allowed, 0 otherwise '),
+    'wind_power'          : ('WindPower', 'Strength of the wind in the area. None, weak, or strong (0-2).'),
+    'height'              : ('Height', "Area height."),
+    'resref'              : ('ResRef', "Resref."),
+    'tag'                 : ('Tag', "Tag."),
+    'tileset'             : ('Tileset', "Tileset."),
+    'width'               : ('Width', "Area width."),
+    'comments'            : ('Comments', "Comments.")
 }
 
 LOCSTRING_TABLE = {
