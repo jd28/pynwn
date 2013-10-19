@@ -1,6 +1,8 @@
 import fnmatch, os
 import cStringIO
 
+from itertools import chain
+
 Extensions = {
     'res': 0,
     'bmp': 1,
@@ -376,7 +378,6 @@ class Container(object):
         self.add(ContentObject.from_file(fname))
 
     def add_to_saves(self, obj):
-        print "Save type...", type(obj)
         self.saves.add(obj)
 
     def pre_save(self):
@@ -403,11 +404,11 @@ class Container(object):
         return co.get()
 
     def glob(self, glob_pattern):
-        """Returns a list of files matching a glob pattern...
+        """Returns a list of objects or content objects for file names matching the glob pattern.
         i.e. Unix shell-style wildcards: \*.utc
         Note: all file names are converted to lowercase.
         """
-        return fnmatch.filter(self.get_filenames(), glob_pattern.lower())
+        return [self[f] for f in fnmatch.filter(self.get_filenames(), glob_pattern.lower())]
 
     def has_file(self, fname):
         """Determines if container has a content object associated with
@@ -548,11 +549,10 @@ class ResourceManager(object):
         """Returns a list of files matching a glob pattern...
         i.e. Unix shell-style wildcards: \*.utc
         Note: all file names are converted to lowercase.
-
-        :returns: List of tuples (<container>, <list of files>)
         """
 
-        return [(con, con.glob(glob_pattern)) for con in self.containers]
+        xs = [con.glob(glob_pattern) for con in self.containers]
+        return chain.from_iterable(xs)
 
     def creatures(self, glob = None):
         """Returns a list of Creature objects contained in
