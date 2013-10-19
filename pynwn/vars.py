@@ -43,7 +43,7 @@ class NWVariable(object):
         return self.gff.has_field('VarTable')
 
     def __getitem__(self, name):
-        if not self.has_vars: return self.default
+        if not self.has_vars(): return self.default
         v = self.get_var(name)
         if v is None:
             return default
@@ -54,7 +54,7 @@ class NWVariable(object):
         if not self.has_vars():
             self.gff.add_field('VarTable', [])
 
-        if self.has_var(name):
+        if self.has(name):
             v = self.get_var(name)
             v['Value'] = self.class_type(value)
         else:
@@ -75,11 +75,11 @@ class NWVariable(object):
 
         return None
 
-    def has_var(self, name):
+    def has(self, name):
         return not self.get_var(name) is None
 
-    def list_vars(self):
-        if not self.has_vars: return []
+    def list(self):
+        if not self.has_vars(): return []
         vs = self.gff['VarTable']
         res = []
         for v in vs:
@@ -102,30 +102,41 @@ class NWObjectVarable(object):
         self._locs = None
         self._strings = None
 
+    def has_vars(self):
+        return self.gff.has_field('VarTable')
+
     @property
-    def local_floats(self):
+    def float(self):
+        """ Local floating point variables
+        """
         if self._floats: return self._floats
 
-        self._floats = NWVariable(self, self.gff, VARIABLE_TYPE_FLOAT, NWFloat, 0.0)
+        self._floats = NWVariable(self.parent_obj, self.gff, VARIABLE_TYPE_FLOAT, NWFloat, 0.0)
         return self._floats
 
     @property
-    def local_ints(self):
+    def int(self):
+        """ Local integer variables
+        """
+
         if self._ints: return self._ints
 
-        self._ints = NWVariable(self, self.gff, VARIABLE_TYPE_INT, NWInt, 0)
+        self._ints = NWVariable(self.parent_obj, self.gff, VARIABLE_TYPE_INT, NWInt, 0)
         return self._ints
 
     @property
     def local_locations(self):
         if self._locs: return self._locs
 
-        self._locs = NWVariable(self, self.gff, VARIABLE_TYPE_LOCATION, None, 0)
+        self._locs = NWVariable(self.parent_obj, self.gff, VARIABLE_TYPE_LOCATION, None, 0)
         return self._locs
 
     @property
-    def local_strings(self):
+    def string(self):
+        """ Local string variables
+        """
+
         if self._strings: return self._strings
 
-        self._strings = NWVariable(self, self.gff, VARIABLE_TYPE_STRING, NWString, '')
+        self._strings = NWVariable(self.parent_obj, self.gff, VARIABLE_TYPE_STRING, NWString, '')
         return self._strings
