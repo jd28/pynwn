@@ -174,7 +174,7 @@ class Dialog(object):
         These are limited pointers in the entry list to the
         topmost level of dialog in a concersation.
 
-        :returns: List of DialogStarts
+        :returns: List of DialogPointers
         """
         result = []
         i = 0
