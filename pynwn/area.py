@@ -29,7 +29,7 @@ LOCSTRING_TABLE = {
     'name'        : ('Name', "Localized name."),
 }
 
-class Area(NWObjectVarable):
+class Area(object):
     def __init__(self, resref, container):
         are = resref+'.are'
 
@@ -44,7 +44,6 @@ class Area(NWObjectVarable):
         if container.has_file(git):
             self.git = container[git]
             self.git = Gff(self.git)
-            NWObjectVarable.__init__(self, self.git)
         else:
             raise ValueError("Container does not contain %s.git" % resref)
 
@@ -55,6 +54,7 @@ class Area(NWObjectVarable):
         else:
             raise ValueError("Container does not contain %s.gic" % resref)
 
+        self._vars = None
         self._scripts = None
         self._locstr = {}
 
@@ -81,6 +81,13 @@ class Area(NWObjectVarable):
 
         return result
 
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.git)
+        return self._vars
+    
     @property
     def doors(self):
         """Door instances.

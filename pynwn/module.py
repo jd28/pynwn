@@ -21,7 +21,7 @@ LOCSTRING_TABLE = {
     'description' : ('Mod_Description', "Localized description.")
 }
 
-class Module(NWObjectVarable):
+class Module(object):
     """Module abstracts over MOD ERF files and directories containing the contents of
     MOD files.
     """
@@ -43,8 +43,6 @@ class Module(NWObjectVarable):
 
         self.gff = Gff(self.container['module.ifo'])
 
-        NWObjectVarable.__init__(self, self.gff)
-
         self._scripts = None
         self._vars = None
         self._locstr = {}
@@ -53,6 +51,13 @@ class Module(NWObjectVarable):
         """Stages changes to the modules IFO GFF structure."""
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
+
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
             
     @property
     def areas(self):

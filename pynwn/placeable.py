@@ -49,7 +49,7 @@ LOCSTRING_TABLE = {
     'description' : ('Description', "Localized description."),
 }
 
-class Placeable(NWObjectVarable):
+class Placeable(object):
     def __init__(self, resref, container, instance=False, instance_gff=None):
         self._scripts = None
         self._vars = None
@@ -69,14 +69,19 @@ class Placeable(NWObjectVarable):
             self.instance_gff = instance_gff
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
-
     def stage(self):
         """ Stage changes to the placeable's GFF structure.
         """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
+            
     @property
     def script(self):
         """Scripts.  Responds to script events:

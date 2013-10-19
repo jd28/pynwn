@@ -51,7 +51,7 @@ LOCSTRING_TABLE = {
     'name'        : ('LocalizedName', "Localized name."),
 }
 
-class Encounter(NWObjectVarable):
+class Encounter(object):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
@@ -69,7 +69,12 @@ class Encounter(NWObjectVarable):
         else:
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
 
     @property
     def scripts(self):

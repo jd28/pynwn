@@ -25,7 +25,7 @@ LOCSTRING_TABLE = {
     'description_id' : ('DescIdentified', "Localized identified description."),
 }
 
-class Store(NWObjectVarable):
+class Store(object):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
@@ -45,11 +45,16 @@ class Store(NWObjectVarable):
         else:
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
-
     def stage(self):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
+
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
 
     @property
     def script(self):

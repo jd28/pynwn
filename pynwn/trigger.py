@@ -30,7 +30,7 @@ LOCSTRING_TABLE = {
     'name'        : ('LocalizedName', "Localized name."),
 }
 
-class Trigger(NWObjectVarable):
+class Trigger(object):
     def __init__(self, resref, container, instance=False):
         self._scripts = None
         self._vars = None
@@ -49,14 +49,19 @@ class Trigger(NWObjectVarable):
         else:
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
-
     def stage(self):
         """Stages changes to GFF structure.
         """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
+            
     @property
     def scripts(self):
         """Scripts.  Responds to script events:

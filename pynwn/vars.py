@@ -89,12 +89,13 @@ class NWVariable(object):
         return res
 
 class NWObjectVarable(object):
-    """NWObjectVarable is an interface for other objects to inherit the ability to \
+    """NWObjectVarable is an interface for other objects to
     read / write local variables stored in a GFF.
     """
 
-    def __init__(self, gff_struct):
+    def __init__(self, parent_obj, gff_struct):
         self.gff = gff_struct
+        self.parent_obj = parent_obj
         self._floats = None
         self._ints = None
         self._objs = None

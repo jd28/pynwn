@@ -19,10 +19,11 @@ LOCSTRING_TABLE = {
     'description' : ('Description', "Localized description."),
 }
 
-class Waypoint(NWObjectVarable):
+class Waypoint(object):
     def __init__(self, resref, container, instance=False):
         self.is_instance = instance
         self._locstr = {}
+        self._vars = None
 
         if not instance:
             if resref[-4:] != '.utw':
@@ -37,13 +38,19 @@ class Waypoint(NWObjectVarable):
         else:
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
-
     def stage(self):
         """Stage changes to GFF structure.
         """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
+
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
+
 
 class WaypointInstance(Waypoint):
     def __init__(self, gff, parent_obj):

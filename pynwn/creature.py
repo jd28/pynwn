@@ -57,7 +57,7 @@ LOCSTRING_TABLE = {
     'description' : ('Description', "Localized description")
 }
 
-class Creature(NWObjectVarable):
+class Creature(object):
     """This abstracts over UTCs only... It doesn't handle all the additional
     fields one finds in BICs, see object PlayerCharacter for that.
     """
@@ -79,13 +79,18 @@ class Creature(NWObjectVarable):
         else:
             self.gff = resref
 
-        NWObjectVarable.__init__(self, self.gff)
-
     def stage(self):
         """Stages changes creature's GFF structure.
         """
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
+
+    @property
+    def vars(self):
+        """ Variable table """
+        if self._vars: return self._vars
+        self._vars = NWObjectVarable(self, self.gff)
+        return self._vars
 
     @property
     def scripts(self):
