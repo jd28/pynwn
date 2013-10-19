@@ -45,7 +45,7 @@ class TwoDA:
     def __repr__(self):
         """Returns repr of the 2da as a string
         """
-        return repr(self.to_StringIO().getvalue())
+        return str(self.to_StringIO().getvalue())
         
     def __str__(self):
         """Returns a valid 2da as a string
