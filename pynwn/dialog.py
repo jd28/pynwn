@@ -73,6 +73,9 @@ class DialogNode(object):
 
         return result
 
+    def stage(self):
+        self.parent.stage()
+
 DIALOG_NODE_TABLE = {
     'animation'      : ('Animation', 'Animation'),
     'animation_loop' : ('AnimLoop', 'Animation loop'),
