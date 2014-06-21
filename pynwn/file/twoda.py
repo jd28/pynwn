@@ -1,16 +1,14 @@
 import re
-import shlex
 import itertools
-import os, shutil, cStringIO
+import os, cStringIO
 from pynwn.util.helper import convert_to_number
 from pynwn.resource import ContentObject
 
-def make_row(lst, max):
-    return ''.join([s.ljust(m + 4) for s, m in itertools.izip(lst, max)])
+import csv
+from prettytable import PrettyTable, PLAIN_COLUMNS
 
-def max_array(current_max, add):
-    if not current_max: return add
-    return [max(x, y) for x, y in zip(current_max, add)]
+def quote(string):
+    return '"' + string + '"' if ' ' in string else string
 
 class TwoDA:
     """2da Files.
@@ -33,7 +31,6 @@ class TwoDA:
         self.co = source
         self.parse(source.get())
 
-
     def __getitem__(self, index):
         if isinstance(index, int):
             if i >= len(self.rows) or i < 0:
@@ -46,45 +43,11 @@ class TwoDA:
         """Returns repr of the 2da as a string
         """
         return str(self.to_StringIO().getvalue())
-        
+
     def __str__(self):
         """Returns a valid 2da as a string
         """
         return self.to_StringIO().getvalue()
-
-    def expload(self, out_dir='.'):
-        """Extracts each line from a tlk and creates a yaml file.
-        """
-        if not os.path.isdir(out_dir):
-            os.mkdir(out_dir)
-
-        clean_rows = [r for r in self.rows if self.label_valid(r[self.label_pos])]
-
-        for cr in clean_rows:
-            d = {
-                'type': self.type,
-                'entries': dict(itertools.izip(self.columns, [convert_to_number(e) for e in cr]))
-            }
-
-            name = d['entries'][self.label_name]
-            if len(name) > 0:
-                path = os.path.join(out_dir, cr[self.label_pos] + '.yaml')
-                with open(path, 'w') as f:
-                    yaml.dump(d, f, indent=4, default_flow_style=False)
-
-        # Write the label file
-        path = os.path.join(out_dir, self.twoda+'.2da')
-        with open(path, 'w') as f:
-            f.write("2DA V2.0" + self.newline)
-            if self.default:
-                f.write("DEFAULT: %s" % self.default)
-            else:
-                f.write(self.newline)
-
-            f.write("\t\t"+self.columns[self.label_pos]+self.newline)
-            for i, r in enumerate(self.rows):
-                f.write("%d\t\t%s%s" % (i, r[self.label_pos], self.newline))
-
 
     def get(self, row, col):
         """Gets a 2da entry by row and column label or column index.
@@ -110,20 +73,19 @@ class TwoDA:
         result.write("2DA V2.0")
         result.write(self.newline)
 
-        num_adj = len(str(len(self.max)))
-
         if self.default:
             result.write("DEFAULT: %s" % self.default)
 
         result.write(self.newline)
 
-        head = [s.ljust(m + 4) for s, m in itertools.izip(self.columns, self.max)]
-        result.write(''.ljust(num_adj+4) + ''.join(head))
-        result.write(self.newline)
+        x = PrettyTable(self.columns)
+        x.set_style(PLAIN_COLUMNS)
+        x.align = 'l'
+        x.right_padding_width = 4
 
-        for i, r in enumerate(self.rows):
-            result.write(str(i).ljust(num_adj + 4) + make_row(r, self.max))
-            result.write(self.newline)
+        for rs in self.rows:
+            x.add_row([quote(word) for word in rs])
+        result.write(x.get_string())
 
         return result
 
@@ -133,6 +95,8 @@ class TwoDA:
 
         if isinstance(col, str):
             col = self.columns.index(col)
+        else:
+            col += 1
 
         return col
 
@@ -146,55 +110,30 @@ class TwoDA:
         """
         return int(self.get(row, col))
 
-    def label_valid(self, lbl):
-        """Deterimnes if a 2da label is valid.
-        """
-        return not lbl in self.invalid_labels
-
     def parse(self, io):
         """Parses a 2da file.
         """
 
-        lines = [l.strip() for l in iter(io.splitlines()) if l.strip() != '']
-
+        lines = [l.strip() for l in iter(io.splitlines()) if len(l.strip())]
         if len(lines) == 0:
             raise ValueError("Invalid 2da file!")
 
-        it = iter(lines)
-        head = it.next()
-        if not re.match("2DA\s+V2.0", head):
-            raise ValueError("Invalid 2da file!")
+        if not re.match("2DA\s+V2.0", lines[0]):
+            raise ValueError("Invalid 2da file, no 2DA header!")
 
-        # Next line could be a Default line or the column header.
-        # Since we've ridded ourselves of all empty lines.
-        colname = it.next()
-
-        m = self.DEFAULT_RE.match(colname)
+        col_line = 1
+        m = self.DEFAULT_RE.match(lines[1])
         if m:
             self.default = m.group(1)
             # If this was default then column header has to be next.
-            colname = it.next()
+            col_line = 2
 
-        self.columns = self.parse_row(colname, False)
-        self.max = [len(s) for s in self.columns]
-        self.rows = [self.parse_row(r) for r in it]
+        csvreader = csv.reader(lines[col_line:], delimiter=' ', skipinitialspace=True)
+        for row in csvreader:
+            self.rows.append(row)
 
-    def parse_row(self, row, strip_row_number=True):
-        """Parses a 2da row.  Currently this is implimented by using the
-        Python shlex package which parses a superset of 2da row format.
-        So it could parse things that are not legal 2da rows.
-        """
-        if strip_row_number:
-            m = self.ROW_NUM_RE.match(row)
-            if m: row = m.group(1)
-
-        splitter = shlex.shlex(row, posix=False)
-        splitter.whitespace_split = True
-        lst = list(splitter)
-
-        self.max = max_array(self.max, [len(s) for s in lst])
-
-        return lst
+        self.columns = [''] + self.rows[0]
+        self.rows = self.rows[1:]
 
     def set(self, row, col, val):
         """Sets a 2da entry by row and column label or column index.
@@ -203,6 +142,3 @@ class TwoDA:
 
         col = self.get_column_index(col)
         self.rows[row][col] = str(val)
-
-    def write_to(io):
-        pass
