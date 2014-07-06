@@ -46,7 +46,7 @@ class NWVariable(object):
         if not self.has_vars(): return self.default
         v = self.get_var(name)
         if v is None:
-            return default
+            return self.default
         else:
             return v['Value'].val
 

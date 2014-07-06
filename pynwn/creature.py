@@ -8,14 +8,20 @@ from pynwn.vars import *
 __all__ = ['Creature', 'CreatureInstance']
 
 TRANSLATION_TABLE = {
-    'resref'           : ('TemplateResRef', "Resref."),
-    'race'             : ('Race', "Racial Type"),
+    # Shared with Player Character
     'appearance'       : ('Appearance_Type', "Appearance ID."),
+    'bodybag'          : ('BodyBag', "Body bag."),
+    'charisma'         : ('Cha', "Creature's charisma."),
+    'cr'               : ('ChallengeRating', "Challenge Rating"),
+    # Class List
+    'constitution'     : ('Con', "Creature's constitution."),
+    'conversation'     : ('Conversation', "Dialog resref."),
+
+    'race'             : ('Race', "Racial Type"),
     'gender'           : ('Gender', "Gender."),
     'phenotype'        : ('Phenotype', "Phenotype ID."),
     'portrait_id'      : ('PortraitId', "Portrait ID."),
     'tag'              : ('Tag', "Tag"),
-    'conversation'     : ('Conversation', "Dialog resref."),
     'is_pc'            : ('IsPC', "Player character flag."),
     'faction'          : ('FactionID', "Faction ID."),
     'disarmable'       : ('Disarmable', "Disarmable flag."),
@@ -27,14 +33,14 @@ TRANSLATION_TABLE = {
     'interruptable'    : ('Interruptable', "Conversation interruptable flag."),
     'lootable'         : ('Lootable', "Lootable."),
     'no_perm_death'    : ('NoPermDeath', "No permenant death flag."),
-    'bodybag'          : ('BodyBag', "Body bag."),
     'starting_package' : ('StartingPackage', "Starting package ID."),
     'corpse_decay'     : ('DecayTime', "Corpse decay time."),
     'strength'         : ('Str', "Creature's strength."),
     'dexterity'        : ('Dex', "Creature's dexterity."),
-    'constitution'     : ('Con', "Creature's constitution."),
+
     'intelligence'     : ('Int', "Creature's intelligence."),
     'wisdom'           : ('Wis', "Creature's wisdom."),
+
     'walkrate'         : ('WalkRate', "Walkrate."),
     'natural_ac'       : ('NaturalAC', "Natural AC."),
     'hp'               : ('HitPoints', "HP."),
@@ -45,10 +51,14 @@ TRANSLATION_TABLE = {
     'save_will'        : ('willbonus', "Will saving throw."),
     'goodevil'         : ('GoodEvil', "Good - Evil"),
     'lawchaos'         : ('LawfulChaotic', "Lawful - Chaotic"),
-    'cr'               : ('ChallengeRating', "Challenge Rating"),
     'perception_range' : ('PerceptionRange', "Perception Range."),
     'palette_id'       : ('PaletteID', "Palette ID."),
+
+    # Unique to Creature
+
+    'resref'           : ('TemplateResRef', "Resref."),
     'comment'          : ('Comment', "Comment.")
+
 }
 
 LOCSTRING_TABLE = {
@@ -139,6 +149,13 @@ class Creature(object):
         :returns: List of skill ranks in order of skill ID.
         """
         return [sk['Rank'].val for sk in self.gff['SkillList']]
+
+    def get_skill(self, skill):
+        return self.gff['SkillList'][skill]['Rank']
+
+    def set_skill(self, skill, value):
+        self.gff['SkillList'][skill]['Rank'].val = value
+        self.stage()
 
     @property
     def feats(self):

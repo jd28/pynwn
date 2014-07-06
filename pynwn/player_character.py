@@ -33,6 +33,7 @@ TRANSLATION_TABLE = {
     'constitution'       : ('Con', "Creature's constitution."),
     'intelligence'       : ('Int', "Creature's intelligence."),
     'wisdom'             : ('Wis', "Creature's wisdom."),
+    'charisma'           : ('Cha', "Creature's charisma."),
     'natural_ac'         : ('NaturalAC', "Natural AC."),
     'plot'               : ('Plot', "Plot flag."),
     'no_perm_death'      : ('NoPermDeath', "No permenant death flag."),
