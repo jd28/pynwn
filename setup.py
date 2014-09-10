@@ -9,7 +9,6 @@ setup(
     packages = ['pynwn',
                 'pynwn.nwn',
                 'pynwn.file',
-                'pynwn.maths',
                 'pynwn.util',],
     license='GPL v2 and 2-Clause BSD License',
     install_requires=[
