@@ -27,7 +27,7 @@ class Erf(res.Container):
         if self.has_modified_content_objects():
             with open(self.io + '.tmp', 'wb') as f:
                 self.write_to(f)
-                
+
             shutil.move(self.io + '.tmp', self.io)
 
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
@@ -51,7 +51,7 @@ class Erf(res.Container):
             pad = 0
             max = len(co.resref)
             if len(co.resref) > fnlen:
-                print "truncating filename %s, longer than %d" % (co.resref, fnlen)
+                print("truncating filename %s, longer than %d" % (co.resref, fnlen))
                 max = fnlen
             else:
                 pad = fnlen - len(co.resref)
@@ -119,11 +119,11 @@ class Erf(res.Container):
 
             for ls in range(lstr_count):
                 if len(lstr) == 0:
-                    print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls)
+                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls))
                     break
 
                 if len(lstr) < 8:
-                    print "locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr
+                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr)
                     break
 
                 lid, strsz = struct.unpack("<L L", lstr[:8])

@@ -238,9 +238,9 @@ class Gff(object):
             self.listoffset, self.listsize = header[12:14]
         else:
             if header[1] != self.Version:
-                raise ValueError, "File: %s: gff file version '%s' does not match current valid version '%s'" % (self.co.get_filename(), header[1], self.Version)
+                raise ValueError("File: %s: gff file version '%s' does not match current valid version '%s'" % (self.co.get_filename(), header[1], self.Version))
             else:
-                raise ValueError, "File: %s: gff file type '%s' does not match specified file type '%s'" % (self.co.get_filename(), header[0].rstrip(), self.filetype)
+                raise ValueError("File: %s: gff file type '%s' does not match specified file type '%s'" % (self.co.get_filename(), header[0].rstrip(), self.filetype))
 
         # position the source file at the struct array and prepare structs list
         self.source.seek(self.structoffset)
@@ -322,12 +322,12 @@ class Gff(object):
         file.
         """
 
-        print "Attempting to save %s" % (self.co.get_filename())
+        print("Attempting to save %s" % (self.co.get_filename()))
 
         # prepare the intermediate lists and parse the gff structure into the
         # fields and structs lists
         self.fields, self.labels, self.structs = [], [], []
-        self.structs.append([0xFFFFFFFFL, []])
+        self.structs.append([0xFFFFFFFF, []])
         topfields = self.build_fields(self._structure)
         self.structs[0][1] = topfields
 

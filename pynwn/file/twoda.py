@@ -1,6 +1,6 @@
 import re
 import itertools
-import os, cStringIO
+import os, io
 from pynwn.util.helper import convert_to_number
 from pynwn.resource import ContentObject
 
@@ -29,14 +29,14 @@ class TwoDA:
         self.newline = "\n"
         self.default = None
         self.co = source
-        self.parse(source.get())
+        self.parse(source.get('r'))
 
-    def __getitem__(self, index):
-        if isinstance(index, int):
+    def __getitem__(self, i):
+        if isinstance(i, int):
             if i >= len(self.rows) or i < 0:
                 raise ValueError("Invalid row index!")
             return self.rows[i]
-        elif isinstance(index, slice):
+        elif isinstance(i, slice):
             pass
 
     def __repr__(self):
@@ -69,7 +69,7 @@ class TwoDA:
     def to_StringIO(self):
         """Returns 2da written in a cStringIO buffer.
         """
-        result = cStringIO.StringIO()
+        result = io.StringIO()
         result.write("2DA V2.0")
         result.write(self.newline)
 
@@ -85,6 +85,7 @@ class TwoDA:
 
         for rs in self.rows:
             x.add_row([quote(word) for word in rs])
+
         result.write(x.get_string())
 
         return result
@@ -142,3 +143,21 @@ class TwoDA:
 
         col = self.get_column_index(col)
         self.rows[row][col] = str(val)
+
+    def add_padding(self, start, stop):
+        pad = ['****'] * (len(self.columns) - 1)
+        for i in range(start, stop+1):
+            self.rows.append([str(i)] + pad)
+
+
+    def merge_2dx(self, twodx):
+        highest = 0
+        for r in twodx.rows:
+            highest = max(highest, int(r[0]))
+
+        if highest > 0 and highest > len(self.rows):
+            print("adding padding")
+            self.add_padding(len(self.rows), highest)
+
+        for r in twodx.rows:
+            self.rows[int(r[0])] = r

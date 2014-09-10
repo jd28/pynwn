@@ -15,7 +15,7 @@ if __name__ == '__main__':
     tga_dict = {}
 
     for area in mgr.module.areas:
-        print "Generating minimap for %s" % area.get_name(0)
+        print("Generating minimap for %s" % area.get_name(0))
 
         config = ConfigParser.ConfigParser()
 
@@ -64,5 +64,5 @@ if __name__ == '__main__':
             new_im.save(area.resref + '.png')
 
         except Exception as e:
-            print e
+            print(e)
             continue

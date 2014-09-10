@@ -47,5 +47,5 @@ if __name__ == '__main__':
     mod = Module('test.mod')
 
     for dlg in mod.glob('*.dlg'):
-        print dlg.resref
-        print dialog_to_str(dlg), '\n\n'
+        print(dlg.resref)
+        print(dialog_to_str(dlg), '\n\n')

@@ -125,7 +125,7 @@ class Key(res.Container):
                 fn = o.get_filename()
                 if self.fn_to_co.has_key(fn) and self.fn_to_co[fn][2] < bif_idx:
                     oo, biff, unused = self.fn_to_co[fn]
-                    print "%s, in %s shadowed by file in %s" % (fn, biff.io, biff.io)
+                    print("%s, in %s shadowed by file in %s" % (fn, biff.io, biff.io))
                     self.content.remove(oo)
 
                 self.fn_to_co[fn] = (o, bif, bif_idx)

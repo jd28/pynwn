@@ -14,14 +14,14 @@ def check_vars(obj):
     for var, val in obj.vars.string.list():
         try:
             x = int(val)
-            print "    %s: Variable %s (%s) is convertable to int!" % (obj.resref, var, val)
+            print ("    %s: Variable %s (%s) is convertable to int!" % (obj.resref, var, val))
             continue # continue since if it's convertible to int it will also convert to float.
         except:
             pass
 
         try:
             x = float(val)
-            print "    %s: Variable %s (%s) is convertable to float!" % (obj.resref, var, val)
+            print("    %s: Variable %s (%s) is convertable to float!" % (obj.resref, var, val))
         except:
             pass
 

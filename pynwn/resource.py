@@ -1,5 +1,5 @@
 import fnmatch, os
-import cStringIO
+import io
 
 from itertools import chain
 
@@ -111,6 +111,10 @@ Extensions = {
     'fxe': 4005,
     'jpg': 4007,
     'pwc': 4008,
+
+    #custom
+    '2dx': 4009,
+
     'ids': 9996,
     'erf': 9997,
     'bif': 9998,
@@ -225,6 +229,10 @@ ResTypes = {
     4005: 'fxe',
     4007: 'jpg',
     4008: 'pwc',
+
+    #custom
+    4009: '2dx',
+
     9996: 'ids',
     9997: 'erf',
     9998: 'bif',
@@ -251,7 +259,7 @@ class ContentObject(object):
     def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
         self.resref = resref.lower()
 
-        if not ResTypes.has_key(res_type):
+        if not res_type in ResTypes:
             raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
         self.modified = False
@@ -270,17 +278,18 @@ class ContentObject(object):
         basename = os.path.basename(abspath)
         basename, ext = os.path.splitext(basename)
         ext = ext[-3:]
-        if not Extensions.has_key(ext): raise ValueError("Invalid Resource Type: %s!" % ext)
+        if not ext in Extensions: raise ValueError("Invalid Resource Type: %s!" % ext)
 
         size = os.path.getsize(abspath)
 
         return ContentObject(basename, Extensions[ext], abspath, 0, size, abspath)
 
-    def get(self):
+    def get(self, mode = 'rb'):
         """Returns the actual data.
         """
+        mode = 'rb' if mode is None else mode
         if isinstance(self.io, str):
-            with open(self.io, 'rb') as f:
+            with open(self.io, mode) as f:
                 f.seek(self.offset)
                 return f.read(self.size)
         else:
@@ -288,7 +297,7 @@ class ContentObject(object):
 
     def to_io(self):
         if isinstance(self.io, str):
-            return cStringIO.StringIO(self.get())
+            return io.StringIO(self.get())
         else:
             return io
 
@@ -339,7 +348,7 @@ def construct(co, cont):
     elif co.res_type == 2029:
         from pynwn.dialog import Dialog
         return Dialog((co, cont))
-    
+
     return None
 
 class Container(object):
@@ -356,7 +365,7 @@ class Container(object):
         """
         co = None
         if isinstance(name, str):
-            if not self.filenames.has_key(name):
+            if not name in self.filenames:
                 raise ValueError("No ContentObject exists for %s" % name)
             co = self.filenames[name]
         elif isinstance(name, int):
@@ -414,7 +423,7 @@ class Container(object):
         """Determines if container has a content object associated with
         a given filename.
         """
-        return self.filenames.has_key(fname)
+        return fname in self.filenames
 
 class DirectoryContainer(Container):
     """A Container that directly wraps a directory (e.g. override/).
@@ -432,7 +441,7 @@ class DirectoryContainer(Container):
         self.path = path
         for dirname, dirnames, filenames in os.walk(self.path):
             for filename in filenames:
-                if not only_nwn or Extensions.has_key(os.path.splitext(filename)[1][1:]):
+                if not only_nwn or os.path.splitext(filename)[1][1:] in Extensions:
                     self.add_file(os.path.join(dirname, filename))
 
     def save(self):
@@ -506,13 +515,13 @@ class ResourceManager(object):
             h_path = os.path.join(path, 'hak', hak)
             h_file = h_path + '.hak'
             if os.path.isfile(h_file):
-                print "Adding HAK %s..." % (h_file)
+                print("Adding HAK %s..." % (h_file))
                 mgr.add_container(Erf.from_file(h_file))
             elif os.path.isdir(h_path):
                 mgr.add_container(DirectoryContainer(h_path))
-                print "Adding HAK directory %s..." % h_path
+                print("Adding HAK directory %s..." % h_path)
             else:
-                print "Error no HAK file or HAK directory found: %s" % hak
+                print("Error no HAK file or HAK directory found: %s" % hak)
 
 
         # First, all the base data files.

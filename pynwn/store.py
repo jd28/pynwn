@@ -105,7 +105,8 @@ class Store(object):
                     st_inst  = RepositoryItem(gff_inst)
                     items.append(st_inst)
                     i += 1
-            except Exception:
+            except Exception as e:
+                print(e)
                 pass
 
             res.append(items)
@@ -143,7 +144,8 @@ class StoreInstance(Store):
                     items.append(st_inst)
                     i += 1
 
-            except Exception, e:
+            except Exception as e:
+                print(e)
                 pass
 
             res.append( items )
