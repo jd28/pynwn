@@ -1,4 +1,4 @@
-import datetime, os, struct, shutil
+import datetime, os, struct, shutil, sys
 
 import pynwn.resource as res
 from pynwn.util.helper import chunks
@@ -97,12 +97,13 @@ class Erf(res.Container):
             header = io.read(160)
             hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
-            ftype = hs[0].strip()
+            ftype = hs[0].decode(sys.stdout.encoding).strip()
             if not ftype in VALID_TYPES: raise ValueError("Invalid file type!")
             new_erf.ftype = ftype
 
-            fname_len = Erf.filename_length(hs[1])
-            new_erf.fversion = hs[1]
+            fvers = hs[1].decode(sys.stdout.encoding)
+            fname_len = Erf.filename_length(fvers)
+            new_erf.fversion = fvers
 
             lstr_count = hs[2]
             lstr_size = hs[3]
@@ -133,10 +134,10 @@ class Erf(res.Container):
                 # Temporary hack around the fact that the erf.exe adds an extra null to the end of
                 # the description string.
                 fubar = """Created by "erf", the command-line ERF utility.\nCopyright (C) 2003-2009, Gareth Hughes and Doug Swarin"""
-                if fubar in lstr:
+                if fubar in lstr.decode(sys.stdout.encoding):
                     strsz += 1
 
-                str = struct.unpack("8x %ds" % strsz, lstr)[0] #
+                str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]
@@ -152,7 +153,8 @@ class Erf(res.Container):
             keylist = struct.unpack(fmt, keylist)
 
             for resref, res_id, res_type, unused in chunks(keylist, 4):
-                co = res.ContentObject(resref.rstrip(' \t\r\n\0'), res_type, fname)
+                co = res.ContentObject(resref.decode(sys.stdout.encoding).rstrip(' \t\r\n\0'),
+                                       res_type, fname)
                 new_erf.add(co)
 
             resourcelist_entry_size = 4 + 4

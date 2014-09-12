@@ -44,7 +44,7 @@ class Sound(object):
                 self.gff = Gff(resource[0])
         else:
             self.gff = resource
-            
+
     def stage(self):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
@@ -71,10 +71,10 @@ class SoundInstance(Sound):
         """
         self.parent_obj.stage()
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(Sound, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

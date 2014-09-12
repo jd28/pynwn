@@ -53,7 +53,7 @@ class Module(object):
         Note: all file names are converted to lowercase.
         """
         return self.container.glob(glob_pattern)
-        
+
     def stage(self):
         """Stages changes to the modules IFO GFF structure."""
         if self.gff.is_loaded():
@@ -65,7 +65,7 @@ class Module(object):
         if self._vars: return self._vars
         self._vars = NWObjectVarable(self, self.gff)
         return self._vars
-            
+
     @property
     def areas(self):
         """Areas.
@@ -145,10 +145,10 @@ class Module(object):
         return self._scripts
 
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(Module, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

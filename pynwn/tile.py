@@ -27,5 +27,5 @@ class TileInstance(object):
                 self.gff['Tile_AnimLoop2'],
                 self.gff['Tile_AnimLoop3'])
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(TileInstance, key, make_gff_property('gff', val))

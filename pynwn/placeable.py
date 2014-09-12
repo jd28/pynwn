@@ -80,7 +80,7 @@ class Placeable(object):
         if self._vars: return self._vars
         self._vars = NWObjectVarable(self, self.gff)
         return self._vars
-            
+
     @property
     def script(self):
         """Scripts.  Responds to script events:
@@ -157,7 +157,7 @@ class PlaceableInstance(Placeable):
         """ Stage changes to the placeable instance's parent GFF structure.
         """
         self.parent_obj.stage()
-        
+
     @property
     def items(self):
         """Inventory items.
@@ -186,10 +186,10 @@ class PlaceableInstance(Placeable):
     def position(self):
         return (self.gff['X'], self.gff['Y'], self.gff['Z'])
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(Placeable, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

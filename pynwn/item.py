@@ -30,7 +30,7 @@ class RepositoryItem(object):
         """
         return (self.gff['Repos_PosX'], self.gff['Repos_Posy'])
 
-for key, val in REPO_TRANSLATION_TABLE.iteritems():
+for key, val in REPO_TRANSLATION_TABLE.items():
     setattr(RepositoryItem, key, make_gff_property('gff', val))
 
 IP_TRANSLATION_TABLE = {
@@ -48,7 +48,7 @@ class ItemProperty(object):
         self.gff = gff
         self.parent_obj = parent_obj
 
-for key, val in IP_TRANSLATION_TABLE.iteritems():
+for key, val in IP_TRANSLATION_TABLE.items():
     setattr(ItemProperty, key, make_gff_property('gff', val))
 
 TRANSLATION_TABLE = {
@@ -102,7 +102,7 @@ class Item(object):
         if self._vars: return self._vars
         self._vars = NWObjectVarable(self, self.gff)
         return self._vars
-            
+
     @property
     def model(self):
         # It will probably be best to encapsulate this...
@@ -138,10 +138,10 @@ class ItemInstance(Item):
         """
         self.parent_obj.stage()
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(Item, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

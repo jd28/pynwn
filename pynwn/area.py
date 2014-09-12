@@ -225,10 +225,10 @@ class Area(object):
         """
         return self.get_instances('WaypointList', WaypointInstance)
 
-for key, val in ARE_TRANSLATION_TABLE.iteritems():
+for key, val in ARE_TRANSLATION_TABLE.items():
     setattr(Area, key, make_gff_property('are', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('are', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

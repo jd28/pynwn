@@ -1,4 +1,4 @@
-import struct
+import struct, sys
 
 class NWByte(object):
     type_id   = 0
@@ -21,7 +21,7 @@ class NWByte(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWByte(struct.unpack('B3x', source.read(4))[0])
@@ -50,7 +50,7 @@ class NWChar(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWChar(struct.unpack('c3x', source.read(4))[0])
@@ -79,7 +79,7 @@ class NWWord(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWWord(struct.unpack('H2x', source.read(4))[0])
@@ -108,7 +108,7 @@ class NWShort(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWShort(struct.unpack('h2x', source.read(4))[0])
@@ -137,7 +137,7 @@ class NWDword(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWDword(struct.unpack('I', source.read(4))[0])
@@ -166,7 +166,7 @@ class NWInt(object):
     @value.setter
     def value(self, val):
         self.val = val
-    
+
     @staticmethod
     def unpack(source):
         return NWInt(struct.unpack('i', source.read(4))[0])
@@ -187,7 +187,7 @@ class NWDword64(object):
 
     def __str__(self):
         return str(self.val)
-    
+
     @property
     def value(self):
         return self.val
@@ -325,7 +325,7 @@ class NWString(object):
         source.seek(offset)
         length = struct.unpack('I', source.read(4))[0]
         pattern = "%ds" % length
-        data = struct.unpack(pattern, source.read(length))[0]
+        data = struct.unpack(pattern, source.read(length))[0].decode(sys.stdout.encoding)
 
         return NWString(data)
 
@@ -373,7 +373,7 @@ class NWResref(object):
             val = ''
         else:
             pattern = "%ds" % length
-            val = struct.unpack(pattern, source.read(length))[0]
+            val = struct.unpack(pattern, source.read(length))[0].decode(sys.stdout.encoding)
 
         return NWResref(val)
 
@@ -430,7 +430,7 @@ class NWLocalizedString(object):
             for substring in range(0, count):
                 id, length = struct.unpack('2I', source.read(8))
                 pattern = "%ds" % length
-                data = struct.unpack(pattern, source.read(struct.calcsize(pattern)))[0]
+                data = struct.unpack(pattern, source.read(struct.calcsize(pattern)))[0].decode(sys.stdout.encoding)
                 result.append([id, data])
 
         source.seek(position)

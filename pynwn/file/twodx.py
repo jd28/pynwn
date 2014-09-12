@@ -15,7 +15,7 @@ class TwoDX:
     """
 
     ROW_NUM_RE = re.compile('^\d+\s+(.*)')
-    DEFAULT_RE = re.compile('^DEFAULT:\s+(.*)')
+    TLK_RE = re.compile('^TLK:\s+([0-9]+)\s+\((.*)\)')
 
     def __init__(self, source):
         if isinstance(source, str):
@@ -27,7 +27,8 @@ class TwoDX:
         self.rows = []
         self.max = None
         self.newline = "\n"
-        self.default = None
+        self.tlk_columns = None
+        self.tlk_offset = None
         self.co = source
         self.parse(source.get('r'))
 
@@ -55,6 +56,12 @@ class TwoDX:
         col = self.get_column_index(col)
         return self.rows[row][col]
 
+    def set(self, row, col, val):
+        """Gets a 2dx entry by row and column label or column index.
+        """
+        col = self.get_column_index(col)
+        self.rows[row][col] = val
+
     def to_ContentObject(self):
         """Returns 2dx as a ContentObject.  It's .io contents
         are cStringIO buffer.
@@ -73,9 +80,10 @@ class TwoDX:
         result.write("2DX V2.0")
         result.write(self.newline)
 
-        if self.default:
-            result.write("DEFAULT: %s" % self.default)
-
+        if self.tlk_offset:
+            result.write("TLK: %d" % self.tlk_offset)
+            if self.tlk_columns:
+                result.write("(%s)" % ",".join(self.tlk_columns))
         result.write(self.newline)
 
         x = PrettyTable(self.columns)
@@ -122,9 +130,12 @@ class TwoDX:
             raise ValueError("Invalid 2dx file, no 2DX header!")
 
         col_line = 1
-        m = self.DEFAULT_RE.match(lines[1])
+        m = self.TLK_RE.match(lines[1])
         if m:
-            self.default = m.group(1)
+            self.tlk_offset = m.group(1)
+            self.tlk_columns = m.group(2)
+            if self.tlk_columns:
+                self.tlk_columns = [int(s.strip()) for s in self.tlk_columns.split(',')]
             # If this was default then column header has to be next.
             col_line = 2
 
@@ -134,6 +145,17 @@ class TwoDX:
 
         self.columns = [''] + self.rows[0]
         self.rows = self.rows[1:]
+
+        if self.tlk_columns and len(self.tlk_columns):
+            self.update_tlks()
+
+    def update_tlks(self):
+        offset = self.tlk_offset
+        for c in self.tlk_columns:
+            for i in range(len(self.rows)):
+                cur = self.get(i, c)
+                if cur != '****':
+                    self.set(i, c, str(int(cur) + int(self.tlk_offset) + 0x01000000))
 
     def set(self, row, col, val):
         """Sets a 2dx entry by row and column label or column index.

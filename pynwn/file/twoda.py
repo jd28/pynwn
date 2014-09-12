@@ -156,7 +156,6 @@ class TwoDA:
             highest = max(highest, int(r[0]))
 
         if highest > 0 and highest > len(self.rows):
-            print("adding padding")
             self.add_padding(len(self.rows), highest)
 
         for r in twodx.rows:

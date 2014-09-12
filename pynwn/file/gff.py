@@ -29,9 +29,9 @@
 #  NeverWinter Nights and all attendent content, as well as the GFF file format
 #  remains the copyright of Bioware.
 
-import os, struct
+import os, struct, sys
 import chardet
-import cStringIO
+import io
 import pynwn.resource as res
 from pynwn.util.helper import chunks
 from pynwn.nwn.types import *
@@ -224,12 +224,13 @@ class Gff(object):
         """Loads the source of the associated gff file."""
 
         # attempt to open the gff file and load its header
-        self.source = cStringIO.StringIO(self.co.get())
+        self.source = io.BytesIO(self.co.get())
 
         header = struct.unpack(self.HeaderPattern,
                                self.source.read(struct.calcsize(self.HeaderPattern)))
 
-        if header[0].rstrip() == self.filetype and header[1] == self.Version:
+        if (header[0].decode(sys.stdout.encoding).rstrip() == self.filetype
+            and header[1].decode(sys.stdout.encoding) == self.Version):
             self.structoffset, self.structcount = header[2:4]
             self.fieldoffset, self.fieldcount = header[4:6]
             self.labeloffset, self.labelcount = header[6:8]
@@ -237,7 +238,7 @@ class Gff(object):
             self.indiceoffset, self.indicesize = header[10:12]
             self.listoffset, self.listsize = header[12:14]
         else:
-            if header[1] != self.Version:
+            if header[1].decode(sys.stdout.encoding) != self.Version:
                 raise ValueError("File: %s: gff file version '%s' does not match current valid version '%s'" % (self.co.get_filename(), header[1], self.Version))
             else:
                 raise ValueError("File: %s: gff file type '%s' does not match specified file type '%s'" % (self.co.get_filename(), header[0].rstrip(), self.filetype))
@@ -275,7 +276,7 @@ class Gff(object):
         size = struct.calcsize(self.LabelPattern)
         rd = self.source.read(size * self.labelcount)
         for chunk in chunks(rd, size):
-            label = struct.unpack(self.LabelPattern, chunk)[0]
+            label = struct.unpack(self.LabelPattern, chunk)[0].decode(sys.stdout.encoding)
             self.labels.append(label.rstrip('\x00'))
 
         # position the source file at the field array and prepare fields list

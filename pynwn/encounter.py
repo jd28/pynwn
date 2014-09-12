@@ -16,7 +16,7 @@ class EncounterCreature(object):
 
     def stage(self):
         """Stages changes to the encounter creature instances parent object.
-        """        
+        """
         self.parent_obj.stage()
 
 ENC_CRE_TABLE = {
@@ -26,7 +26,7 @@ ENC_CRE_TABLE = {
     'unique'     : ('SingleSpawn', 'Unique spawn.')
 }
 
-for key, val in ENC_CRE_TABLE.iteritems():
+for key, val in ENC_CRE_TABLE.items():
     setattr(EncounterCreature, key, make_gff_property('gff', val))
 
 TRANSLATION_TABLE = {
@@ -131,10 +131,10 @@ class EncounterInstance(Encounter):
         """
         self.parent_obj.stage()
 
-for key, val in TRANSLATION_TABLE.iteritems():
+for key, val in TRANSLATION_TABLE.items():
     setattr(Encounter, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])

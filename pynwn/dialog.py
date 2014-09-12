@@ -42,7 +42,7 @@ DIALOG_PTR_TABLE = {
     'link_comment' : ('LinkComment', 'Link comment.'),
 }
 
-for key, val in DIALOG_PTR_TABLE.iteritems():
+for key, val in DIALOG_PTR_TABLE.items():
     setattr(DialogPointer, key, make_gff_property('gff', val))
 
 class DialogNode(object):
@@ -91,10 +91,10 @@ DIALOG_NODE_LOCSTRINGS = {
     'text' : ('Text', 'Text')
 }
 
-for key, val in DIALOG_NODE_TABLE.iteritems():
+for key, val in DIALOG_NODE_TABLE.items():
     setattr(DialogNode, key, make_gff_property('gff', val))
 
-for key, val in DIALOG_NODE_LOCSTRINGS.iteritems():
+for key, val in DIALOG_NODE_LOCSTRINGS.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])
@@ -199,5 +199,5 @@ DIALOG_TABLE = {
     'word_count'   : ('NumWords', 'Word count.'),
 }
 
-for key, val in DIALOG_TABLE.iteritems():
+for key, val in DIALOG_TABLE.items():
     setattr(Dialog, key, make_gff_property('gff', val))
