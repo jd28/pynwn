@@ -114,6 +114,7 @@ class TwoDA:
     def parse(self, io):
         """Parses a 2da file.
         """
+        io = io.replace('\t', ' ')
 
         lines = [l.strip() for l in iter(io.splitlines()) if len(l.strip())]
         if len(lines) == 0:
