@@ -127,8 +127,7 @@ class TwoDA:
         m = self.DEFAULT_RE.match(lines[1])
         if m:
             self.default = m.group(1)
-            # If this was default then column header has to be next.
-            col_line = 2
+            col_line += 1
 
         csvreader = csv.reader(lines[col_line:], delimiter=' ', skipinitialspace=True)
         for row in csvreader:
