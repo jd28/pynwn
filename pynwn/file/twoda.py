@@ -161,3 +161,11 @@ class TwoDA:
 
         for r in twodx.rows:
             self.rows[int(r[0])] = r
+
+    def has_column(self, col):
+        return col in self.columns
+
+    def add_column(self, col):
+        self.columns.append(col)
+        for r in self.rows:
+            r.append('****')
