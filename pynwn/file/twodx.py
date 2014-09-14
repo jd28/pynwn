@@ -16,6 +16,7 @@ class TwoDX:
 
     ROW_NUM_RE = re.compile('^\d+\s+(.*)')
     TLK_RE = re.compile('^TLK:\s+([0-9]+)\s+\((.*)\)')
+    DESC_RE = re.compile('^DESCRIPTION: (.*)')
 
     def __init__(self, source):
         if isinstance(source, str):
@@ -30,6 +31,7 @@ class TwoDX:
         self.tlk_columns = None
         self.tlk_offset = None
         self.co = source
+        self.description = None
         self.parse(source.get('r'))
 
     def __getitem__(self, i):
@@ -130,15 +132,24 @@ class TwoDX:
             raise ValueError("Invalid 2dx file, no 2DX header!")
 
         col_line = 1
-        m = self.TLK_RE.match(lines[1])
-        if m:
-            self.tlk_offset = m.group(1)
-            self.tlk_columns = m.group(2)
-            if self.tlk_columns:
-                self.tlk_columns = [int(s.strip()) for s in self.tlk_columns.split(',')]
-            # If this was default then column header has to be next.
-            col_line = 2
+        i = 1
+        while True:
+            m = self.TLK_RE.match(lines[i])
+            if m:
+                self.tlk_offset = m.group(1)
+                self.tlk_columns = m.group(2)
+                if self.tlk_columns:
+                    self.tlk_columns = [s.strip() for s in self.tlk_columns.split(',')]
+                i += 1
+                continue
+            m = self.DESC_RE.match(lines[i])
+            if m:
+                self.description = m.group(1)
+                i += 1
+                continue
+            break
 
+        col_line = i
         csvreader = csv.reader(lines[col_line:], delimiter=' ', skipinitialspace=True)
         for row in csvreader:
             self.rows.append(row)
