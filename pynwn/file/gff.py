@@ -110,7 +110,10 @@ class GffInstance(object):
         self.index  = list_index
 
     def __getitem__(self, name):
-        res = self.parent[self.field][self.index][name]
+        try:
+            res = self.parent[self.field][self.index][name]
+        except KeyError:
+            return None
         if (isinstance(res, list) or
             isinstance(res, dict) or
             isinstance(res, NWLocalizedString)):
