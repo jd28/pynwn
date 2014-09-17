@@ -65,6 +65,7 @@ TRANSLATION_TABLE = {
     'cursed'           : ('Cursed', "Cursed flag."),
     'palette_id'       : ('PaletteID', "Palette ID."),
     'comment'          : ('Comment', "Comment."),
+    'display_name': ('DisplayName', 'Display Name.'),
 }
 
 LOCSTRING_TABLE = {
