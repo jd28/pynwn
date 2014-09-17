@@ -1,4 +1,4 @@
-import struct
+import struct, sys
 
 from pynwn.nwn.consts import *
 
@@ -53,7 +53,7 @@ class Tlk:
                 'volume_variance': 0,
                 'pitch_variance': 0
             }
-        elif self.cache.has_key(i):
+        elif i in self.cache:
             return self.cache[i]
         elif i >= len(self):
             raise ValueError( "Invalid TLK entry: %d" % i )
@@ -69,13 +69,13 @@ class Tlk:
 
             temp = struct.unpack("I 16s I I I I f", data)
             flags, sound_resref, v_variance, p_variance, offset, size, sound_length = temp
-            sound_resref = sound_resref.encode()
+            sound_resref = sound_resref
 
             self.io.seek(self.str_offset + offset)
             text = self.io.read(size)
 
-            text = text if flags & 0x1 > 0 else ""
-            sound = sound_resref if flags & 0x2 > 0 else ""
+            text = text.decode(sys.stdout.encoding) if flags & 0x1 > 0 else ""
+            sound = sound_resref.decode(sys.stdout.encoding) if flags & 0x2 > 0 else ""
             sound_length = float(sound_length) if flags & 0x4 > 0 else 0.0
 
             self.cache[i] = {
@@ -133,7 +133,7 @@ class Tlk:
             self[loc + i] = tlk[i]
 
 class TlkTable(object):
-    def __init__(dialog, custom = None, dialogf = None, customf = None):
+    def __init__(self, dialog, custom = None, dialogf = None, customf = None):
         self.dm = Tlk(dialog)
         self.df = Tlk(dialogf) if dialogf else self.dm
         self.cm = Tlk(custom) if custom else None
@@ -155,5 +155,5 @@ class TlkTable(object):
 
         if t is None:
             raise ValueError("No such TLK")
-        
+
         return t[strref]
