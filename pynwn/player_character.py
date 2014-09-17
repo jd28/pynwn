@@ -1,6 +1,7 @@
 from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
+from pynwn.file.gff import GffInstance
 
-from pynwn.item import RepositoryItem
+from pynwn.item import RepositoryItem, ItemInstance
 from pynwn.scripts import *
 from pynwn.vars import *
 
@@ -99,10 +100,28 @@ class PlayerCharacter( object ):
         if self.gff.is_loaded():
             self.container.add_to_saves(self.gff)
 
-for key, val in TRANSLATION_TABLE.iteritems():
+    @property
+    def equips(self):
+        """ Creature's equipment list.
+
+        :returns: List of tuples containing equipment ID and ItemInstance.
+        """
+        result = []
+        i = 0
+        for p in self.gff['Equip_ItemList']:
+            gff_inst = GffInstance(self.gff, 'Equip_ItemList', i)
+            st_inst  = ItemInstance(gff_inst, self)
+
+            equip_slot = p['_STRUCT_TYPE_']
+            result.append((equip_slot, st_inst))
+            i += 1
+
+        return result
+
+for key, val in TRANSLATION_TABLE.items():
     setattr(PlayerCharacter, key, make_gff_property('gff', val))
 
-for key, val in LOCSTRING_TABLE.iteritems():
+for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])
