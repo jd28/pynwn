@@ -10,7 +10,7 @@ class Tlk:
     DATA_ELEMENT_SIZE = 4 + 16 + 4 + 4 + 4 + 4 + 4
 
     def __init__(self, io = None):
-        self.cache = {}
+        self.entries = {}
         if io:
             self.io = io
             buf = self.io.read(self.HEADER_SIZE)
@@ -19,7 +19,7 @@ class Tlk:
             self.ftype, self.fvers, self.lang, self.str_count, self.str_offset = temp
         else:
             self.io = None
-            self.ftype = 'TLK'
+            self.ftype = 'TLK '
             self.fvers = 'V3.0'
             self.lang = 0
             self.str_count = 0
@@ -45,24 +45,12 @@ class Tlk:
 
             return n
 
-        if i == 0xffffffff:
-            return {
-                'text': '',
-                'sound': "",
-                'sound_length': 0.0,
-                'volume_variance': 0,
-                'pitch_variance': 0
-            }
-        elif i in self.cache:
-            return self.cache[i]
-        elif i >= len(self):
-            raise ValueError( "Invalid TLK entry: %d" % i )
-        elif i < 0:
-            if len(self) - 1 < 0:
-                raise ValueError( "Invalid TLK entry: %d" % i )
-            return self[ len(self) - 1]
+        if i == 0xffffffff or i >= len(self) or i < 0:
+            return ""
+        elif i in self.entries:
+            return self.entries[i]
         else:
-            seek_to = self.HEADER_SIZE + (i) * self.DATA_ELEMENT_SIZE
+            seek_to = self.HEADER_SIZE + i * self.DATA_ELEMENT_SIZE
             self.io.seek(seek_to)
 
             data = self.io.read(self.DATA_ELEMENT_SIZE)
@@ -73,64 +61,79 @@ class Tlk:
 
             self.io.seek(self.str_offset + offset)
             text = self.io.read(size)
-
             text = text.decode(sys.stdout.encoding) if flags & 0x1 > 0 else ""
-            sound = sound_resref.decode(sys.stdout.encoding) if flags & 0x2 > 0 else ""
-            sound_length = float(sound_length) if flags & 0x4 > 0 else 0.0
 
-            self.cache[i] = {
-                'text': text,
-                'sound': sound,
-                'sound_length': sound_length,
-                'volume_variance': v_variance,
-                'pitch_variance': p_variance
-            }
-
-            return self[i]
+            return text
 
     def __len__(self):
         """Determines the highest TLK entry.
         """
-        keys = self.cache.keys()
-        if len(keys)  == 0 and self.str_count == 0:
+        keys = self.entries.keys()
+        size = len(keys)
+        if size == 0 and self.str_count == 0:
             return 0
 
-        h = max(keys) + 1 if len(keys) > 0 else 0
+        h = max(keys) + 1 if size > 0 else 0
         c = self.str_count
 
         return max(h, c)
 
     def __setitem__(self, i, val):
-        d = self[i]
+        self.entries[i] = val
 
-        d['text'] = val['text']
-        d['sound'] = val['sound']
-        d['sound_length'] = val['sound_length']
-        d['volume_variance'] = val['volume_variance']
-        d['pitch_variance'] = val['pitch_variance']
-
-    def add (self, text, sound = "", sound_length = 0.0, volume_variance = 0, pitch_variance = 0):
+    def add (self, text):
         """Adds TLK entry to the end of entry list.
         """
         next_i = len(self)
 
-        #$stderr.puts "put in cache: #{next_id}"
-        self.cache[next_i] = {
-            'text': text,
-            'sound': sound,
-            'sound_length': 0.0,
-            'volume_variance': volume_variance,
-            'pitch_variance': pitch_variance
-        }
+        self.entries[next_i] = text
         return next_i
 
-    def inject(self, loc, tlk, start=0, count=None):
+    def inject(self, other):
         """Injects lines from one TLK into another.
         """
-        if not end: end = len(tlk)
+        for i in range(len(other)+1):
+            n = other[i]
+            if len(n):
+                self[i] = n
 
-        for i in range(start, count):
-            self[loc + i] = tlk[i]
+    def write_tls(self, io):
+        io.write("#TLS V1.0 Uncompiled TLK source#\n")
+        for i in range(len(self)+1):
+            n = self[i]
+            if len(n):
+                n = n.encode(sys.stdout.encoding, 'ignore').decode(sys.stdout.encoding)
+                try:
+                    io.write("<%d><%d>:%s\n" % (i, i + 0x01000000, n))
+                except UnicodeError as e:
+                    print("Unicode error:", i, n)
+
+    def write(self, io):
+        header = struct.pack("4s 4s I I I",
+                             self.ftype,
+                             self.fvers,
+                             self.lang,
+                             len(self),
+                             self.HEADER_SIZE + len(self) * self.DATA_ELEMENT_SIZE)
+        io.write(header)
+
+        offset = 0
+        strings = []
+        for i in range(len(self)):
+            n = self[i]
+
+            entries = struct.pack("I 16s I I I I f",
+                                  0x1 if len(n) else 0,
+                                  b"",
+                                  0,
+                                  0,
+                                  offset if len(n) else 0,
+                                  len(n),
+                                  0)
+            io.write(entries)
+            offset += len(n)
+            strings.append(n)
+        io.write(bytearray(''.join(strings), sys.stdout.encoding))
 
 class TlkTable(object):
     def __init__(self, dialog, custom = None, dialogf = None, customf = None):
