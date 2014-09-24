@@ -532,7 +532,7 @@ class ResourceManager(object):
 
         # First, all the base data files.
         if include_bioware:
-            for key in ['chitin.key', 'xp1.key', 'xp2.key', 'xp2patch.key', 'xp3.key']:
+            for key in ['xp3.key', 'xp2patch.key', 'xp2.key', 'xp1.key', 'chitin.key']:
                 mgr.add_container(Key(os.path.join(path, key), path))
 
         return mgr
