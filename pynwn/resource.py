@@ -2,6 +2,7 @@ import fnmatch, os
 import io
 
 from itertools import chain
+from pynwn.file.tlk import TlkTable
 
 Extensions = {
     'res': 0,
@@ -509,6 +510,11 @@ class ResourceManager(object):
         # Module
         mgr.module = Mod(mod)
         mgr.add_container(mgr.module.container)
+
+        dialog = os.path.join(path, 'dialog.tlk')
+        custom = os.path.join(path, 'tlk', mgr.module.tlk + '.tlk')
+        mgr.tlktable = TlkTable(open(dialog, 'rb'),
+                                open(custom, 'rb'))
 
         # All custom haks
         for hak in mgr.module.haks:
