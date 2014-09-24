@@ -93,9 +93,12 @@ class TwoDA:
     def get_column_index(self, col):
         """Gets the column index from a column label.
         """
-
         if isinstance(col, str):
-            col = self.columns.index(col)
+            find = col.lower()
+            for i, c in enumerate(self.columns):
+                if find == c.lower():
+                    return i
+            assert(False)
         else:
             col += 1
 
@@ -162,7 +165,11 @@ class TwoDA:
             self.rows[int(r[0])] = r
 
     def has_column(self, col):
-        return col in self.columns
+        find = col.lower()
+        for i, c in enumerate(self.columns):
+            if find == c.lower():
+                return True
+        return False
 
     def add_column(self, col):
         self.columns.append(col)
