@@ -1,4 +1,4 @@
-import struct, os
+import struct, os, sys
 
 import pynwn.resource as res
 from pynwn.util.helper import chunks
@@ -53,7 +53,7 @@ class Bif:
         :type id: int
 
         """
-        return self.contained.has_key(id)
+        return id in self.contained
 
 class Key(res.Container):
     """...
@@ -93,7 +93,9 @@ class Key(res.Container):
                 size, name_offset, name_size, drives = struct.unpack("LLhh", c)
                 io.seek(name_offset)
                 name = io.read(name_size)
-                name = struct.unpack("%ds" % name_size, name)[0].rstrip(' \t\r\n\0')
+                name = struct.unpack("%ds" % name_size, name)[0]
+                name = name.decode(sys.stdout.encoding)
+                name = name.rstrip(' \t\r\n\0')
                 name = os.path.join(self.root, name.replace('\\', os.sep))
                 name = os.path.abspath(name)
                 self.bif.append( Bif(self, name) )
@@ -106,6 +108,7 @@ class Key(res.Container):
             for c in chunks(data, 22):
                 if len(c) != 22: break
                 resref, res_type, res_id = struct.unpack("<16s hL", c)
+                resref = resref.decode(sys.stdout.encoding)
                 self.key_table[res_id] = (resref.rstrip(' \t\r\n\0'), res_type)
 
             self.fn_to_co = {}
@@ -115,7 +118,7 @@ class Key(res.Container):
                 res_id = res_id & 0xfffff
 
                 #print res_id, resref, res_type, bif_idx
-                if not bif.contained.has_key(res_id):
+                if not res_id in bif.contained:
                     msg = "%s does not have %d" % (bif.io.name, res_id)
                     raise ValueError(msg)
 
@@ -123,7 +126,7 @@ class Key(res.Container):
                 o = res.ContentObject(resref, res_type, bif.io, ofs, sz)
 
                 fn = o.get_filename()
-                if self.fn_to_co.has_key(fn) and self.fn_to_co[fn][2] < bif_idx:
+                if fn in self.fn_to_co and self.fn_to_co[fn][2] < bif_idx:
                     oo, biff, unused = self.fn_to_co[fn]
                     print("%s, in %s shadowed by file in %s" % (fn, biff.io, biff.io))
                     self.content.remove(oo)
