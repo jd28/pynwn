@@ -134,7 +134,7 @@ class Erf(res.Container):
                 # Temporary hack around the fact that the erf.exe adds an extra null to the end of
                 # the description string.
                 fubar = """Created by "erf", the command-line ERF utility.\nCopyright (C) 2003-2009, Gareth Hughes and Doug Swarin"""
-                if fubar in lstr.decode(sys.stdout.encoding):
+                if fubar in lstr[8:].decode(sys.stdout.encoding):
                     strsz += 1
 
                 str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
