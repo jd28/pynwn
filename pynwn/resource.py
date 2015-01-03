@@ -574,8 +574,18 @@ class ResourceManager(object):
         Note: all file names are converted to lowercase.
         """
 
-        xs = [con.glob(glob_pattern) for con in self.containers]
-        return chain.from_iterable(xs)
+        # Due to some things being returned as constructed NWN objects
+        # and some as ContentObjects...  Probably was a bad idea.
+        ugh = {}
+        for con in self.containers:
+            for co in con.glob(glob_pattern):
+                if isinstance(co, ContentObject):
+                    if not co.get_filename() in ugh:
+                        ugh[co.get_filename()] = co
+                elif not co.co.get_filename() in ugh:
+                    ugh[co.co.get_filename()] = co
+
+        return ugh.values()
 
     def creatures(self, glob = None):
         """Returns a list of Creature objects contained in
