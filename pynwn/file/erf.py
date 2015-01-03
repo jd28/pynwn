@@ -3,18 +3,20 @@ import datetime, os, struct, shutil, sys
 import pynwn.resource as res
 from pynwn.util.helper import chunks
 
-VALID_TYPES = ['ERF', 'HAK', 'MOD']
-
 class Erf(res.Container):
     """Reads/Writes NWN ERF formats: erf, hak, and mod.
     """
 
-    def __init__(self, io):
-        super(Erf, self).__init__()
+    TYPES = ['ERF', 'HAK', 'MOD']
+    VERSIONS = ['V1.0', 'V1.1']
 
-        self.io = io
+    def __init__(self, erf_type, version='V1.0'):
+        super(Erf, self).__init__()
+        assert(erf_type in self.TYPES)
+        assert(version in self.VERSIONS)
         self.localized_strings = {}
-        self.ftype, self.fversion = "ERF", "V1.0"
+        self.ftype = erf_type
+        self.fversion = version
         self.desc_strref = 0xffffffff
 
         now = datetime.datetime.now()
@@ -74,7 +76,9 @@ class Erf(res.Container):
         offset_to_keylist = offset_to_locstr + len(locstr)
         offset_to_resourcelist = offset_to_keylist + len(keylist)
 
-        header = struct.pack("8s LL LL LL LL L 116x", self.ftype+' '+ self.fversion, len(self.localized_strings),
+        header = struct.pack("8s LL LL LL LL L 116x",
+                             (self.ftype+' '+self.fversion).encode(sys.stdout.encoding),
+                              len(self.localized_strings),
                              len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
                              offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
 
@@ -94,18 +98,17 @@ class Erf(res.Container):
 
         """
         with open(fname, 'rb') as io:
-            new_erf = Erf(fname)
-
             header = io.read(160)
             hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
             ftype = hs[0].decode(sys.stdout.encoding).strip()
-            if not ftype in VALID_TYPES: raise ValueError("Invalid file type!")
-            new_erf.ftype = ftype
+            if not ftype in Erf.TYPES: raise ValueError("Invalid file type!")
 
             fvers = hs[1].decode(sys.stdout.encoding)
             fname_len = Erf.filename_length(fvers)
-            new_erf.fversion = fvers
+
+            new_erf = Erf(ftype, fvers)
+            new_erf.io = fname
 
             lstr_count = hs[2]
             lstr_size = hs[3]
@@ -133,13 +136,12 @@ class Erf(res.Container):
                 if strsz > len(lstr) - 8:
                     strsz = len(lstr) - 8
 
-                # Temporary hack around the fact that the erf.exe adds an extra null to the end of
-                # the description string.
-                fubar = """Created by "erf", the command-line ERF utility.\nCopyright (C) 2003-2009, Gareth Hughes and Doug Swarin"""
-                if fubar in lstr[8:].decode(sys.stdout.encoding):
-                    strsz += 1
-
-                str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
+                # Necessary for hacking around the fact that erf.exe adds an extra null
+                # to the end of the description string.
+                try:
+                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
+                except struct.error as e:
+                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(sys.stdout.encoding) #
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]

@@ -134,7 +134,14 @@ class TwoDA:
             col_line += 1
 
         csvreader = csv.reader(lines[col_line:], delimiter=' ', skipinitialspace=True)
+        count = None
         for row in csvreader:
+            if count is None:
+                count = len(row) + 1
+            else:
+                if count != len(row):
+                    print(count, len(row), row)
+                    assert(False)
             self.rows.append(row)
 
         self.columns = [''] + self.rows[0]

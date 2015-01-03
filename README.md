@@ -5,18 +5,17 @@ Neverwinter Nights 1/2 file formats Python library.
 
 The following library combines Jordan McCoy's GFF File Format
 Reader/Writer and a port of a large part of Elven's
-[nwn-lib](https://github.com/niv/nwn-lib) into Python 2.7.
+[nwn-lib](https://github.com/niv/nwn-lib) into Python 3.
 
 ## Status
 Alpha - Some documentation is out of date...
 
 ## File Formats
 * GFF files: BIC, UTI, UTC, et al.
-* MDL files: Binary and ASCII models.  (NOTE: this requires the NumPy
-  library).  Source: The old neveredit project.
 * ERF files: HAK, MOD, ERF
 * TLK
 * 2DA
+* Meaglyn's [TLS format](http://neverwintervault.org/project/nwn1/other/tool/meaglyns-nwn-tlk-compiler) (Basically...)
 
 ## Objects
 All NWN1 GFF types have classes that provide an abstracted interface
