@@ -112,7 +112,8 @@ class TwoDA:
     def get_int(self, row, col):
         """Gets a 2da entry by row and column label or column index as an int.
         """
-        return int(self.get(row, col))
+        res = self.get(row, col)
+        return 0 if res == '****' else int(res)
 
     def parse(self, io):
         """Parses a 2da file.
