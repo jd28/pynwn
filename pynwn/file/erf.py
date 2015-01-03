@@ -40,11 +40,11 @@ class Erf(res.Container):
 
         """
         fnlen = Erf.filename_length(self.fversion)
-        lstr_iter = iter(sorted(self.localized_strings.iteritems()))
+        lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
         for k, v in lstr_iter:
             locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
-        locstr = ''.join(locstr)
+        locstr = b''.join(locstr)
 
         keylist = []
         for i, co in enumerate(self.content):
@@ -56,8 +56,10 @@ class Erf(res.Container):
             else:
                 pad = fnlen - len(co.resref)
 
-            keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad), co.resref, i, co.res_type, 0))
-        keylist = ''.join(keylist)
+            keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad),
+                                       co.resref.encode(sys.stdout.encoding),
+                                       i, co.res_type, 0))
+        keylist = b''.join(keylist)
 
         offset = 160 + len(locstr) + len(keylist) + 8 * len(self.content)
 
@@ -66,7 +68,7 @@ class Erf(res.Container):
             reslist.append(struct.pack("< L L", offset, co.size))
             offset += co.size
 
-        reslist = ''.join(reslist)
+        reslist = b''.join(reslist)
 
         offset_to_locstr = 160
         offset_to_keylist = offset_to_locstr + len(locstr)

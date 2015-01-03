@@ -271,6 +271,9 @@ class ContentObject(object):
         self.offset = offset or 0
         self.size = size
 
+    def __hash__(self):
+        return self.get_filename().__hash__()
+
     @staticmethod
     def from_file(filename):
         """Instantiates a ContentObject from a file.

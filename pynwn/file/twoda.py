@@ -29,7 +29,7 @@ class TwoDA:
         self.newline = "\n"
         self.default = None
         self.co = source
-        self.parse(source.get('r'))
+        self.parse(source.get().decode('utf-8'))
 
     def __getitem__(self, i):
         if isinstance(i, int):
