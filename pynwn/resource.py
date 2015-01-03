@@ -283,8 +283,11 @@ class ContentObject(object):
         abspath = os.path.abspath(filename)
         basename = os.path.basename(abspath)
         basename, ext = os.path.splitext(basename)
-        ext = ext[-3:]
-        if not ext in Extensions: raise ValueError("Invalid Resource Type: %s!" % ext)
+        if len(basename) > 16:
+            raise ValueError("Resref of file (%s) is too large!" % filename)
+
+        ext = ext[1:]
+        if not ext in Extensions: raise ValueError("Invalid Resource Type: %s!" % filename)
 
         size = os.path.getsize(abspath)
 
