@@ -1,6 +1,6 @@
 import re, struct, sys
 
-ENTRY_RE = re.compile('^<(\d+)><\d+>:(.+)')
+ENTRY_RE = re.compile('^<(\d+)><\d*>:(.+)')
 
 from pynwn.file.tlk import Tlk
 
@@ -68,10 +68,13 @@ class TLS:
 
         offset = 0
         strings = []
+
+        # Always inject Bad Strref
+        if not self[0]:
+            self[0] = 'Bad Strref'
+
         for i in range(len(self)):
             n = self[i]
-            if len(n):
-                print(i, len(n), offset, n)
             entries = struct.pack("I 16s I I I I f",
                                   0x1 if len(n) else 0,
                                   b"",
