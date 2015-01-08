@@ -421,8 +421,19 @@ class Container(object):
     def get_content_data(self, name):
         """Get content object data by file name or integer index
         """
-        co = self[name]
+        co = self.get_content_object(name)
         return co.get()
+
+    def get_content_object(self, name):
+        co = None
+        if isinstance(name, str):
+            if not name in self.filenames:
+                raise ValueError("No ContentObject exists for %s" % name)
+            co = self.filenames[name]
+        elif isinstance(name, int):
+            co = self.content[name]
+        return co
+
 
     def glob(self, glob_pattern):
         """Returns a list of objects or content objects for file names matching the glob pattern.
