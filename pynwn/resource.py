@@ -383,6 +383,9 @@ class Container(object):
         res = construct(co, self)
         return res if res else co
 
+    def __len__(self):
+        return len(self.content)
+
     def add(self, content_obj):
         """Add a content object to a container.
         """
