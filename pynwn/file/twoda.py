@@ -69,6 +69,11 @@ class TwoDA:
     def to_StringIO(self):
         """Returns 2da written in a cStringIO buffer.
         """
+        i = 0
+        for r in self.rows:
+            r[0] = str(i)
+            i += 1
+
         result = io.StringIO()
         result.write("2DA V2.0")
         result.write(self.newline)
