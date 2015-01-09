@@ -428,6 +428,11 @@ class Container(object):
             co = self.content[name]
         return co
 
+    def remove(self, name):
+        co = self.get_content_object(name)
+        if co:
+            self.filenames.pop(name, None)
+            self.content.remove(co)
 
     def glob(self, glob_pattern):
         """Returns a list of objects or content objects for file names matching the glob pattern.
