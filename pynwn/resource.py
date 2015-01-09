@@ -383,7 +383,12 @@ class Container(object):
     def add(self, content_obj):
         """Add a content object to a container.
         """
-        self.filenames[content_obj.get_filename()] = content_obj
+        fn = content_obj.get_filename()
+        if fn in self.filenames:
+            co = self.filenames[fn]
+            self.filenames.pop(fn, None)
+            self.content.remove(co)
+        self.filenames[fn] = content_obj
         self.content.append(content_obj)
 
     def add_file(self, fname):
