@@ -113,9 +113,6 @@ Extensions = {
     'jpg': 4007,
     'pwc': 4008,
 
-    #custom
-    '2dx': 4009,
-
     'ids': 9996,
     'erf': 9997,
     'bif': 9998,
@@ -230,9 +227,6 @@ ResTypes = {
     4005: 'fxe',
     4007: 'jpg',
     4008: 'pwc',
-
-    #custom
-    4009: '2dx',
 
     9996: 'ids',
     9997: 'erf',
