@@ -59,7 +59,7 @@ class Erf(res.Container):
         lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
         for k, v in lstr_iter:
-            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
+            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v.encode(sys.stdout.encoding)))
         locstr = b''.join(locstr)
 
         keylist = []
