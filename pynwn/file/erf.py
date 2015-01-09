@@ -1,4 +1,4 @@
-import datetime, os, struct, shutil, sys
+import datetime, os, struct, shutil, sys, tempfile
 
 import pynwn.resource as res
 from pynwn.util.helper import chunks
@@ -50,11 +50,12 @@ class Erf(res.Container):
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
     # be
     def write_to(self, io):
-        """Writes ERF file to file handle.
+        """Writes ERF to file.
 
-        :param io: A file handle.
-
+        :param io: A file path.
         """
+        out = io
+        io, path = tempfile.mkstemp()
         fnlen = Erf.filename_length(self.fversion)
         lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
@@ -96,13 +97,17 @@ class Erf(res.Container):
                              len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
                              offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
 
-        io.write(header)
-        io.write(locstr)
-        io.write(keylist)
-        io.write(reslist)
+        os.write(io, header)
+        os.write(io, locstr)
+        os.write(io, keylist)
+        os.write(io, reslist)
 
         for co in self.content:
-            io.write(co.get())
+            os.write(io, co.get())
+
+        os.close(io)
+        shutil.copy(path, out)
+        os.remove(path)
 
     @staticmethod
     def from_file(fname):
