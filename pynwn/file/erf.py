@@ -32,6 +32,20 @@ class Erf(res.Container):
 
             shutil.move(self.io + '.tmp', self.io)
 
+    def description(self, lang=0):
+        """Gets description, by language.
+        :param lang: See Bioware's TLK language constants.
+        """
+        if not lang in self.localized_strings: return ""
+        return self.localized_strings[lang]
+
+    def set_description(self, text, lang=0):
+        """Sets description, by language.
+        :param text: New description.
+        :param lang: See Bioware's TLK language constants.
+        """
+        self.localized_strings[lang] = text
+
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
     # be
