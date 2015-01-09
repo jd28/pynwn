@@ -61,7 +61,7 @@ class Tlk:
 
             self.io.seek(self.str_offset + offset)
             text = self.io.read(size)
-            text = text.decode(sys.stdout.encoding) if flags & 0x1 > 0 else ""
+            text = text.decode(sys.getdefaultencoding()) if flags & 0x1 > 0 else ""
 
             return text
 
@@ -102,7 +102,7 @@ class Tlk:
         for i in range(len(self)+1):
             n = self[i]
             if len(n):
-                n = n.encode(sys.stdout.encoding, 'ignore').decode(sys.stdout.encoding)
+                n = n.encode(sys.getdefaultencoding(), 'ignore').decode(sys.getdefaultencoding())
                 try:
                     io.write("<%d><%d>:%s\n" % (i, i + 0x01000000, n))
                 except UnicodeError as e:
@@ -133,7 +133,7 @@ class Tlk:
             io.write(entries)
             offset += len(n)
             strings.append(n)
-        io.write(bytearray(''.join(strings), sys.stdout.encoding))
+        io.write(bytearray(''.join(strings), sys.getdefaultencoding()))
 
 class TlkTable(object):
     def __init__(self, dialog, custom = None, dialogf = None, customf = None):

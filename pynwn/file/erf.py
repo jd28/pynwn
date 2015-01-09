@@ -59,7 +59,7 @@ class Erf(res.Container):
         lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
         for k, v in lstr_iter:
-            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v.encode(sys.stdout.encoding)))
+            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v.encode(sys.getdefaultencoding())))
         locstr = b''.join(locstr)
 
         keylist = []
@@ -73,7 +73,7 @@ class Erf(res.Container):
                 pad = fnlen - len(co.resref)
 
             keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad),
-                                       co.resref.encode(sys.stdout.encoding),
+                                       co.resref.encode(sys.getdefaultencoding()),
                                        i, co.res_type, 0))
         keylist = b''.join(keylist)
 
@@ -91,7 +91,7 @@ class Erf(res.Container):
         offset_to_resourcelist = offset_to_keylist + len(keylist)
 
         header = struct.pack("8s LL LL LL LL L 116x",
-                             (self.ftype+' '+self.fversion).encode(sys.stdout.encoding),
+                             (self.ftype+' '+self.fversion).encode(sys.getdefaultencoding()),
                               len(self.localized_strings),
                              len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
                              offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
@@ -115,10 +115,10 @@ class Erf(res.Container):
             header = io.read(160)
             hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
-            ftype = hs[0].decode(sys.stdout.encoding).strip()
+            ftype = hs[0].decode(sys.getdefaultencoding()).strip()
             if not ftype in Erf.TYPES: raise ValueError("Invalid file type!")
 
-            fvers = hs[1].decode(sys.stdout.encoding)
+            fvers = hs[1].decode(sys.getdefaultencoding())
             fname_len = Erf.filename_length(fvers)
 
             new_erf = Erf(ftype, fvers)
@@ -153,9 +153,9 @@ class Erf(res.Container):
                 # Necessary for hacking around the fact that erf.exe adds an extra null
                 # to the end of the description string.
                 try:
-                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
+                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.getdefaultencoding()) #
                 except struct.error as e:
-                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(sys.stdout.encoding) #
+                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(sys.getdefaultencoding()) #
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]
@@ -171,7 +171,7 @@ class Erf(res.Container):
             keylist = struct.unpack(fmt, keylist)
 
             for resref, res_id, res_type, unused in chunks(keylist, 4):
-                co = res.ContentObject(resref.decode(sys.stdout.encoding).rstrip(' \t\r\n\0'),
+                co = res.ContentObject(resref.decode(sys.getdefaultencoding()).rstrip(' \t\r\n\0'),
                                        res_type, fname)
                 new_erf.add(co)
 

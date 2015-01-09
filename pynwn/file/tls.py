@@ -87,4 +87,4 @@ class TLS:
             if len(n):
                 offset += len(n)
                 strings.append(n)
-        io.write(bytearray(''.join(strings), sys.stdout.encoding))
+        io.write(bytearray(''.join(strings), sys.getdefaultencoding()))
