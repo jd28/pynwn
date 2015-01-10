@@ -1,4 +1,4 @@
-import datetime, os, struct, shutil, sys, tempfile
+import datetime, os, struct, shutil, sys, tempfile, re
 
 import pynwn.resource as res
 from pynwn.util.helper import chunks
@@ -45,6 +45,18 @@ class Erf(res.Container):
         :param lang: See Bioware's TLK language constants.
         """
         self.localized_strings[lang] = text
+
+    def add_file(self, file):
+        basename = os.path.basename(file)
+        basename, ext = os.path.splitext(basename)
+        ext = ext[1:].lower()
+        fnlen = Erf.filename_length(self.fversion)
+        if len(basename) > fnlen:
+            raise ValueError("Error: Unable to add file '%s', it is too long!" % file)
+        elif re.match('^[a-zA-Z0-9_]+$', basename) is None:
+            raise ValueError("Error: Unable to add file '%s', invalid resref!" % file)
+
+        res.Container.add_file(self, file)
 
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
