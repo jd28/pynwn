@@ -1,4 +1,4 @@
-import datetime, os, struct, shutil, sys
+import datetime, os, struct, shutil, sys, tempfile, re
 
 import pynwn.resource as res
 from pynwn.util.helper import chunks
@@ -27,25 +27,49 @@ class Erf(res.Container):
         self.pre_save()
 
         if self.has_modified_content_objects():
-            with open(self.io + '.tmp', 'wb') as f:
-                self.write_to(f)
+            self.write_to(self.io)
 
-            shutil.move(self.io + '.tmp', self.io)
+    def description(self, lang=0):
+        """Gets description, by language.
+        :param lang: See Bioware's TLK language constants.
+        """
+        if not lang in self.localized_strings: return ""
+        return self.localized_strings[lang]
+
+    def set_description(self, text, lang=0):
+        """Sets description, by language.
+        :param text: New description.
+        :param lang: See Bioware's TLK language constants.
+        """
+        self.localized_strings[lang] = text
+
+    def add_file(self, file):
+        basename = os.path.basename(file)
+        basename, ext = os.path.splitext(basename)
+        ext = ext[1:].lower()
+        fnlen = Erf.filename_length(self.fversion)
+        if len(basename) > fnlen:
+            raise ValueError("Error: Unable to add file '%s', it is too long!" % file)
+        elif re.match('^[a-zA-Z0-9_]+$', basename) is None:
+            raise ValueError("Error: Unable to add file '%s', invalid resref!" % file)
+
+        res.Container.add_file(self, file)
 
     # Note about the following... Python doesn't seem to auto-pad strings in the way that
     # ruby does, nor strip trailing NULLs... so this is a little less nice than it should
     # be
     def write_to(self, io):
-        """Writes ERF file to file handle.
+        """Writes ERF to file.
 
-        :param io: A file handle.
-
+        :param io: A file path.
         """
+        out = io
+        io, path = tempfile.mkstemp()
         fnlen = Erf.filename_length(self.fversion)
         lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
         for k, v in lstr_iter:
-            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v))
+            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v.encode(sys.getdefaultencoding())))
         locstr = b''.join(locstr)
 
         keylist = []
@@ -59,7 +83,7 @@ class Erf(res.Container):
                 pad = fnlen - len(co.resref)
 
             keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad),
-                                       co.resref.encode(sys.stdout.encoding),
+                                       co.resref.encode(sys.getdefaultencoding()),
                                        i, co.res_type, 0))
         keylist = b''.join(keylist)
 
@@ -77,18 +101,22 @@ class Erf(res.Container):
         offset_to_resourcelist = offset_to_keylist + len(keylist)
 
         header = struct.pack("8s LL LL LL LL L 116x",
-                             (self.ftype+' '+self.fversion).encode(sys.stdout.encoding),
+                             (self.ftype+' '+self.fversion).encode(sys.getdefaultencoding()),
                               len(self.localized_strings),
                              len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
                              offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
 
-        io.write(header)
-        io.write(locstr)
-        io.write(keylist)
-        io.write(reslist)
+        os.write(io, header)
+        os.write(io, locstr)
+        os.write(io, keylist)
+        os.write(io, reslist)
 
         for co in self.content:
-            io.write(co.get())
+            os.write(io, co.get())
+
+        os.close(io)
+        shutil.copy(path, out)
+        os.remove(path)
 
     @staticmethod
     def from_file(fname):
@@ -101,10 +129,10 @@ class Erf(res.Container):
             header = io.read(160)
             hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
-            ftype = hs[0].decode(sys.stdout.encoding).strip()
+            ftype = hs[0].decode(sys.getdefaultencoding()).strip()
             if not ftype in Erf.TYPES: raise ValueError("Invalid file type!")
 
-            fvers = hs[1].decode(sys.stdout.encoding)
+            fvers = hs[1].decode(sys.getdefaultencoding())
             fname_len = Erf.filename_length(fvers)
 
             new_erf = Erf(ftype, fvers)
@@ -139,9 +167,9 @@ class Erf(res.Container):
                 # Necessary for hacking around the fact that erf.exe adds an extra null
                 # to the end of the description string.
                 try:
-                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.stdout.encoding) #
+                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(sys.getdefaultencoding()) #
                 except struct.error as e:
-                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(sys.stdout.encoding) #
+                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(sys.getdefaultencoding()) #
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]
@@ -157,7 +185,7 @@ class Erf(res.Container):
             keylist = struct.unpack(fmt, keylist)
 
             for resref, res_id, res_type, unused in chunks(keylist, 4):
-                co = res.ContentObject(resref.decode(sys.stdout.encoding).rstrip(' \t\r\n\0'),
+                co = res.ContentObject(resref.decode(sys.getdefaultencoding()).rstrip(' \t\r\n\0'),
                                        res_type, fname)
                 new_erf.add(co)
 

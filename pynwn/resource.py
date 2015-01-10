@@ -259,8 +259,6 @@ class ContentObject(object):
 
     def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
         self.resref = resref.lower()
-        if len(self.resref) > 16:
-            raise ValueError("Resref of file (%s) is too large!" % self.resref)
 
         if not res_type in ResTypes:
             raise ValueError("Invalid Resource Type: %d!" % res_type)
@@ -283,8 +281,6 @@ class ContentObject(object):
         abspath = os.path.abspath(filename)
         basename = os.path.basename(abspath)
         basename, ext = os.path.splitext(basename)
-        if len(basename) > 16:
-            raise ValueError("Resref of file (%s) is too large!" % filename)
 
         ext = ext[1:]
         if not ext in Extensions: raise ValueError("Invalid Resource Type: %s!" % filename)
@@ -389,7 +385,12 @@ class Container(object):
     def add(self, content_obj):
         """Add a content object to a container.
         """
-        self.filenames[content_obj.get_filename()] = content_obj
+        fn = content_obj.get_filename()
+        if fn in self.filenames:
+            co = self.filenames[fn]
+            self.filenames.pop(fn, None)
+            self.content.remove(co)
+        self.filenames[fn] = content_obj
         self.content.append(content_obj)
 
     def add_file(self, fname):
@@ -421,8 +422,24 @@ class Container(object):
     def get_content_data(self, name):
         """Get content object data by file name or integer index
         """
-        co = self[name]
+        co = self.get_content_object(name)
         return co.get()
+
+    def get_content_object(self, name):
+        co = None
+        if isinstance(name, str):
+            if not name in self.filenames:
+                raise ValueError("No ContentObject exists for %s" % name)
+            co = self.filenames[name]
+        elif isinstance(name, int):
+            co = self.content[name]
+        return co
+
+    def remove(self, name):
+        co = self.get_content_object(name)
+        if co:
+            self.filenames.pop(name, None)
+            self.content.remove(co)
 
     def glob(self, glob_pattern):
         """Returns a list of objects or content objects for file names matching the glob pattern.

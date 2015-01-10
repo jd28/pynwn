@@ -94,7 +94,7 @@ class Key(res.Container):
                 io.seek(name_offset)
                 name = io.read(name_size)
                 name = struct.unpack("%ds" % name_size, name)[0]
-                name = name.decode(sys.stdout.encoding)
+                name = name.decode(sys.getdefaultencoding())
                 name = name.rstrip(' \t\r\n\0')
                 name = os.path.join(self.root, name.replace('\\', os.sep))
                 name = os.path.abspath(name)
@@ -108,7 +108,7 @@ class Key(res.Container):
             for c in chunks(data, 22):
                 if len(c) != 22: break
                 resref, res_type, res_id = struct.unpack("<16s hL", c)
-                resref = resref.decode(sys.stdout.encoding)
+                resref = resref.decode(sys.getdefaultencoding())
                 self.key_table[res_id] = (resref.rstrip(' \t\r\n\0'), res_type)
 
             self.fn_to_co = {}
