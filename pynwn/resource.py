@@ -429,7 +429,7 @@ class Container(object):
         co = None
         if isinstance(name, str):
             if not name in self.filenames:
-                raise ValueError("No ContentObject exists for %s" % name)
+                return None
             co = self.filenames[name]
         elif isinstance(name, int):
             co = self.content[name]
