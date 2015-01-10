@@ -27,10 +27,7 @@ class Erf(res.Container):
         self.pre_save()
 
         if self.has_modified_content_objects():
-            with open(self.io + '.tmp', 'wb') as f:
-                self.write_to(f)
-
-            shutil.move(self.io + '.tmp', self.io)
+            self.write_to(self.io)
 
     def description(self, lang=0):
         """Gets description, by language.
