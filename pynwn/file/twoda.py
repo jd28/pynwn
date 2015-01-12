@@ -1,6 +1,6 @@
 import re
 import itertools
-import os, io
+import os, io, sys
 from pynwn.util.helper import convert_to_number
 from pynwn.resource import ContentObject
 
@@ -29,7 +29,10 @@ class TwoDA:
         self.newline = "\n"
         self.default = None
         self.co = source
-        self.parse(source.get().decode('utf-8'))
+        data = source.get()
+        if not isinstance(data, str):
+            data = data.decode(sys.getdefaultencoding())
+        self.parse(data)
 
     def __getitem__(self, i):
         if isinstance(i, int):
@@ -103,7 +106,7 @@ class TwoDA:
             for i, c in enumerate(self.columns):
                 if find == c.lower():
                     return i
-            assert(False)
+            col = -1
         else:
             col += 1
 
