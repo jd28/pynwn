@@ -1,3 +1,5 @@
+import os
+
 def chunks(l, n):
     """Cut a slicable object into N length pieces.
     """
@@ -20,3 +22,9 @@ def enum(*sequential, **named):
     """
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
+
+def get_encoding():
+    e = "cp1252"
+    if 'PYNWN_ENCODING' in os.environ and len(os.environ['PYNWN_ENCODING']):
+        e = os.environ['PYNWN_ENCODING']
+    return e
