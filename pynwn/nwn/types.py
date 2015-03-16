@@ -1,4 +1,5 @@
 import struct, sys
+from pynwn.util.helper import get_encoding
 
 class NWByte(object):
     type_id   = 0
@@ -325,7 +326,7 @@ class NWString(object):
         source.seek(offset)
         length = struct.unpack('I', source.read(4))[0]
         pattern = "%ds" % length
-        data = struct.unpack(pattern, source.read(length))[0].decode(sys.getdefaultencoding())
+        data = struct.unpack(pattern, source.read(length))[0].decode(get_encoding())
 
         return NWString(data)
 
@@ -373,7 +374,7 @@ class NWResref(object):
             val = ''
         else:
             pattern = "%ds" % length
-            val = struct.unpack(pattern, source.read(length))[0].decode(sys.getdefaultencoding())
+            val = struct.unpack(pattern, source.read(length))[0].decode(get_encoding())
 
         return NWResref(val)
 
@@ -430,7 +431,7 @@ class NWLocalizedString(object):
             for substring in range(0, count):
                 id, length = struct.unpack('2I', source.read(8))
                 pattern = "%ds" % length
-                data = struct.unpack(pattern, source.read(struct.calcsize(pattern)))[0].decode(sys.getdefaultencoding())
+                data = struct.unpack(pattern, source.read(struct.calcsize(pattern)))[0].decode(get_encoding())
                 result.append([id, data])
 
         source.seek(position)

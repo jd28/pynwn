@@ -1,7 +1,7 @@
 import re
 import itertools
 import os, io, sys
-from pynwn.util.helper import convert_to_number
+from pynwn.util.helper import convert_to_number, get_encoding
 from pynwn.resource import ContentObject
 
 import csv
@@ -31,7 +31,7 @@ class TwoDA:
         self.co = source
         data = source.get()
         if not isinstance(data, str):
-            data = data.decode(sys.getdefaultencoding())
+            data = data.decode(get_encoding())
         self.parse(data)
 
     def __getitem__(self, i):

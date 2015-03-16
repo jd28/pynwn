@@ -1,8 +1,9 @@
-import re, struct, sys
+import re, struct, sys, os
 
 ENTRY_RE = re.compile('^<(\d+)><\d*>:(.+)')
 
 from pynwn.file.tlk import Tlk
+from pynwn.util.helper import get_encoding
 
 class TLS:
     def __init__(self, filename):
@@ -87,4 +88,4 @@ class TLS:
             if len(n):
                 offset += len(n)
                 strings.append(n)
-        io.write(bytearray(''.join(strings), sys.getdefaultencoding()))
+        io.write(bytearray(''.join(strings), get_encoding()))
