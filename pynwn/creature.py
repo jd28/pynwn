@@ -191,11 +191,14 @@ class Creature(object):
         """
         result = []
         i = 0
-        for p in self.gff['ItemList']:
-            gff_inst = GffInstance(self.gff, 'ItemList', i)
-            st_inst  = RepositoryItem(gff_inst, self)
-            result.append(st_inst)
-            i += 1
+        try:
+            for p in self.gff['ItemList']:
+                gff_inst = GffInstance(self.gff, 'ItemList', i)
+                st_inst  = RepositoryItem(gff_inst, self)
+                result.append(st_inst)
+                i += 1
+        except KeyError:
+            pass
 
         return result
 
