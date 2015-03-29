@@ -343,18 +343,17 @@ class Gff(object):
             field[1] = self.labels.index(field[1])
 
         # generate the structs and field indices arrays
-        structs, indices = '', ''
+        structs, indices = b'', b''
         for structtype, structfields in self.structs:
             if len(structfields) == 1:
                 structs += struct.pack('<3I', structtype, structfields[0], 1)
             else:
-                structs += struct.pack('<3I', structtype, len(indices),
-                                       len(structfields))
+                structs += struct.pack('<3I', structtype, len(indices), len(structfields))
                 for fieldid in structfields:
                     indices += struct.pack('I', fieldid)
 
         # generate the fields, field data and list indices arrays
-        fields, fielddata, lists = '', '', ''
+        fields, fielddata, lists = b'', b'', b''
         for type, labelidx, data in self.fields:
 
             fields += struct.pack('2I', type, labelidx)
@@ -378,17 +377,17 @@ class Gff(object):
                     fielddata += data.pack()
 
         # generate the labels array
-        labels = ''
+        labels = b''
         for label in self.labels:
             length = len(label)
             pattern = "%ds" % length
             if length < Gff.LABEL_LENGTH:
                 pattern += "%dx" % (Gff.LABEL_LENGTH - length)
-            labels += struct.pack(pattern, label)
+            labels += struct.pack(pattern, str.encode(label, 'ascii'))
 
         # generate the header and concat the file content
-        content = ''
-        header = struct.pack('8s', "%s %s" % (self.filetype, self.Version))
+        content = b''
+        header = struct.pack('8s', str.encode("%s %s" % (self.filetype, self.Version), 'ascii'))
         header += struct.pack('2I', 56, len(self.structs))
         content += structs
         header += struct.pack('2I', 56 + len(content), len(self.fields))
@@ -402,7 +401,7 @@ class Gff(object):
         header += struct.pack('2I', 56 + len(content), len(lists))
         content = header + content + lists
 
-        self.co.io = cStringIO.StringIO(content)
+        self.co.io = io.BytesIO(content)
         self.co.offset = 0
         self.co.size = len(content)
         self.co.modified = True
@@ -463,7 +462,7 @@ class Gff(object):
 
         # identify and parse the fields of the specified structure
         ids = []
-        for label, value in structure.iteritems():
+        for label, value in structure.items():
             if label == '_STRUCT_ID_' or label == '_STRUCT_TYPE_':
                 continue
 

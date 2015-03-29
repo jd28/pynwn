@@ -335,7 +335,7 @@ class NWString(object):
 
         length = len( self.val )
         pattern = "I%ds" % length
-        return struct.pack(pattern, length, self.val)
+        return struct.pack(pattern, length, self.val.encode('utf-8'))
 
 class NWResref(object):
     type_id   = 11
@@ -383,7 +383,7 @@ class NWResref(object):
 
         length = len(self.val)
         pattern = "B%ds" % length
-        return struct.pack(pattern, length, self.val)
+        return struct.pack(str.encode(pattern), length, str.encode(self.val))
 
 class NWLocalizedString(object):
     type_id   = 12
@@ -448,7 +448,7 @@ class NWLocalizedString(object):
         for substring in self.strings:
             length = len(substring[1])
             pattern = "2I%ds" % length
-            content += struct.pack(pattern, substring[0], length, substring[1])
+            content += struct.pack(pattern, substring[0], length, substring[1].encode('utf-8'))
 
         return struct.pack('I', len(content)) + content
 
