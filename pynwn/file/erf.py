@@ -196,9 +196,12 @@ class Erf(res.Container):
             _index = -1
             for offset, size in chunks(resourcelist, 2):
                 _index += 1
-                co = new_erf.content[_index]
-                co.offset = offset
-                co.size = size
+                try:
+                    co = new_erf.content[_index]
+                    co.offset = offset
+                    co.size = size
+                except IndexError as e:
+                    print("WARNING: Attempt to index invalid content object in '%s' at offset %X" % (fname, offset))
 
         return new_erf
 
