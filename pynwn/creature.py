@@ -208,7 +208,7 @@ class Creature(object):
 
         :returns: List of tuples containing equipment ID and resref.
         """
-        return [(e['_STRUCT_TYPE_'], e['EquippedRes'])
+        return [(e['_STRUCT_TYPE_'], e['EquippedRes'].val)
                 for e in self.gff['Equip_ItemList']]
 
 class CreatureInstance(Creature):
