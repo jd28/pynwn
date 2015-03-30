@@ -115,7 +115,7 @@ class Door(object):
         lbls[Event.CLICK] = 'OnClick'
         lbls[Event.FAIL_TO_OPEN] = 'OnFailToOpen'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 

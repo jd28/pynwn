@@ -37,12 +37,15 @@ Event = enum('ATTACKED',
              'USER_DEFINED')
 
 class NWObjectScripts:
-    def __init__(self, gff_struct, label_map):
-        self.gff = gff_struct
+    def __init__(self, obj, label_map, gff = None):
+        self.gff = gff or obj.gff
         self.map = label_map
+        self.parent = obj
 
     def __getitem__(self, label):
         return self.gff[self.map[label]]
 
     def __setitem__(self, label, value):
         self.gff[self.map[label]] = value
+        if self.parent:
+            self.parent.stage()

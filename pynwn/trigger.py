@@ -85,7 +85,7 @@ class Trigger(object):
         lbls[Event.EXIT] = 'ScriptOnExit'
         lbls[Event.USER_DEFINED] = 'ScriptUserDefine'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 

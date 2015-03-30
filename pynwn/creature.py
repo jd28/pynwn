@@ -138,7 +138,7 @@ class Creature(object):
         lbls[Event.USER_DEFINED] = 'ScriptUserDefine'
         lbls[Event.BLOCKED] = 'ScriptOnBlocked'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 
