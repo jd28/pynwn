@@ -389,7 +389,9 @@ class Container(object):
         if fn in self.filenames:
             co = self.filenames[fn]
             self.filenames.pop(fn, None)
-            self.content.remove(co)
+            if co in self.content:
+                self.content.remove(co)
+
         self.filenames[fn] = content_obj
         self.content.append(content_obj)
 
