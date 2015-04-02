@@ -56,7 +56,7 @@ class TwoDA:
         """Gets a 2da entry by row and column label or column index.
         """
         col = self.get_column_index(col)
-        return self.rows[row][col]
+        return self.rows[row][col] if self.rows[row][col] != '****' else ""
 
     def to_ContentObject(self):
         """Returns 2da as a ContentObject.  It's .io contents
@@ -121,7 +121,14 @@ class TwoDA:
         """Gets a 2da entry by row and column label or column index as an int.
         """
         res = self.get(row, col)
-        return 0 if res == '****' else int(res)
+        if len(res):
+            base = 16 if res.startswith('0x') else 10
+            try:
+                return int(res, base)
+            except ValueError:
+                pass
+             
+        return 0
 
     def parse(self, io):
         """Parses a 2da file.
