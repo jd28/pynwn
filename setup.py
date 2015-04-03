@@ -14,4 +14,5 @@ setup(
     install_requires=[
         'prettytable',
     ],
+    zip_safe=False
 )
