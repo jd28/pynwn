@@ -302,7 +302,7 @@ class ContentObject(object):
 
     def to_io(self):
         if isinstance(self.io, str):
-            return io.StringIO(self.get())
+            return io.BytesIO(self.get())
         else:
             return io
 
