@@ -174,7 +174,7 @@ class Area(object):
         lbls[Event.HEARTBEAT] = 'OnHeartbeat'
         lbls[Event.USER_DEFINED] = 'OnUserDefined'
 
-        self._scripts = NWObjectScripts(self.are, lbls)
+        self._scripts = NWObjectScripts(self, lbls, self.are)
 
         return self._scripts
 

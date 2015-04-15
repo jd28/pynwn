@@ -81,6 +81,14 @@ LOCSTRING_TABLE = {
     'description' : ('Description', "Localized description")
 }
 
+class LevelStats(object):
+    def __init__(self):
+        self.hitdice = None
+        self.class_type = None
+        self.epic_level = None
+        self.skills = []
+        self.feats = []
+
 class PlayerCharacter( object ):
     def __init__(self, resref, container):
         self._scripts = None
@@ -117,6 +125,28 @@ class PlayerCharacter( object ):
             i += 1
 
         return result
+
+    @property
+    def level_stats(self):
+        """ Player's level stat list.
+        """
+        result = []
+        for p in self.gff['LvlStatList']:
+            ls = LevelStats()
+            ls.class_type = p['LvlStatClass'].value
+            ls.hitdice = p['LvlStatHitDie'].value
+            ls.epic_level = p['EpicLevel'].value
+            ls.skillpoints = p['SkillPoints'].value
+
+            for sk in p['SkillList']:
+                ls.skills.append(sk['Rank'].value)
+
+            for ft in p['FeatList']:
+                ls.feats.append(ft['Feat'].value)
+
+            result.append(ls)
+        return result
+
 
 for key, val in TRANSLATION_TABLE.items():
     setattr(PlayerCharacter, key, make_gff_property('gff', val))

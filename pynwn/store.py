@@ -69,7 +69,7 @@ class Store(object):
         lbls[Event.OPEN] = 'OnOpenStore'
         lbls[Event.CLOSE] = 'OnStoreClosed'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 

@@ -140,7 +140,7 @@ class Module(object):
         lbls[Event.REST] = 'Mod_OnPlrRest'
         lbls[Event.USER_DEFINED] = 'Mod_OnUsrDefined'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 

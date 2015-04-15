@@ -138,7 +138,7 @@ class Creature(object):
         lbls[Event.USER_DEFINED] = 'ScriptUserDefine'
         lbls[Event.BLOCKED] = 'ScriptOnBlocked'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 
@@ -191,11 +191,14 @@ class Creature(object):
         """
         result = []
         i = 0
-        for p in self.gff['ItemList']:
-            gff_inst = GffInstance(self.gff, 'ItemList', i)
-            st_inst  = RepositoryItem(gff_inst, self)
-            result.append(st_inst)
-            i += 1
+        try:
+            for p in self.gff['ItemList']:
+                gff_inst = GffInstance(self.gff, 'ItemList', i)
+                st_inst  = RepositoryItem(gff_inst, self)
+                result.append(st_inst)
+                i += 1
+        except KeyError:
+            pass
 
         return result
 
@@ -205,7 +208,7 @@ class Creature(object):
 
         :returns: List of tuples containing equipment ID and resref.
         """
-        return [(e['_STRUCT_TYPE_'], e['EquippedRes'])
+        return [(e['_STRUCT_TYPE_'], e['EquippedRes'].val)
                 for e in self.gff['Equip_ItemList']]
 
 class CreatureInstance(Creature):

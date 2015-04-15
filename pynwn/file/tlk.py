@@ -1,6 +1,7 @@
-import struct, sys
+import struct, sys, os
 
 from pynwn.nwn.consts import *
+from pynwn.util.helper import get_encoding
 
 class Tlk:
     """Loads a TLK file from a file handle.
@@ -49,7 +50,7 @@ class Tlk:
             return ""
         elif i in self.entries:
             return self.entries[i]
-        else:
+        elif not self.io is None:
             seek_to = self.HEADER_SIZE + i * self.DATA_ELEMENT_SIZE
             self.io.seek(seek_to)
 
@@ -61,9 +62,14 @@ class Tlk:
 
             self.io.seek(self.str_offset + offset)
             text = self.io.read(size)
-            text = text.decode(sys.getdefaultencoding()) if flags & 0x1 > 0 else ""
+            try:
+                text = text.decode(get_encoding()) if flags & 0x1 > 0 else ""
+            except UnicodeDecodeError as e:
+                print("Encoding Error: Unable to read entry %d" % i)
+                text = ""
 
             return text
+        return ""
 
     def __len__(self):
         """Determines the highest TLK entry.
@@ -102,7 +108,6 @@ class Tlk:
         for i in range(len(self)+1):
             n = self[i]
             if len(n):
-                n = n.encode(sys.getdefaultencoding(), 'ignore').decode(sys.getdefaultencoding())
                 try:
                     io.write("<%d><%d>:%s\n" % (i, i + 0x01000000, n))
                 except UnicodeError as e:
@@ -110,8 +115,8 @@ class Tlk:
 
     def write(self, io):
         header = struct.pack("4s 4s I I I",
-                             self.ftype,
-                             self.fvers,
+                             self.ftype.encode('ascii'),
+                             self.fvers.encode('ascii'),
                              self.lang,
                              len(self),
                              self.HEADER_SIZE + len(self) * self.DATA_ELEMENT_SIZE)
@@ -121,7 +126,6 @@ class Tlk:
         strings = []
         for i in range(len(self)):
             n = self[i]
-
             entries = struct.pack("I 16s I I I I f",
                                   0x1 if len(n) else 0,
                                   b"",
@@ -133,7 +137,7 @@ class Tlk:
             io.write(entries)
             offset += len(n)
             strings.append(n)
-        io.write(bytearray(''.join(strings), sys.getdefaultencoding()))
+        io.write(bytearray(''.join(strings), get_encoding()))
 
 class TlkTable(object):
     def __init__(self, dialog, custom = None, dialogf = None, customf = None):

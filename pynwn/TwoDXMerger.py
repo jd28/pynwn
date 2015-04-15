@@ -22,10 +22,11 @@ class TwoDXMerger:
                 col = self.twodx.get_column_index(c)
                 new = r[col]
                 if new == '####': continue
-                if self.default:
+                if (self.default
+                    and row < len(self.default.rows)
+                    and self.default.get_column_index(c) >= 0):
                     orig = self.default.get(row, c)
                     cur  = self.twoda.get(row, c)
-                    new  = self.twodx.get(row, c)
                     if orig == cur:
                         self.twoda.set(row, c, new)
                 else:

@@ -75,6 +75,13 @@ class NWVariable(object):
 
         return None
 
+    def delete(self, name):
+        for v in self.gff['VarTable']:
+            if v['Type'].val == self.type and v['Name'].val == name:
+                self.gff['VarTable'].remove(v)
+                self.parent_obj.stage()
+                break
+
     def has(self, name):
         return not self.get_var(name) is None
 

@@ -120,7 +120,7 @@ class Placeable(object):
         lbls[Event.DISTURBED] = 'OnInvDisturbed'
         lbls[Event.USED] = 'OnUsed'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 

@@ -1,7 +1,7 @@
 import re
 import itertools
-import os, io
-from pynwn.util.helper import convert_to_number
+import os, io, sys
+from pynwn.util.helper import convert_to_number, get_encoding
 from pynwn.resource import ContentObject
 
 import csv
@@ -29,7 +29,10 @@ class TwoDA:
         self.newline = "\n"
         self.default = None
         self.co = source
-        self.parse(source.get().decode('utf-8'))
+        data = source.get()
+        if not isinstance(data, str):
+            data = data.decode(get_encoding())
+        self.parse(data)
 
     def __getitem__(self, i):
         if isinstance(i, int):
@@ -53,7 +56,7 @@ class TwoDA:
         """Gets a 2da entry by row and column label or column index.
         """
         col = self.get_column_index(col)
-        return self.rows[row][col]
+        return self.rows[row][col] if self.rows[row][col] != '****' else ""
 
     def to_ContentObject(self):
         """Returns 2da as a ContentObject.  It's .io contents
@@ -103,7 +106,7 @@ class TwoDA:
             for i, c in enumerate(self.columns):
                 if find == c.lower():
                     return i
-            assert(False)
+            col = -1
         else:
             col += 1
 
@@ -118,7 +121,14 @@ class TwoDA:
         """Gets a 2da entry by row and column label or column index as an int.
         """
         res = self.get(row, col)
-        return 0 if res == '****' else int(res)
+        if len(res):
+            base = 16 if res.startswith('0x') else 10
+            try:
+                return int(res, base)
+            except ValueError:
+                pass
+             
+        return 0
 
     def parse(self, io):
         """Parses a 2da file.

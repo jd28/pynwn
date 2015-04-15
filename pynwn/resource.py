@@ -302,7 +302,7 @@ class ContentObject(object):
 
     def to_io(self):
         if isinstance(self.io, str):
-            return io.StringIO(self.get())
+            return io.BytesIO(self.get())
         else:
             return io
 
@@ -389,7 +389,9 @@ class Container(object):
         if fn in self.filenames:
             co = self.filenames[fn]
             self.filenames.pop(fn, None)
-            self.content.remove(co)
+            if co in self.content:
+                self.content.remove(co)
+
         self.filenames[fn] = content_obj
         self.content.append(content_obj)
 
@@ -429,7 +431,7 @@ class Container(object):
         co = None
         if isinstance(name, str):
             if not name in self.filenames:
-                raise ValueError("No ContentObject exists for %s" % name)
+                return None
             co = self.filenames[name]
         elif isinstance(name, int):
             co = self.content[name]

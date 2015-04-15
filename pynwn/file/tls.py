@@ -1,29 +1,31 @@
-import re, struct, sys
+import re, struct, sys, os
 
 ENTRY_RE = re.compile('^<(\d+)><\d*>:(.+)')
 
 from pynwn.file.tlk import Tlk
+from pynwn.util.helper import get_encoding
 
 class TLS:
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self.entries = {}
         cur_line = ""
         cur_index = None
-        with open(filename) as f:
-            for line in f.read().splitlines():
-                if len(line) and line[0] == '#': continue
-                m = ENTRY_RE.match(line)
-                if m:
-                    if not cur_index is None:
-                        self.entries[cur_index] = cur_line
-                    cur_index = int(m.group(1))
-                    cur_line  = m.group(2)
+        if not filename is None and os.path.exists(filename) and os.path.isfile(filename):
+            with open(filename) as f:
+                for line in f.read().splitlines():
+                    if len(line) and line[0] == '#': continue
+                    m = ENTRY_RE.match(line)
+                    if m:
+                        if not cur_index is None:
+                            self.entries[cur_index] = cur_line
+                        cur_index = int(m.group(1))
+                        cur_line  = m.group(2)
 
-                else:
-                    cur_line += '\n' + line
+                    else:
+                        cur_line += '\n' + line
 
-            if not cur_index is None:
-                self.entries[cur_index] = cur_line
+                if not cur_index is None:
+                    self.entries[cur_index] = cur_line
 
     def __len__(self):
         return max(self.entries.keys()) + 1
@@ -87,4 +89,4 @@ class TLS:
             if len(n):
                 offset += len(n)
                 strings.append(n)
-        io.write(bytearray(''.join(strings), sys.getdefaultencoding()))
+        io.write(bytearray(''.join(strings), get_encoding()))

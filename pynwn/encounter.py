@@ -97,7 +97,7 @@ class Encounter(object):
         lbls[Event.HEARTBEAT] = 'OnHeartbeat'
         lbls[Event.USER_DEFINED] = 'OnUserDefined'
 
-        self._scripts = NWObjectScripts(self.gff, lbls)
+        self._scripts = NWObjectScripts(self, lbls)
 
         return self._scripts
 
