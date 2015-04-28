@@ -49,3 +49,11 @@ class NWObjectScripts:
         self.gff[self.map[label]] = value
         if self.parent:
             self.parent.stage()
+
+    def all(self):
+        """
+        Get all set scripts.
+
+        :returns: [(Event, str)]
+        """
+        return [(key, self[key]) for key in self.map.keys() if len(self[key])]
