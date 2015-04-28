@@ -99,7 +99,7 @@ class Module(object):
         return [hak['Mod_Hak'].value for hak in self.gff['Mod_HakList']]
 
     @property
-    def script(self):
+    def scripts(self):
         """Scripts.  Responds to script events:
 
         #. Event.CUTSCENE_ABORT

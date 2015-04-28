@@ -78,7 +78,7 @@ class Door(object):
         return self._vars
 
     @property
-    def script(self):
+    def scripts(self):
         """Scripts: Door responds to the following script events:
 
         #. Event.CLOSE

@@ -158,7 +158,7 @@ class Area(object):
         return self.get_instances('Placeable List', PlaceableInstance)
 
     @property
-    def script(self):
+    def scripts(self):
         """Scripts.  Responds to script events:
 
         #. Event.ENTER
