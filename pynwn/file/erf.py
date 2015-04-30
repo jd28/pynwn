@@ -77,7 +77,7 @@ class Erf(res.Container):
             pad = 0
             max = len(co.resref)
             if len(co.resref) > fnlen:
-                print("truncating filename %s, longer than %d" % (co.resref, fnlen))
+                print("truncating filename %s, longer than %d" % (co.resref, fnlen), file=sys.stderr)
                 max = fnlen
             else:
                 pad = fnlen - len(co.resref)
@@ -153,11 +153,11 @@ class Erf(res.Container):
 
             for ls in range(lstr_count):
                 if len(lstr) == 0:
-                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls))
+                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls), file=sys.stderr)
                     break
 
                 if len(lstr) < 8:
-                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr)
+                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr, file=sys.stderr)
                     break
 
                 lid, strsz = struct.unpack("<L L", lstr[:8])
@@ -201,7 +201,7 @@ class Erf(res.Container):
                     co.offset = offset
                     co.size = size
                 except IndexError as e:
-                    print("WARNING: Attempt to index invalid content object in '%s' at offset %X" % (fname, offset))
+                    print("WARNING: Attempt to index invalid content object in '%s' at offset %X" % (fname, offset), file=sys.stderr)
 
         return new_erf
 
