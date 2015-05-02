@@ -296,7 +296,7 @@ class NWDouble(object):
 
 class NWString(object):
     type_id   = 10
-    type      = 'cexostring'
+    type      = 'cexostr'
     at_offset = 'data'
 
     def __init__(self, val):
@@ -387,7 +387,7 @@ class NWResref(object):
 
 class NWLocalizedString(object):
     type_id   = 12
-    type      = 'cexolocstring'
+    type      = 'cexolocstr'
     at_offset = 'data'
 
     def __init__(self, strref, entry_list):
