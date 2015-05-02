@@ -1,5 +1,6 @@
 import fnmatch, os
 import io
+import hashlib
 
 from itertools import chain
 from pynwn.file.tlk import TlkTable
@@ -442,6 +443,28 @@ class Container(object):
         if co:
             self.filenames.pop(name, None)
             self.content.remove(co)
+
+    def hashes(self, hash_type='sha1'):
+        """
+        Get content object hashes.
+
+        :param hash_type: 'sha1', 'sha256'
+        :returns: {filename: hexdigest}
+        """
+        if hash_type not in ['sha1', 'sha256']:
+            raise ValueError("Unsupported hash type: %s" % hash_type)
+
+
+        res = {}
+        for co in self.content:
+            if hash_type == 'sha1':
+                m = hashlib.sha1()
+            elif hash_type == 'sha256':
+                m = hashlib.sha256()
+            m.update(co.get())
+            res[co.get_filename()] = m.hexdigest()
+
+        return res
 
     def glob(self, glob_pattern):
         """Returns a list of objects or content objects for file names matching the glob pattern.
