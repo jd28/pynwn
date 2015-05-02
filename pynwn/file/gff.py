@@ -209,6 +209,40 @@ class Gff(object):
             self.load()
         self.structure[name] = value
 
+    def to_dict(self, cursor=None):
+        """
+        Converts gff to dict.
+
+        :returns: A dictionary in the format of nwn-lib json output.
+        """
+
+        res = {}
+        if cursor is None:
+            res["__data_type"] = self.filetype
+            res["__struct_id"] = -1
+
+        cursor = cursor or self.structure
+        def get_value(val):
+            if isinstance(val, NWLocalizedString):
+                return val.to_dict()
+            else:
+                return { 'value': v.value,
+                         'type': v.type }
+        if "_STRUCT_TYPE_" in cursor:
+            res["__struct_id"] = cursor["_STRUCT_TYPE_"]
+        for k, v in cursor.items():
+            if isinstance(v, list):
+                res[k] = {
+                    'type': 'list',
+                    'value': [self.to_dict(l) for l in v]
+                }
+            elif isinstance(v, dict):
+                res[k] = self.to_dict(v)
+            elif k == "_STRUCT_TYPE_":
+                continue
+            else:
+                res[k] = get_value(v)
+        return res
 
     @property
     def structure(self):

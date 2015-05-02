@@ -410,6 +410,16 @@ class NWLocalizedString(object):
 
         self.strings.append([lang, new_string])
 
+    def to_dict(self):
+        res = {
+            'type': 'cexolocstr',
+            'str_ref': self.strref,
+            'value': {}
+        }
+        for string in self.strings:
+            res['value'][str(string[0])] = string[1]
+        return res
+
     @property
     def strref(self):
         return self._strref
