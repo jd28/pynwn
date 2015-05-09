@@ -131,12 +131,12 @@ class Placeable(object):
         :returns: List of RepositoryItem objects or [] if
                   the object does not have an inventory.
         """
-        if self.has_inventory:
+        if self.has_inventory and self.gff.has_field('ItemList'):
             result = []
             i = 0
             for p in self.gff['ItemList']:
                 gff_inst = GffInstance(self.gff, 'ItemList', i)
-                st_inst  = RepositoryItem(gff_inst)
+                st_inst  = RepositoryItem(gff_inst, self)
                 result.append(st_inst)
                 i += 1
 
