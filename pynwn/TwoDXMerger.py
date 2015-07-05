@@ -31,3 +31,11 @@ class TwoDXMerger:
                         self.twoda.set(row, c, new)
                 else:
                     self.twoda.set(row, c, new)
+
+        if 'column_rename' in self.twodx.metadata:
+          for old, new in self.twodx.metadata['column_rename'].items():
+            old = old.lower()
+            for i, col in enumerate(self.twoda.columns):
+              if col.lower() == old:
+                self.twoda.columns[i] = new
+                break

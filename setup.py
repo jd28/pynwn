@@ -13,6 +13,7 @@ setup(
     license='GPL v2 and 2-Clause BSD License',
     install_requires=[
         'prettytable',
+        'pyyaml'
     ],
     zip_safe=False
 )

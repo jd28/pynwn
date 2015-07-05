@@ -4,6 +4,7 @@ import os, io
 from pynwn.util.helper import convert_to_number
 from pynwn.resource import ContentObject
 
+import yaml
 import csv
 from prettytable import PrettyTable, PLAIN_COLUMNS
 
@@ -28,6 +29,7 @@ class TwoDX:
         self.rows = []
         self.max = None
         self.newline = "\n"
+        self.metadata = {}
         self.tlk_columns = None
         self.tlk_offset = None
         self.co = source
@@ -79,14 +81,10 @@ class TwoDX:
         """Returns 2dx written in a cStringIO buffer.
         """
         result = io.StringIO()
-        result.write("2DX V2.0")
-        result.write(self.newline)
-
-        if self.tlk_offset:
-            result.write("TLK: %d" % self.tlk_offset)
-            if self.tlk_columns:
-                result.write("(%s)" % ",".join(self.tlk_columns))
-        result.write(self.newline)
+        result.write("2DX V2.1")
+        result.write("---")
+        result.write(yaml.dump(self.metadata))
+        result.write("---")
 
         x = PrettyTable(self.columns)
         x.set_style(PLAIN_COLUMNS)
@@ -120,53 +118,81 @@ class TwoDX:
         """
         return int(self.get(row, col))
 
-    def parse(self, io):
-        """Parses a 2dx file.
-        """
-
-        lines = [l.strip() for l in iter(io.splitlines()) if len(l.strip())]
-        if len(lines) == 0:
-            raise ValueError("Invalid 2dx file!")
-
-        if not re.match("2DX\s+V2.0", lines[0]):
-            raise ValueError("Invalid 2dx file, no 2DX header!")
-
-        col_line = 1
+    def parse20Header(self, lines):
         i = 1
         while True:
             m = self.TLK_RE.match(lines[i])
             if m:
+                self.metadata["tlk"] = {}
                 self.tlk_offset = m.group(1)
                 self.tlk_columns = m.group(2)
                 if self.tlk_columns:
-                    self.tlk_columns = [s.strip() for s in self.tlk_columns.split(',')]
+                    for s in self.tlk_columns.split(','):
+                        self.metadata["tlk"][s.strip()] = self.tlk_offset
                 i += 1
                 continue
             m = self.DESC_RE.match(lines[i])
             if m:
-                self.description = m.group(1)
+                self.metadata["description"] = m.group(1)
                 i += 1
                 continue
-            break
 
-        col_line = i
-        csvreader = csv.reader(lines[col_line:], delimiter=' ', skipinitialspace=True)
+            break
+        return i
+
+    def parse21Header(self, lines):
+        i = 1
+        holder = []
+        if lines[i].startswith("---"):
+            i += 1
+            while not lines[i].startswith("---"):
+                holder.append(lines[i])
+                i += 1
+                if i >= len(lines):
+                    raise RuntimeError("Unterminated YAML header!")
+            i += 1
+            holder = '\n'.join(holder)
+            try:
+                self.metadata = yaml.load(holder)
+            except:
+                raise RuntimeError("Invalid YAML header!")
+
+        return i
+    def parse(self, io):
+        """Parses a 2dx file.
+        """
+
+        lines = [l for l in iter(io.splitlines())]
+        if len(lines) == 0:
+            raise ValueError("Invalid 2dx file!")
+
+        if re.match("2DX\s+V2.0", lines[0]):
+          self.version = lines[0]
+          col_line = self.parse20Header(lines)
+        elif re.match("2DX\s+V2.1", lines[0]):
+          col_line = self.parse21Header(lines)
+          self.version = lines[0]
+        else:
+            raise ValueError("Invalid 2dx file, no 2DX header!")
+
+        lines = [l.strip() for l in lines[col_line:] if len(l.strip()) > 0]
+        csvreader = csv.reader(lines, delimiter=' ', skipinitialspace=True)
         for row in csvreader:
             self.rows.append(row)
 
         self.columns = [''] + self.rows[0]
         self.rows = self.rows[1:]
 
-        if self.tlk_columns and len(self.tlk_columns):
+        if 'tlk' in self.metadata:
             self.update_tlks()
 
     def update_tlks(self):
         offset = self.tlk_offset
-        for c in self.tlk_columns:
+        for c, off in self.metadata['tlk'].items():
             for i in range(len(self.rows)):
                 cur = self.get(i, c)
                 if cur != '****':
-                    self.set(i, c, str(int(cur) + int(self.tlk_offset) + 0x01000000))
+                    self.set(i, c, str(int(cur) + int(off) + 0x01000000))
 
     def set(self, row, col, val):
         """Sets a 2dx entry by row and column label or column index.
