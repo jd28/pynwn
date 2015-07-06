@@ -6,6 +6,12 @@ class TwoDXMerger:
 
     def merge(self):
         highest = 0
+        nrows = len(self.twoda.rows)
+        for r in self.twodx.rows:
+            if r[0] == "#":
+                r[0] = nrows
+                nrows += 1
+
         for r in self.twodx.rows:
             highest = max(highest, int(r[0]))
 
