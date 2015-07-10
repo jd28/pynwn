@@ -155,8 +155,13 @@ class TwoDA:
                 count = len(row) + 1
             else:
                 if count != len(row):
-                    print(count, len(row), row)
-                    assert(False)
+                    if count < len(row):
+                        print("WARNING: Row %d has an invalid number of row entries, truncating row." % (len(self.rows) - 1, ))
+                        row = row[:count]
+                    else:
+                        print("WARNING: Row %d has an invalid number of row entries, expanding row." % (len(self.rows) - 1,))
+                        row += ['****'] * (count - len(row))
+                    assert(count == len(row))
             self.rows.append(row)
 
         self.columns = [''] + self.rows[0]
