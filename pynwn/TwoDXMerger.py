@@ -15,7 +15,7 @@ class TwoDXMerger:
         for r in self.twodx.rows:
             highest = max(highest, int(r[0]))
 
-        if highest > 0 and highest > len(self.twoda.rows):
+        if highest > 0 and highest >= len(self.twoda.rows):
             self.twoda.add_padding(len(self.twoda.rows), highest)
 
         for c in self.twodx.columns[1:]:
