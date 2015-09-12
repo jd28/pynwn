@@ -5,7 +5,7 @@ ENTRY_RE = re.compile('^<(\d+)><\d*>:(.+)')
 from pynwn.file.tlk import Tlk
 from pynwn.util.helper import get_encoding
 
-class TLS:
+class Tls:
     def __init__(self, filename=None):
         self.entries = {}
         cur_line = ""
