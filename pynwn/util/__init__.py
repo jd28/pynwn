@@ -6,6 +6,8 @@ http://stackoverflow.com/questions/1165352/fast-comparison-between-two-python-di
 License: MIT
 """
 
+import hashlib
+
 class DictDiffer(object):
     """
     Calculate the difference between two dictionaries as:
@@ -42,3 +44,10 @@ class DictDiffer(object):
     @property
     def identical(self):
         return self.current_dict == self.past_dict
+
+def sha1_from_file(fname):
+    sha1 = hashlib.sha1()
+    with open(fname,'rb') as f:
+        for chunk in iter(lambda: f.read(128*sha1.block_size), b''):
+            sha1.update(chunk)
+        return sha1.hexdigest()
