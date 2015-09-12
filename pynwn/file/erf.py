@@ -31,6 +31,7 @@ class Erf(res.Container):
 
     def description(self, lang=0):
         """Gets description, by language.
+
         :param lang: See Bioware's TLK language constants.
         """
         if not lang in self.localized_strings: return ""
@@ -38,6 +39,7 @@ class Erf(res.Container):
 
     def set_description(self, text, lang=0):
         """Sets description, by language.
+
         :param text: New description.
         :param lang: See Bioware's TLK language constants.
         """
