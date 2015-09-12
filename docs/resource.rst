@@ -8,28 +8,28 @@ PyNWN Resources
 Container
 =========
 
-.. autoclass:: pynwn.resource.Container
+.. autoclass:: pynwn.Container
    :members:
    :special-members:
 
 ContentObject
 =============
 
-.. autoclass:: pynwn.resource.ContentObject
+.. autoclass:: pynwn.ContentObject
    :members:
    :special-members:
 
 DirectoryContainer
 ==================
 
-.. autoclass:: pynwn.resource.DirectoryContainer
+.. autoclass:: pynwn.DirectoryContainer
    :members:
    :special-members:
 
 ResourceManager
 ===============
 
-.. autoclass:: pynwn.resource.ResourceManager
+.. autoclass:: pynwn.ResourceManager
    :members:
    :special-members:
 

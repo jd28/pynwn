@@ -9,11 +9,11 @@ PyNWN v0.1
 Contents:
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
-   code
-   resource
    objects
+   resource
+   files
 
 Indices and tables
 ==================
