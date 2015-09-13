@@ -1,7 +1,7 @@
 import datetime, os, struct, shutil, sys, tempfile, re
 
 import pynwn.resource as res
-from pynwn.util.helper import chunks, get_encoding
+from pynwn.util import chunks, get_encoding
 
 class Erf(res.Container):
     """Reads/Writes NWN ERF formats: erf, hak, and mod.

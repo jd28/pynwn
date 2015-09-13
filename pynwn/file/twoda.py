@@ -1,7 +1,7 @@
 import re
 import itertools
 import os, io, sys
-from pynwn.util.helper import convert_to_number, get_encoding
+from pynwn.util import convert_to_number, get_encoding
 from pynwn.resource import ContentObject
 
 import csv
@@ -127,7 +127,7 @@ class TwoDA:
                 return int(res, base)
             except ValueError:
                 pass
-             
+
         return 0
 
     def parse(self, io):

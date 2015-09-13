@@ -1,5 +1,5 @@
 import struct, sys
-from pynwn.util.helper import get_encoding
+from pynwn.util import get_encoding
 
 class NWByte(object):
     type_id   = 0

@@ -1,15 +1,14 @@
-#coding=utf-8
-"""
-A dictionary difference calculator
-Originally posted as:
-http://stackoverflow.com/questions/1165352/fast-comparison-between-two-python-dictionary/1165552#1165552
-License: MIT
-"""
-
 import hashlib
+import struct
+import os
 
 class DictDiffer(object):
     """
+    A dictionary difference calculator
+    Originally posted as:
+    http://stackoverflow.com/questions/1165352/fast-comparison-between-two-python-dictionary/1165552#1165552
+    License: MIT
+
     Calculate the difference between two dictionaries as:
     (1) items added
     (2) items removed
@@ -46,8 +45,39 @@ class DictDiffer(object):
         return self.current_dict == self.past_dict
 
 def sha1_from_file(fname):
+    """Produces sha1 from file.
+    """
     sha1 = hashlib.sha1()
     with open(fname,'rb') as f:
         for chunk in iter(lambda: f.read(128*sha1.block_size), b''):
             sha1.update(chunk)
         return sha1.hexdigest()
+
+def chunks(l, n):
+    """Cut a slicable object into N length pieces.
+    """
+    return [l[i:i+n] for i in range(0, len(l), n)]
+
+def convert_to_number(val):
+    """Attempts to coerce value to int, if that fails float, and if
+    that fails it returns the original value.
+    """
+    try:
+        return int(val)
+    except:
+        try:
+            return float(val)
+        except:
+            return val
+
+def enum(*sequential, **named):
+    """Create a sequential Enum type from list of strings
+    """
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
+
+def get_encoding():
+    e = "cp1252"
+    if 'PYNWN_ENCODING' in os.environ and len(os.environ['PYNWN_ENCODING']):
+        e = os.environ['PYNWN_ENCODING']
+    return e

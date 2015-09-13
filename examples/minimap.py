@@ -4,7 +4,7 @@
 # NOTE: THIS EXAMPLE REQUIRES the Python Imaging Library!
 
 from pynwn.resource import ResourceManager
-from pynwn.util.helper import chunks
+from pynwn.util import chunks
 import ConfigParser, sys
 import Image
 

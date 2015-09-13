@@ -33,8 +33,8 @@ import os, struct, sys
 import chardet
 import io
 import pynwn.resource as res
-from pynwn.util.helper import chunks
-from pynwn.util.helper import get_encoding
+from pynwn.util import chunks
+from pynwn.util import get_encoding
 from pynwn.nwn.types import *
 
 def make_gff_property(attr, name):

@@ -1,7 +1,7 @@
 import re
 import itertools
 import os, io
-from pynwn.util.helper import convert_to_number
+from pynwn.util import convert_to_number
 from pynwn.resource import ContentObject
 
 import yaml
@@ -179,8 +179,8 @@ class TwoDX:
         csvreader = csv.reader(lines, delimiter=' ', skipinitialspace=True)
         for row in csvreader:
             self.rows.append(row)
-        
-        # 2dx doesn't need to have any rows/labels.  All changes can be in the metadata.    
+
+        # 2dx doesn't need to have any rows/labels.  All changes can be in the metadata.
         if not len(self.rows): return
 
         self.columns = [''] + self.rows[0]
