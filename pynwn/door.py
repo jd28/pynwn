@@ -51,7 +51,7 @@ class Door(object):
     def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None
-
+        self.container = None
         self.is_instance = instance
         if not instance:
             if isinstance(resource, str):
@@ -65,9 +65,7 @@ class Door(object):
             self.gff = resource
 
     def stage(self):
-        """Stages changes to door's GFF structure.
-        """
-        if self.gff.is_loaded():
+        if self.gff.is_loaded() and self.container:
             self.container.add_to_saves(self.gff)
 
     @property
@@ -129,8 +127,6 @@ class DoorInstance(Door):
         self.parent_obj = parent_obj
 
     def stage(self):
-        """Stages changes to the door instances parent object.
-        """
         self.parent_obj.stage()
 
     @property

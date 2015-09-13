@@ -1,12 +1,13 @@
+.. currentmodule:: pynwn
+
 Waypoint
 ********
-
-.. autoclass:: pynwn.waypoint.Waypoint
+.. autoclass:: Waypoint
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.waypoint.WaypointInstance
+.. autoclass:: WaypointInstance
    :members:
    :undoc-members:

@@ -1,12 +1,14 @@
+.. currentmodule:: pynwn
+
 Sound
 *****
 
-.. autoclass:: pynwn.sound.Sound
+.. autoclass:: Sound
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.sound.SoundInstance
+.. autoclass:: SoundInstance
    :members:
    :undoc-members:

@@ -50,7 +50,7 @@ ARE_TRANSLATION_TABLE = {
     'tag'                 : ('Tag', "Tag."),
     'tileset'             : ('Tileset', "Tileset."),
     'width'               : ('Width', "Area width."),
-    'comments'            : ('Comments', "Comments.")
+    'comment'             : ('Comments', "Comments.")
 }
 
 LOCSTRING_TABLE = {
@@ -87,15 +87,13 @@ class Area(object):
         self._locstr = {}
 
     def stage(self):
-        """Stages changes to the Area's GFF structures.
-        """
-        if self.are.is_loaded():
+        if self.are.is_loaded() and self.container:
             self.container.add_to_saves(self.are)
 
-        if self.git.is_loaded():
+        if self.git.is_loaded() and self.container:
             self.container.add_to_saves(self.git)
 
-        if self.gic.is_loaded():
+        if self.gic.is_loaded() and self.container:
             self.container.add_to_saves(self.gic)
 
     def get_instances(self, list_name, instance_class):
@@ -129,7 +127,7 @@ class Area(object):
     def creatures(self):
         """Creature instances.
 
-        :returns: List of CreatureInstance objects.
+        :returns: List of :class:`pynwn.CreatureInstance` objects.
         """
         return self.get_instances('Creature List',  CreatureInstance)
 
@@ -137,7 +135,7 @@ class Area(object):
     def encounters(self):
         """Encounters
 
-        :returns: List of EncounterInstance objects.
+        :returns: List of :class:`pynwn.EncounterInstance` objects.
         """
         return self.get_instances('Encounter List', EncounterInstance)
 
@@ -145,7 +143,7 @@ class Area(object):
     def items(self):
         """Item instance list.
 
-        :returns: List of ItemInstance objects.
+        :returns: List of :class:`pynwn.ItemInstance` objects.
         """
         return self.get_instances('List', ItemInstance)
 
@@ -153,7 +151,7 @@ class Area(object):
     def placeables(self):
         """Placeables
 
-        :returns: List of PlaceableInstance objects.
+        :returns: List of :class:`pynwn.PlaceableInstance` objects.
         """
         return self.get_instances('Placeable List', PlaceableInstance)
 
@@ -182,14 +180,14 @@ class Area(object):
     def sounds(self):
         """Sounds
 
-        :returns: List of SoundInstance objects.
+        :returns: List of :class:`pynwn.SoundInstance` objects.
         """
         return self.get_instances('SoundList', SoundInstance)
 
     @property
     def tiles(self):
         """Tiles
-        :returns: List of TileInstance objects.
+        :returns: List of :class:`pynwn.TileInstance` objects.
         """
         result = []
         i = 0
@@ -205,7 +203,7 @@ class Area(object):
     def stores(self):
         """Stores
 
-        :returns: List of StoreInstance objects.
+        :returns: List of :class:`pynwn.StoreInstance` objects.
         """
         return self.get_instances('StoreList', StoreInstance)
 
@@ -213,7 +211,7 @@ class Area(object):
     def triggers(self):
         """Triggers
 
-        :returns: List of TriggerInstance objects.
+        :returns: List of :class:`pynwn.TriggerInstance` objects.
         """
         return self.get_instances('TriggerList', TriggerInstance)
 
@@ -221,7 +219,7 @@ class Area(object):
     def waypoints(self):
         """Waypoints
 
-        :returns: List of WaypointInstance objects.
+        :returns: List of :class:`pynwn.WaypointInstance` objects.
         """
         return self.get_instances('WaypointList', WaypointInstance)
 

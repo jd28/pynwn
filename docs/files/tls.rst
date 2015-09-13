@@ -1,6 +1,8 @@
+.. currentmodule:: pynwn
+
 Tls
 ===
 
-.. autoclass:: pynwn.Tls
+.. autoclass:: Tls
    :members:
    :special-members:

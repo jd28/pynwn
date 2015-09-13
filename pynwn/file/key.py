@@ -4,9 +4,7 @@ import pynwn.resource as res
 from pynwn.util.helper import chunks, get_encoding
 
 class Bif:
-    """A Bif object encapsulates an open file handle pointing
-    to a .bif file. It's contents are indexed on first access,
-    not on creation by NWN::Key::Key (to speed up things).
+    """ Bif.
     """
 
     def __init__(self, key, io):

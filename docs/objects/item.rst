@@ -1,24 +1,22 @@
 Item
 ****
 
-.. autoclass:: pynwn.item.Item
+.. currentmodule:: pynwn
+
+.. autoclass:: Item
    :members:
-   :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.item.ItemInstance
+.. autoclass:: ItemInstance
    :members:
-   :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.item.ItemProperty
+.. autoclass:: ItemProperty
    :members:
-   :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.item.RepositoryItem
+.. autoclass:: RepositoryItem
    :members:
-   :undoc-members:

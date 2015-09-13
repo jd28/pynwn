@@ -12,7 +12,7 @@ from pynwn.vars import *
 TRANSLATION_TABLE = {
     'game_version'   : ('Mod_MinGameVer', 'Game version'),
     'expansion_pack' : ('Expansion_Pack', 'Expansion pack.'),
-    'tlk'            : ('Mod_CustomTlk', 'Custom TLK file.'),
+    'tlk'            : ('Mod_CustomTlk', 'Custom TLK file without file extension.'),
     'xp_scale'       : ('Mod_XPScale', 'Experience point scale.'),
 }
 
@@ -28,6 +28,7 @@ class Module(object):
     def __init__(self, module):
         if not isinstance(module, str):
             raise ValueError("Module must be instantiated with a file path to a MOD file or a directory")
+        self.container = None
 
         if os.path.isdir(module):
             self.container = RES.DirectoryContainer(module)
@@ -39,7 +40,7 @@ class Module(object):
             raise ValueError(msg)
 
         if not self.container.has_file('module.ifo'):
-            raise ValueError("The %s Container has no module.ifo!" % module)
+            raise ValueError("The %s has no module.ifo!" % module)
 
         self.gff = Gff(self.container['module.ifo'])
 
@@ -55,8 +56,7 @@ class Module(object):
         return self.container.glob(glob_pattern)
 
     def stage(self):
-        """Stages changes to the modules IFO GFF structure."""
-        if self.gff.is_loaded():
+        if self.gff.is_loaded() and self.container:
             self.container.add_to_saves(self.gff)
 
     @property
@@ -70,7 +70,7 @@ class Module(object):
     def areas(self):
         """Areas.
 
-        :returns: List of Area objects.
+        :returns: List of :class:`pynwn.Area` objects.
         """
 
         res = []
@@ -81,7 +81,10 @@ class Module(object):
 
     @property
     def entry_area(self):
-        """Entry area resref"""
+        """Entry area.
+
+        :returns: :class:`pynwn.Area` instance.
+        """
         return Area(self.gff['Mod_Entry_Area'], self.container)
 
     @property
@@ -95,7 +98,7 @@ class Module(object):
 
     @property
     def haks(self):
-        """List of HAK files."""
+        """List of HAK files without 'hak' extension."""
         return [hak['Mod_Hak'].value for hak in self.gff['Mod_HakList']]
 
     @property

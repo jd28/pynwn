@@ -1,12 +1,12 @@
+.. currentmodule:: pynwn
+
 Door
 ****
 
-.. autoclass:: pynwn.door.Door
+.. autoclass:: Door
    :members:
-   :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.door.DoorInstance
+.. autoclass:: DoorInstance
    :members:
-   :undoc-members:

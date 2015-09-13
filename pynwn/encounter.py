@@ -15,8 +15,6 @@ class EncounterCreature(object):
         self.is_instance = True
 
     def stage(self):
-        """Stages changes to the encounter creature instances parent object.
-        """
         self.parent_obj.stage()
 
 ENC_CRE_TABLE = {
@@ -105,7 +103,7 @@ class Encounter(object):
     def creatures(self):
         """Creatures in the encounter.
 
-        :returns: List of EncounterCreature objects.
+        :returns: List of :class:`EncounterCreature` objects.
         """
         result = []
         i = 0
@@ -120,6 +118,7 @@ class Encounter(object):
 class EncounterInstance(Encounter):
     """A encounter instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
+    It never needs to be instaniated directly.
     """
     def __init__(self, gff, parent_obj):
         Encounter.__init__(self, gff, True)
@@ -127,8 +126,6 @@ class EncounterInstance(Encounter):
         self.parent_obj = parent_obj
 
     def stage(self):
-        """Stages changes to the encounter instances parent object.
-        """
         self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.items():

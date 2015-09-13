@@ -1,5 +1,7 @@
+.. currentmodule:: pynwn
+
 2da
 ===
 
-.. autoclass:: pynwn.TwoDA
+.. autoclass:: TwoDA
    :members:

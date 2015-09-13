@@ -1,11 +1,8 @@
+.. currentmodule:: pynwn
+
 Gff
 ===
 
-.. autoclass:: pynwn.Gff
-   :members:
-
----------
-
-.. autoclass:: pynwn.file.gff.GffInstance
+.. autoclass:: Gff
    :members:
 

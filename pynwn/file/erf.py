@@ -24,6 +24,10 @@ class Erf(res.Container):
         self.day_of_year = now.timetuple().tm_yday
 
     def save(self):
+        """Writes modifications to disk.
+
+        If you want to write to some other file use :meth:`write_to`
+        """
         self.pre_save()
 
         if self.has_modified_content_objects():
@@ -124,7 +128,7 @@ class Erf(res.Container):
     def from_file(fname):
         """Create an Erf from a file handle.
 
-        :param io: A file handle.
+        :param fname: File name.
 
         """
         with open(fname, 'rb') as io:

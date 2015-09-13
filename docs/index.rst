@@ -9,11 +9,20 @@ PyNWN v0.1
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+  :caption: API
+  :maxdepth: 2
 
-   objects
-   resource
-   files
+  objects
+  resource
+  files
+
+.. toctree::
+  :caption: Examples
+  :maxdepth: 2
+
+  examples/check_string_vars
+  examples/dialog_printer
+  examples/minimap
 
 Indices and tables
 ==================

@@ -68,8 +68,12 @@ LOCSTRING_TABLE = {
 }
 
 class Creature(object):
-    """This abstracts over UTCs only... It doesn't handle all the additional
-    fields one finds in BICs, see object PlayerCharacter for that.
+    """The Creature class abstracts over UTCs only. It doesn't handle all the additional
+    fields one finds in BICs, see :class:`pynwn.PlayerCharacter` for that.
+
+    :param resource: Filename or content object.
+    :type resource: ``str`` or (:class:`pynwn.ContentObject`, :class:`pynwn.Container`)
+    :param instance: Deterimines if the current creature is an instanced object or not.
     """
     def __init__(self, resource, instance=False):
         self._scripts = None
@@ -229,8 +233,8 @@ class CreatureInstance(Creature):
     def items(self):
         """Creature's inventory items.
 
-        :returns: List of Tupels contiain repository position
-                  and the ItemInstance.
+        :returns: List of tuples contiain repository position
+                  and the :class:`pynwn.ItemInstance`.
         """
 
         result = []
@@ -253,7 +257,7 @@ class CreatureInstance(Creature):
     def equips(self):
         """ Creature's equipment list.
 
-        :returns: List of tuples containing equipment ID and ItemInstance.
+        :returns: List of tuples containing equipment ID and :class:`pynwn.ItemInstance`.
         """
         result = []
         i = 0

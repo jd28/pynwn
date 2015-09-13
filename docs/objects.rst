@@ -1,5 +1,5 @@
-PyNWN Objects
-*************
+Objects
+*******
 
 .. toctree::
    :maxdepth: 3
@@ -15,6 +15,7 @@ PyNWN Objects
    objects/module
    objects/palette
    objects/placeable
+   objects/player-character
    objects/sound
    objects/store
    objects/trigger

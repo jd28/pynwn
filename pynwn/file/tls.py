@@ -6,6 +6,8 @@ from pynwn.file.tlk import Tlk
 from pynwn.util.helper import get_encoding
 
 class Tls:
+    """The Tls file format was created by Meaglyn.
+    """
     def __init__(self, filename=None):
         self.entries = {}
         cur_line = ""

@@ -18,8 +18,6 @@ class RepositoryItem(object):
         self.parent_obj = parent_obj
 
     def stage(self):
-        """Stages changes to parent object's GFF structure
-        """
         self.parent_obj.stage()
 
     @property
@@ -78,6 +76,7 @@ class Item(object):
     def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None
+        self.container = None
 
         self.is_instance = instance
         if not instance:
@@ -92,9 +91,7 @@ class Item(object):
             self.gff = resource
 
     def stage(self):
-        """Stages changes to the item's GFF structure.
-        """
-        if self.gff.is_loaded():
+        if self.gff.is_loaded() and self.container:
             self.container.add_to_saves(self.gff)
 
     @property
@@ -113,7 +110,7 @@ class Item(object):
     def properties(self):
         """Item properties
 
-        :returns: List of ItemProperty objects.
+        :returns: List of :class:`ItemProperty` objects.
         """
         result = []
         i = 0
@@ -128,6 +125,7 @@ class Item(object):
 class ItemInstance(Item):
     """A item instance is one placed in an area in the toolset.
     As such it's values are derived from its parent GFF structure.
+    It never needs to be instantiated directly.
     """
     def __init__(self, gff, parent_obj):
         Item.__init__(self, gff, True)
@@ -135,8 +133,6 @@ class ItemInstance(Item):
         self.parent_obj = parent_obj
 
     def stage(self):
-        """Stages changes to the encounter creature instances parent object.
-        """
         self.parent_obj.stage()
 
 for key, val in TRANSLATION_TABLE.items():

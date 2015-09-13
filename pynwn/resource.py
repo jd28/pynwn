@@ -245,10 +245,12 @@ class ContentObject(object):
     """A ContentObject is an abstraction of any particular NWN resource object
     either in NWN container (i.e. a hak, mod, or erf) or in a file.
 
-    NOTE: Parameter abspath is ONLY used when the content object is in a DirectoryContainer.  Since
-    modifications to content objects are not immediately written to disk, if ``io``
-    is changed from a file to cStringIO, it's necessary to know where to write
-    the file when DirectoryContainer.save() is called.
+    .. note::
+
+        Parameter abspath is ONLY used when the content object is in a DirectoryContainer.  Since
+        modifications to content objects are not immediately written to disk, if ``io``
+        is changed from a file to cStringIO, it's necessary to know where to write
+        the file when :meth:`DirectoryContainer.save` is called.
 
     :param resref: Template resref name.
     :param res_type: Resource type.
@@ -423,12 +425,18 @@ class Container(object):
         return self.filenames.keys()
 
     def get_content_data(self, name):
-        """Get content object data by file name or integer index
+        """Get content object data
+
+        :param name: File name or int index.
         """
         co = self.get_content_object(name)
         return co.get()
 
     def get_content_object(self, name):
+        """Get content object.
+
+        :param name: File name or int index.
+        """
         co = None
         if isinstance(name, str):
             if not name in self.filenames:
@@ -439,6 +447,10 @@ class Container(object):
         return co
 
     def remove(self, name):
+        """Remove content object.
+
+        :param name: File name
+        """
         co = self.get_content_object(name)
         if co:
             self.filenames.pop(name, None)
@@ -499,6 +511,13 @@ class DirectoryContainer(Container):
                     self.add_file(os.path.join(dirname, filename))
 
     def save(self):
+        """Saves modified content objects.
+
+        .. note::
+
+            Content objects are not immediately saved to disk when changed.  So this function must
+            be called in order to save the them to disk.
+        """
         if self.has_modified_content_objects():
             for co in self.content:
                 if co.modified:
@@ -531,14 +550,14 @@ class ResourceManager(object):
 
     @staticmethod
     def from_module(mod, use_override=False, include_bioware=True, path = "C:\\NeverwinterNights\\NWN\\"):
-        """Creates a ResourceManager object from a module or module director.
+        """Creates a ResourceManager object from a module or module directory.
 
         :param mod: Path to module or module directory.
         :param use_override: default False, If true the overried directory in ``path`` will be used.
         :param include_bioware: default True, If false Bioware NWN BIF files will not be used.
         :param path: default "C:\\NeverwinterNights\\NWN\\", Path to NWN directory.
 
-        **NOTES:**
+        .. note::
 
         * If a directory is passed in ``mod`` it **must** contain a ``module.ifo`` file.
         * If ``include_bioware`` is ``False``, ``path`` can be any working directory
