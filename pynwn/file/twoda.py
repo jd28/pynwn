@@ -45,7 +45,7 @@ class TwoDA:
     def __repr__(self):
         """Returns repr of the 2da as a string
         """
-        return str(self.to_StringIO().getvalue())
+        return str(self)
 
     def __str__(self):
         """Returns a valid 2da as a string
@@ -72,10 +72,10 @@ class TwoDA:
     def to_StringIO(self):
         """Returns 2da written in a cStringIO buffer.
         """
-        i = 0
-        for r in self.rows:
+
+        for i, r in enumerate(self.rows):
             r[0] = str(i)
-            i += 1
+
 
         result = io.StringIO()
         result.write("2DA V2.0")
