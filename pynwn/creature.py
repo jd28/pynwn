@@ -67,14 +67,16 @@ LOCSTRING_TABLE = {
     'description' : ('Description', "Localized description")
 }
 
+
 class Creature(object):
     """The Creature class abstracts over UTCs only. It doesn't handle all the additional
     fields one finds in BICs, see :class:`pynwn.PlayerCharacter` for that.
 
     :param resource: Filename or content object.
-    :type resource: ``str`` or (:class:`pynwn.ContentObject`, :class:`pynwn.Container`)
+    :type resource: ``str``, (:class:`pynwn.ContentObject`, :class:`pynwn.Container`), or :class:`pynwn.GffInstance`
     :param instance: Deterimines if the current creature is an instanced object or not.
     """
+
     def __init__(self, resource, instance=False):
         self._scripts = None
         self._vars = None

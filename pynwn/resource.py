@@ -254,7 +254,7 @@ class ContentObject(object):
 
     :param resref: Template resref name.
     :param res_type: Resource type.
-    :param io: Either a file name or cStringIO.
+    :param content: Either a file name or cStringIO.
     :param offset: Data offest in ``io``.
     :param size: Data size.
     :param abspath: Absolute path to the file if one is contained in ``io``.

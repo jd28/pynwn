@@ -215,9 +215,7 @@ class Erf(res.Container):
     def filename_length(version):
         """Determine maximum ResRef length.
 
-        :param version: ERF version. Only "V1.0" and "V1.1" are valid parameters.
-        :type name: str.
-
+        :param str version: ERF version. Only "V1.0" and "V1.1" are valid parameters.
         """
         if version == "V1.0":
             return 16
