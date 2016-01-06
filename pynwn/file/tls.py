@@ -1,43 +1,49 @@
-import re, struct, sys, os
+import re
+import struct
+import os
 
 ENTRY_RE = re.compile('^<(\d+)><\d*>:(.+)')
 
 from pynwn.file.tlk import Tlk
-from pynwn.util.helper import get_encoding
+from pynwn.util import get_encoding
+
 
 class Tls:
     """The Tls file format was created by Meaglyn.
     """
+
     def __init__(self, filename=None):
         self.entries = {}
         cur_line = ""
         cur_index = None
-        if not filename is None and os.path.exists(filename) and os.path.isfile(filename):
+        if filename is not None and os.path.exists(filename) and os.path.isfile(filename):
             with open(filename) as f:
                 for line in f.read().splitlines():
-                    if len(line) and line[0] == '#': continue
+                    if len(line) and line[0] == '#':
+                        continue
                     m = ENTRY_RE.match(line)
                     if m:
-                        if not cur_index is None:
+                        if cur_index is not None:
                             self.entries[cur_index] = cur_line
                         cur_index = int(m.group(1))
-                        cur_line  = m.group(2)
+                        cur_line = m.group(2)
 
                     else:
                         cur_line += '\n' + line
 
-                if not cur_index is None:
+                if cur_index is not None:
                     self.entries[cur_index] = cur_line
 
     def __len__(self):
         return max(self.entries.keys()) + 1
 
     def __setitem__(self, i, val):
-        assert(isinstance(val, str))
+        assert (isinstance(val, str))
         self.entries[i] = val
 
     def __getitem__(self, i):
-        if not i in self.entries: return ""
+        if i not in self.entries:
+            return ""
         return self.entries[i]
 
     def inject(self, other):
@@ -55,11 +61,10 @@ class Tls:
 
     def write(self, io):
         io.write("#TLS V1.0 Uncompiled TLK source#\n")
-        for i in range(len(self)+1):
+        for i in range(len(self) + 1):
             n = self[i]
             if len(n):
                 io.write("<%d><%d>:%s\n" % (i, i + 0x01000000, n))
-
 
     def write_tlk(self, io, lang):
         header = struct.pack("4s 4s I I I",

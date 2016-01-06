@@ -1,37 +1,37 @@
 import os
 
+from pynwn import DirectoryContainer
 from pynwn.file.erf import Erf
 from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
-
 from pynwn.area import Area
-from pynwn.placeable import Placeable
-import pynwn.resource as RES
 from pynwn.scripts import *
 from pynwn.vars import *
 
 TRANSLATION_TABLE = {
-    'game_version'   : ('Mod_MinGameVer', 'Game version'),
-    'expansion_pack' : ('Expansion_Pack', 'Expansion pack.'),
-    'tlk'            : ('Mod_CustomTlk', 'Custom TLK file without file extension.'),
-    'xp_scale'       : ('Mod_XPScale', 'Experience point scale.'),
+    'game_version': ('Mod_MinGameVer', 'Game version'),
+    'expansion_pack': ('Expansion_Pack', 'Expansion pack.'),
+    'tlk': ('Mod_CustomTlk', 'Custom TLK file without file extension.'),
+    'xp_scale': ('Mod_XPScale', 'Experience point scale.'),
 }
 
 LOCSTRING_TABLE = {
-    'name'  : ('Mod_Name', "Localized name."),
-    'description' : ('Mod_Description', "Localized description.")
+    'name': ('Mod_Name', "Localized name."),
+    'description': ('Mod_Description', "Localized description.")
 }
+
 
 class Module(object):
     """Module abstracts over MOD ERF files and directories containing the contents of
     MOD files.
     """
+
     def __init__(self, module):
         if not isinstance(module, str):
             raise ValueError("Module must be instantiated with a file path to a MOD file or a directory")
         self.container = None
 
         if os.path.isdir(module):
-            self.container = RES.DirectoryContainer(module)
+            self.container = DirectoryContainer(module)
         elif os.path.isfile(module):
             # If it's a file, assume that it is a module ERF.
             self.container = Erf.from_file(module)
@@ -62,7 +62,8 @@ class Module(object):
     @property
     def vars(self):
         """ Variable table """
-        if self._vars: return self._vars
+        if self._vars:
+            return self._vars
         self._vars = NWObjectVarable(self, self.gff)
         return self._vars
 
@@ -93,8 +94,7 @@ class Module(object):
 
         :returns: Tuple of the X, Y, Z coordinates.
         """
-        return (self.gff['Mod_Entry_X'], self.gff['Mod_Entry_Y'], self.gff['Mod_Entry_Z'])
-
+        return self.gff['Mod_Entry_X'], self.gff['Mod_Entry_Y'], self.gff['Mod_Entry_Z']
 
     @property
     def haks(self):
@@ -122,26 +122,27 @@ class Module(object):
         #. Event.REST
         #. Event.USER_DEFINED
         """
-        if self._scripts: return self._scripts
+        if self._scripts:
+            return self._scripts
 
-        lbls = {}
-
-        lbls[Event.CUTSCENE_ABORT] = 'Mod_OnCutsnAbort'
-        lbls[Event.ENTER] = 'Mod_OnClientEntr'
-        lbls[Event.EXIT] = 'Mod_OnClientLeav'
-        lbls[Event.HEARTBEAT] = 'Mod_OnHeartbeat'
-        lbls[Event.ITEM_ACQUIRED] = 'Mod_OnAcquirItem'
-        lbls[Event.ITEM_ACTIVATED] = 'Mod_OnActvtItem'
-        lbls[Event.ITEM_EQUIPPED] = 'Mod_OnPlrEqItm'
-        lbls[Event.ITEM_UNACQUIRED] = 'Mod_OnUnAqreItem'
-        lbls[Event.ITEM_UNEQUIPPED] = 'Mod_OnPlrUnEqItm'
-        lbls[Event.LEVELUP] = 'Mod_OnPlrLvlUp'
-        lbls[Event.LOAD] = 'Mod_OnModLoad'
-        lbls[Event.DEATH] = 'Mod_OnPlrDeath'
-        lbls[Event.DYING] = 'Mod_OnPlrDying'
-        lbls[Event.RESPAWN] = 'Mod_OnSpawnBtnDn'
-        lbls[Event.REST] = 'Mod_OnPlrRest'
-        lbls[Event.USER_DEFINED] = 'Mod_OnUsrDefined'
+        lbls = {
+            Event.CUTSCENE_ABORT: 'Mod_OnCutsnAbort',
+            Event.ENTER: 'Mod_OnClientEntr',
+            Event.EXIT: 'Mod_OnClientLeav',
+            Event.HEARTBEAT: 'Mod_OnHeartbeat',
+            Event.ITEM_ACQUIRED: 'Mod_OnAcquirItem',
+            Event.ITEM_ACTIVATED: 'Mod_OnActvtItem',
+            Event.ITEM_EQUIPPED: 'Mod_OnPlrEqItm',
+            Event.ITEM_UNACQUIRED: 'Mod_OnUnAqreItem',
+            Event.ITEM_UNEQUIPPED: 'Mod_OnPlrUnEqItm',
+            Event.LEVELUP: 'Mod_OnPlrLvlUp',
+            Event.LOAD: 'Mod_OnModLoad',
+            Event.DEATH: 'Mod_OnPlrDeath',
+            Event.DYING: 'Mod_OnPlrDying',
+            Event.RESPAWN: 'Mod_OnSpawnBtnDn',
+            Event.REST: 'Mod_OnPlrRest',
+            Event.USER_DEFINED: 'Mod_OnUsrDefined'
+        }
 
         self._scripts = NWObjectScripts(self, lbls)
 
@@ -155,5 +156,5 @@ for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])
-    setattr(Module, 'get_'+key, getter)
-    setattr(Module, 'set_'+key, setter)
+    setattr(Module, 'get_' + key, getter)
+    setattr(Module, 'set_' + key, setter)

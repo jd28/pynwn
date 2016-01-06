@@ -1,7 +1,9 @@
-import struct, os, sys
+import struct
+import os
 
 import pynwn.resource as res
-from pynwn.util.helper import chunks, get_encoding
+from pynwn.util import chunks, get_encoding
+
 
 class Bif:
     """ Bif.
@@ -32,7 +34,8 @@ class Bif:
             data = f.read(self.var_res_count * 16)
 
             for c in chunks(data, 16):
-                if len(c) != 16: break
+                if len(c) != 16:
+                    break
 
                 rid, offset, size, restype = struct.unpack("<L L L L", c)
                 rid &= 0xfffff
@@ -53,12 +56,14 @@ class Bif:
         """
         return id in self.contained
 
+
 class Key(res.Container):
     """...
 
-    :param io: File handle.
+    :param str fname: File handle.
     :param data_path: Path to your NWN installation directory.  e.g: C:/NeverwinterNights/NWN/
     """
+
     def __init__(self, fname, data_path):
         super(Key, self).__init__()
 
@@ -86,9 +91,10 @@ class Key(res.Container):
 
             self.file_table = []
             for c in chunks(data, 12):
-                if len(c) != 12: break
+                if len(c) != 12:
+                    break
 
-                size, name_offset, name_size, drives = struct.unpack("LLhh", c)
+                size, name_offset, name_size, drives = struct.unpack("IIhh", c)
                 io.seek(name_offset)
                 name = io.read(name_size)
                 name = struct.unpack("%ds" % name_size, name)[0]
@@ -96,7 +102,7 @@ class Key(res.Container):
                 name = name.rstrip(' \t\r\n\0')
                 name = os.path.join(self.root, name.replace('\\', os.sep))
                 name = os.path.abspath(name)
-                self.bif.append( Bif(self, name) )
+                self.bif.append(Bif(self, name))
                 self.file_table.append((size, name, drives))
 
             self.key_table = {}
@@ -104,7 +110,8 @@ class Key(res.Container):
             data = io.read(22 * key_count)
 
             for c in chunks(data, 22):
-                if len(c) != 22: break
+                if len(c) != 22:
+                    break
                 resref, res_type, res_id = struct.unpack("<16s hL", c)
                 resref = resref.decode(get_encoding())
                 self.key_table[res_id] = (resref.rstrip(' \t\r\n\0'), res_type)
@@ -113,10 +120,10 @@ class Key(res.Container):
             for res_id, (resref, res_type) in self.key_table.items():
                 bif_idx = res_id >> 20
                 bif = self.bif[bif_idx]
-                res_id = res_id & 0xfffff
+                res_id &= 0xfffff
 
-                #print res_id, resref, res_type, bif_idx
-                if not res_id in bif.contained:
+                # print res_id, resref, res_type, bif_idx
+                if res_id not in bif.contained:
                     msg = "%s does not have %d" % (bif.io.name, res_id)
                     raise ValueError(msg)
 

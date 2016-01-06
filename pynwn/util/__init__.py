@@ -1,6 +1,6 @@
 import hashlib
-import struct
 import os
+
 
 class DictDiffer(object):
     """
@@ -15,11 +15,12 @@ class DictDiffer(object):
     (3) keys same in both but changed values
     (4) keys same in both and unchanged values
     """
+
     def __init__(self, current_dict, past_dict):
         self.current_dict, self.past_dict = current_dict, past_dict
         self.current_keys, self.past_keys = [
             set(d.keys()) for d in (current_dict, past_dict)
-        ]
+            ]
         self.intersect = self.current_keys.intersection(self.past_keys)
 
     @property
@@ -44,19 +45,22 @@ class DictDiffer(object):
     def identical(self):
         return self.current_dict == self.past_dict
 
+
 def sha1_from_file(fname):
     """Produces sha1 from file.
     """
     sha1 = hashlib.sha1()
-    with open(fname,'rb') as f:
-        for chunk in iter(lambda: f.read(128*sha1.block_size), b''):
+    with open(fname, 'rb') as f:
+        for chunk in iter(lambda: f.read(128 * sha1.block_size), b''):
             sha1.update(chunk)
         return sha1.hexdigest()
+
 
 def chunks(l, n):
     """Cut a slicable object into N length pieces.
     """
-    return [l[i:i+n] for i in range(0, len(l), n)]
+    return [l[i:i + n] for i in range(0, len(l), n)]
+
 
 def convert_to_number(val):
     """Attempts to coerce value to int, if that fails float, and if
@@ -64,17 +68,19 @@ def convert_to_number(val):
     """
     try:
         return int(val)
-    except:
+    except ValueError:
         try:
             return float(val)
-        except:
+        except ValueError:
             return val
+
 
 def enum(*sequential, **named):
     """Create a sequential Enum type from list of strings
     """
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
+
 
 def get_encoding():
     e = "cp1252"

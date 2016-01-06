@@ -25,7 +25,7 @@ if __name__ == '__main__':
             if n.get_text(0) is None or len(n.get_text(0)) == 0:
                 continue
 
-            print n.get_text(0)
+            print(n.get_text(0))
             chkr.set_text(n.get_text(0))
             cmdln.run()
             n.set_text(0, chkr.get_text())
