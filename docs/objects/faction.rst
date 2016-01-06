@@ -1,6 +1,7 @@
 Faction
 *******
+.. currentmodule:: pynwn
 
-.. autoclass:: pynwn.faction.Faction
+.. autoclass:: Faction
    :members:
    :undoc-members:

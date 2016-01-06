@@ -1,12 +1,14 @@
+.. currentmodule:: pynwn
+
 Trigger
 *******
 
-.. autoclass:: pynwn.trigger.Trigger
+.. autoclass:: Trigger
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.trigger.TriggerInstance
+.. autoclass:: TriggerInstance
    :members:
    :undoc-members:

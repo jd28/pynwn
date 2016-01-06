@@ -1,6 +1,10 @@
+.. currentmodule:: pynwn
+
 Erf
 ===
 
-.. autoclass:: pynwn.Erf
-   :members:
+.. autoclass:: Erf
+  :members:
+  :show-inheritance:
+  :inherited-members:
 

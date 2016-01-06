@@ -1,12 +1,16 @@
 Encounter
 *********
+.. currentmodule:: pynwn
 
-.. autoclass:: pynwn.encounter.Encounter
+.. autoclass:: EncounterCreature
    :members:
-   :undoc-members:
+
+---
+
+.. autoclass:: Encounter
+   :members:
 
 ----------
 
-.. autoclass:: pynwn.encounter.EncounterInstance
+.. autoclass:: EncounterInstance
    :members:
-   :undoc-members:

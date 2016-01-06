@@ -1,6 +1,8 @@
+.. currentmodule:: pynwn
+
 Dialog
 ======
 
-.. autoclass:: pynwn.dialog.Dialog
+.. autoclass:: Dialog
    :members:
    :undoc-members:

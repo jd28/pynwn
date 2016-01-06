@@ -1,15 +1,17 @@
 import re
-import itertools
-import os, io
-from pynwn.util import convert_to_number
-from pynwn.resource import ContentObject
+import os
+import io
+import csv
 
 import yaml
-import csv
 from prettytable import PrettyTable, PLAIN_COLUMNS
+
+from pynwn.resource import ContentObject
+
 
 def quote(string):
     return '"' + string + '"' if ' ' in string else string
+
 
 class TwoDX:
     """2dx Files.
@@ -61,10 +63,12 @@ class TwoDX:
         return self.rows[row][col]
 
     def set(self, row, col, val):
-        """Gets a 2dx entry by row and column label or column index.
+        """Sets a 2dx entry by row and column label or column index.
+        The value passed is automatically coerced to str.
         """
+
         col = self.get_column_index(col)
-        self.rows[row][col] = val
+        self.rows[row][col] = str(val)
 
     def to_ContentObject(self):
         """Returns 2dx as a ContentObject.  It's .io contents
@@ -158,20 +162,21 @@ class TwoDX:
                 raise RuntimeError("Invalid YAML header!")
 
         return i
-    def parse(self, io):
+
+    def parse(self, content):
         """Parses a 2dx file.
         """
 
-        lines = [l for l in iter(io.splitlines())]
+        lines = [l for l in iter(content.splitlines())]
         if len(lines) == 0:
             raise ValueError("Invalid 2dx file!")
 
         if re.match("2DX\s+V2.0", lines[0]):
-          self.version = lines[0]
-          col_line = self.parse20Header(lines)
+            self.version = lines[0]
+            col_line = self.parse20Header(lines)
         elif re.match("2DX\s+V2.1", lines[0]):
-          col_line = self.parse21Header(lines)
-          self.version = lines[0]
+            col_line = self.parse21Header(lines)
+            self.version = lines[0]
         else:
             raise ValueError("Invalid 2dx file, no 2DX header!")
 
@@ -181,7 +186,8 @@ class TwoDX:
             self.rows.append(row)
 
         # 2dx doesn't need to have any rows/labels.  All changes can be in the metadata.
-        if not len(self.rows): return
+        if not len(self.rows):
+            return
 
         self.columns = [''] + self.rows[0]
         self.rows = self.rows[1:]
@@ -196,11 +202,3 @@ class TwoDX:
                 cur = self.get(i, c)
                 if cur != '****':
                     self.set(i, c, str(int(cur) + int(off) + 0x01000000))
-
-    def set(self, row, col, val):
-        """Sets a 2dx entry by row and column label or column index.
-        The value passed is automatically coerced to str.
-        """
-
-        col = self.get_column_index(col)
-        self.rows[row][col] = str(val)

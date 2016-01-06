@@ -1,9 +1,11 @@
-import struct, sys
+import struct
+
 from pynwn.util import get_encoding
 
+
 class NWByte(object):
-    type_id   = 0
-    type      = 'byte'
+    type_id = 0
+    type = 'byte'
     at_offset = False
 
     def __init__(self, val):
@@ -30,9 +32,10 @@ class NWByte(object):
     def pack(self):
         return struct.pack('B3x', self.val)
 
+
 class NWChar(object):
-    type_id   = 1
-    type      = 'char'
+    type_id = 1
+    type = 'char'
     at_offset = False
 
     def __init__(self, val):
@@ -59,9 +62,10 @@ class NWChar(object):
     def pack(self):
         return struct.pack('c3x', self.val)
 
+
 class NWWord(object):
-    type_id   = 2
-    type      = 'word'
+    type_id = 2
+    type = 'word'
     at_offset = False
 
     def __init__(self, val):
@@ -88,9 +92,10 @@ class NWWord(object):
     def pack(self):
         return struct.pack('H2x', self.val)
 
+
 class NWShort(object):
-    type_id   = 3
-    type      = 'short'
+    type_id = 3
+    type = 'short'
     at_offset = False
 
     def __init__(self, val):
@@ -117,9 +122,10 @@ class NWShort(object):
     def pack(self):
         return struct.pack('h2x', self.val)
 
+
 class NWDword(object):
-    type_id   = 4
-    type      = 'dword'
+    type_id = 4
+    type = 'dword'
     at_offset = False
 
     def __init__(self, val):
@@ -146,9 +152,10 @@ class NWDword(object):
     def pack(self):
         return struct.pack('I', self.val)
 
+
 class NWInt(object):
-    type_id   = 5
-    type      = 'int'
+    type_id = 5
+    type = 'int'
     at_offset = False
 
     def __init__(self, val):
@@ -175,9 +182,10 @@ class NWInt(object):
     def pack(self):
         return struct.pack('i', self.val)
 
+
 class NWDword64(object):
-    type_id   = 6
-    type      = 'dword64'
+    type_id = 6
+    type = 'dword64'
     at_offset = True
 
     def __init__(self, val):
@@ -205,9 +213,10 @@ class NWDword64(object):
     def pack(self):
         return struct.pack('Q', self.val)
 
+
 class NWInt64(object):
     type_id = 7
-    type    = 'int64'
+    type = 'int64'
     at_offset = True
 
     def __init__(self, val):
@@ -235,9 +244,10 @@ class NWInt64(object):
     def pack(self):
         return struct.pack('q', self.val)
 
+
 class NWFloat(object):
-    type_id   = 8
-    type      = 'float'
+    type_id = 8
+    type = 'float'
     at_offset = False
 
     def __init__(self, val):
@@ -264,9 +274,10 @@ class NWFloat(object):
     def pack(self):
         return struct.pack('f', self.val)
 
+
 class NWDouble(object):
-    type_id   = 9
-    type      = 'double'
+    type_id = 9
+    type = 'double'
     at_offset = True
 
     def __init__(self, val):
@@ -294,9 +305,10 @@ class NWDouble(object):
     def pack(self):
         return struct.pack('d', self.val)
 
+
 class NWString(object):
-    type_id   = 10
-    type      = 'cexostr'
+    type_id = 10
+    type = 'cexostr'
     at_offset = 'data'
 
     def __init__(self, val):
@@ -333,13 +345,14 @@ class NWString(object):
     def pack(self):
         """Writes the specified data as a cexostring and returns it."""
 
-        length = len( self.val )
+        length = len(self.val)
         pattern = "I%ds" % length
         return struct.pack(pattern, length, self.val.encode('utf-8'))
 
+
 class NWResref(object):
-    type_id   = 11
-    type      = 'resref'
+    type_id = 11
+    type = 'resref'
     at_offset = 'data'
 
     def __init__(self, val):
@@ -385,9 +398,10 @@ class NWResref(object):
         pattern = "B%ds" % length
         return struct.pack(str.encode(pattern), length, str.encode(self.val))
 
+
 class NWLocalizedString(object):
-    type_id   = 12
-    type      = 'cexolocstr'
+    type_id = 12
+    type = 'cexolocstr'
     at_offset = 'data'
 
     def __init__(self, strref, entry_list):
@@ -462,12 +476,13 @@ class NWLocalizedString(object):
 
         return struct.pack('I', len(content)) + content
 
+
 class NWVoid(object):
     """ Does not abstract a type, it exists only for
     parsing"""
 
-    type_id   = 13
-    type      = 'void'
+    type_id = 13
+    type = 'void'
     at_offset = 'data'
 
     def __init__(self, val):
@@ -488,12 +503,13 @@ class NWVoid(object):
         pattern = "I%dB" % length
         return struct.pack(pattern, length, self.val)
 
+
 class NWStruct(object):
     """ Does not abstract a type, it exists only for
     parsing"""
 
-    type_id   = 14
-    type      = 'struct'
+    type_id = 14
+    type = 'struct'
     at_offset = True
 
     def __init__(self):
@@ -503,12 +519,13 @@ class NWStruct(object):
     def unpack(source, offset):
         return offset
 
+
 class NWList(object):
     """ Does not abstract a type, it exists only for
     parsing"""
 
-    type_id   = 15
-    type      = 'list'
+    type_id = 15
+    type = 'list'
     at_offset = 'list'
 
     def __init__(self):

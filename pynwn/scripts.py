@@ -36,8 +36,9 @@ Event = enum('ATTACKED',
              'USED',
              'USER_DEFINED')
 
+
 class NWObjectScripts:
-    def __init__(self, obj, label_map, gff = None):
+    def __init__(self, obj, label_map, gff=None):
         self.gff = gff or obj.gff
         self.map = label_map
         self.parent = obj

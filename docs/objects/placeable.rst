@@ -1,12 +1,14 @@
+.. currentmodule:: pynwn
+
 Placeable
 *********
 
-.. autoclass:: pynwn.placeable.Placeable
+.. autoclass:: Placeable
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.placeable.PlaceableInstance
+.. autoclass:: PlaceableInstance
    :members:
    :undoc-members:

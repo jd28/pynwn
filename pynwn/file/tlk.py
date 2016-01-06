@@ -1,7 +1,7 @@
-import struct, sys, os
+import struct
 
-from pynwn.nwn.consts import *
-from pynwn.util.helper import get_encoding
+from pynwn.util import get_encoding
+
 
 class Tlk:
     """Loads a TLK file from a file handle.
@@ -10,7 +10,7 @@ class Tlk:
     HEADER_SIZE = 20
     DATA_ELEMENT_SIZE = 4 + 16 + 4 + 4 + 4 + 4 + 4
 
-    def __init__(self, io = None):
+    def __init__(self, io=None):
         self.entries = {}
         if io:
             self.io = io
@@ -33,7 +33,7 @@ class Tlk:
         """
 
         if isinstance(i, slice):
-            indices = i.indices( len(self) )
+            indices = i.indices(len(self))
 
             n = Tlk(None)
             n.ftype = self.ftype
@@ -50,7 +50,7 @@ class Tlk:
             return ""
         elif i in self.entries:
             return self.entries[i]
-        elif not self.io is None:
+        elif self.io is not None:
             seek_to = self.HEADER_SIZE + i * self.DATA_ELEMENT_SIZE
             self.io.seek(seek_to)
 
@@ -64,9 +64,9 @@ class Tlk:
             text = self.io.read(size)
             try:
                 text = text.decode(get_encoding()) if flags & 0x1 > 0 else ""
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError:
                 print("Encoding Error: Unable to read entry %d" % i)
-                text = ""
+                text = ''
 
             return text
         return ""
@@ -87,7 +87,7 @@ class Tlk:
     def __setitem__(self, i, val):
         self.entries[i] = val
 
-    def add (self, text):
+    def add(self, text):
         """Adds TLK entry to the end of entry list.
         """
         next_i = len(self)
@@ -98,14 +98,14 @@ class Tlk:
     def inject(self, other):
         """Injects lines from one TLK into another.
         """
-        for i in range(len(other)+1):
+        for i in range(len(other) + 1):
             n = other[i]
             if len(n):
                 self[i] = n
 
     def write_tls(self, io):
         io.write("#TLS V1.0 Uncompiled TLK source#\n")
-        for i in range(len(self)+1):
+        for i in range(len(self) + 1):
             n = self[i]
             if len(n):
                 try:
@@ -139,8 +139,9 @@ class Tlk:
             strings.append(n)
         io.write(bytearray(''.join(strings), get_encoding()))
 
+
 class TlkTable(object):
-    def __init__(self, dialog, custom = None, dialogf = None, customf = None):
+    def __init__(self, dialog, custom=None, dialogf=None, customf=None):
         self.dm = Tlk(dialog)
         self.df = Tlk(dialogf) if dialogf else self.dm
         self.cm = Tlk(custom) if custom else None

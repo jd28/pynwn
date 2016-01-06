@@ -1,6 +1,8 @@
+.. currentmodule:: pynwn
+
 Module
 ******
 
-.. autoclass:: pynwn.module.Module
+.. autoclass:: Module
    :members:
    :undoc-members:

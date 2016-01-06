@@ -1,5 +1,7 @@
+.. currentmodule:: pynwn
+
 2dx
 ===
 
-.. autoclass:: pynwn.TwoDX
+.. autoclass:: TwoDX
    :members:

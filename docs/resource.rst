@@ -1,35 +1,31 @@
-PyNWN Resources
-***************
-
-.. automodule:: pynwn
-   :members:
-   :undoc-members:
-
-Container
+Resources
 =========
 
-.. autoclass:: pynwn.Container
-   :members:
-   :special-members:
+.. currentmodule:: pynwn
+
+Container
+----------
+
+.. autoclass:: Container
+  :members:
 
 ContentObject
-=============
+-------------
 
-.. autoclass:: pynwn.ContentObject
-   :members:
-   :special-members:
+.. autoclass:: ContentObject
+  :members:
 
 DirectoryContainer
-==================
+------------------
 
-.. autoclass:: pynwn.DirectoryContainer
-   :members:
-   :special-members:
+.. autoclass:: DirectoryContainer
+  :members:
+  :show-inheritance:
+  :inherited-members:
 
 ResourceManager
-===============
+---------------
 
-.. autoclass:: pynwn.ResourceManager
-   :members:
-   :special-members:
+.. autoclass:: ResourceManager
+  :members:
 

@@ -3,21 +3,22 @@ from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 from pynwn.vars import *
 
 TRANSLATION_TABLE = {
-    'tag'              : ('Tag', "Tag."),
-    'resref'           : ('TemplateResRef', "Resref."),
-    'appearance'       : ('Appearance', 'Appearance ID'),
-    'comment'          : ('Comment', "Comment."),
-    'has_map_note'     : ('HasMapNote', "Has map note flag."),
-    'linked_to'        : ('LinkedTo', "Linked to."),
-    'map_note_enabled' : ('MapNoteEnabled', "Map note enabled."),
-    'palette_id'       : ('PaletteID', "Palette ID."),
+    'tag': ('Tag', "Tag."),
+    'resref': ('TemplateResRef', "Resref."),
+    'appearance': ('Appearance', 'Appearance ID'),
+    'comment': ('Comment', "Comment."),
+    'has_map_note': ('HasMapNote', "Has map note flag."),
+    'linked_to': ('LinkedTo', "Linked to."),
+    'map_note_enabled': ('MapNoteEnabled', "Map note enabled."),
+    'palette_id': ('PaletteID', "Palette ID."),
 }
 
 LOCSTRING_TABLE = {
-    'name'        : ('LocalizedName', "Localized name."),
-    'map_note'    : ('MapNote', "Localized map note."),
-    'description' : ('Description', "Localized description."),
+    'name': ('LocalizedName', "Localized name."),
+    'map_note': ('MapNote', "Localized map note."),
+    'description': ('Description', "Localized description."),
 }
+
 
 class Waypoint(object):
     def __init__(self, resource, instance=False):
@@ -27,7 +28,7 @@ class Waypoint(object):
         self.is_instance = instance
         if not instance:
             if isinstance(resource, str):
-                from resource import ContentObject
+                from pynwn import ContentObject
                 co = ContentObject.from_file(resource)
                 self.gff = Gff(co)
                 self.is_file = True
@@ -46,7 +47,8 @@ class Waypoint(object):
     @property
     def vars(self):
         """ Variable table """
-        if self._vars: return self._vars
+        if self._vars:
+            return self._vars
         self._vars = NWObjectVarable(self, self.gff)
         return self._vars
 
@@ -66,6 +68,7 @@ class WaypointInstance(Waypoint):
         """
         self.parent_obj.stage()
 
+
 for key, val in TRANSLATION_TABLE.items():
     setattr(Waypoint, key, make_gff_property('gff', val))
 
@@ -73,5 +76,5 @@ for key, val in LOCSTRING_TABLE.items():
     getter, setter = make_gff_locstring_property('gff', val)
     setattr(getter, '__doc__', val[1])
     setattr(setter, '__doc__', val[1])
-    setattr(Waypoint, 'get_'+key, getter)
-    setattr(Waypoint, 'set_'+key, setter)
+    setattr(Waypoint, 'get_' + key, getter)
+    setattr(Waypoint, 'set_' + key, setter)

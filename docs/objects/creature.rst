@@ -1,12 +1,14 @@
+.. currentmodule:: pynwn
+
 Creature
 ********
 
-.. autoclass:: pynwn.creature.Creature
+.. autoclass:: Creature
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.creature.CreatureInstance
+.. autoclass:: CreatureInstance
    :members:
    :undoc-members:
