@@ -1,4 +1,3 @@
-
 #  NeverWinter Nights: GFF File Format Reader/Writer
 #  [gff.py, v1.2 (BETA), 2004-03-08, jrm]
 #
@@ -29,13 +28,11 @@
 #  NeverWinter Nights and all attendent content, as well as the GFF file format
 #  remains the copyright of Bioware.
 
-import os, struct, sys
-import chardet
 import io
-import pynwn.resource as res
-from pynwn.util.helper import chunks
-from pynwn.util.helper import get_encoding
+
+from pynwn.util import chunks
 from pynwn.nwn.types import *
+
 
 def make_gff_property(attr, name):
     def getter(self):
@@ -43,7 +40,7 @@ def make_gff_property(attr, name):
 
         # Ensure that the correct types have been passed.
         if (not isinstance(gff, Gff) and
-            not isinstance(gff, GffInstance)):
+                not isinstance(gff, GffInstance)):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
@@ -54,7 +51,7 @@ def make_gff_property(attr, name):
 
         # Ensure that the correct types have been passed.
         if (not isinstance(gff, Gff) and
-            not isinstance(gff, GffInstance)):
+                not isinstance(gff, GffInstance)):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
@@ -63,13 +60,14 @@ def make_gff_property(attr, name):
 
     return property(getter, setter, None, name[1])
 
+
 def make_gff_locstring_property(attr, name):
     def getter(self, lang=None):
         gff = getattr(self, attr)
 
         # Ensure that the correct types have been passed.
         if (not isinstance(gff, Gff) and
-            not isinstance(gff, GffInstance)):
+                not isinstance(gff, GffInstance)):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
@@ -79,13 +77,12 @@ def make_gff_locstring_property(attr, name):
         else:
             return ls[lang]
 
-
     def setter(self, lang=None, string=None):
         gff = getattr(self, attr)
 
         # Ensure that the correct types have been passed.
         if (not isinstance(gff, Gff) and
-            not isinstance(gff, GffInstance)):
+                not isinstance(gff, GffInstance)):
             raise ValueError("""ERROR: make_gff_property can only operate on
                              Gffs and GffInstances!""")
 
@@ -97,7 +94,7 @@ def make_gff_locstring_property(attr, name):
 
         self.stage()
 
-    return (getter, setter)
+    return getter, setter
 
 
 class GffInstance(object):
@@ -105,10 +102,11 @@ class GffInstance(object):
 
     This object creats a view into a parent GFF
     """
+
     def __init__(self, parent_gff, list_name, list_index):
         self.parent = parent_gff
-        self.field  = list_name
-        self.index  = list_index
+        self.field = list_name
+        self.index = list_index
 
     def __getitem__(self, name):
         try:
@@ -116,8 +114,8 @@ class GffInstance(object):
         except KeyError:
             return None
         if (isinstance(res, list) or
-            isinstance(res, dict) or
-            isinstance(res, NWLocalizedString)):
+                isinstance(res, dict) or
+                isinstance(res, NWLocalizedString)):
             return res
 
         return res.value
@@ -125,8 +123,8 @@ class GffInstance(object):
     def __setitem__(self, name, value):
         res = self.parent[self.field][self.index][name]
         if (isinstance(res, list) or
-            isinstance(res, dict) or
-            isinstance(res, NWLocalizedString)):
+                isinstance(res, dict) or
+                isinstance(res, NWLocalizedString)):
             raise ValueError("""Unable to set List, Struct, or
                              NWLocalizedString types""")
 
@@ -140,6 +138,7 @@ class GffInstance(object):
 
     def get_structure(self):
         return self.parent[self.field][self.index]
+
 
 class Gff(object):
     """Represents a GFF file."""
@@ -158,9 +157,9 @@ class Gff(object):
     # struct patterns
     HeaderPattern = '4s4s12I'
     StructPattern = '3I'
-    LabelPattern  = '16s'
-    FieldPattern  = '2I'
-    DwordPattern  = 'I'
+    LabelPattern = '16s'
+    FieldPattern = '2I'
+    DwordPattern = 'I'
 
     def __init__(self, content_object):
         """Constructor."""
@@ -178,11 +177,12 @@ class Gff(object):
         return str(self.structure)
 
     def __getitem__(self, name):
-        if not self.is_loaded: self.load()
+        if not self.is_loaded:
+            self.load()
         res = self.structure[name]
         if (isinstance(res, list) or
-            isinstance(res, dict) or
-            isinstance(res, NWLocalizedString)):
+                isinstance(res, dict) or
+                isinstance(res, NWLocalizedString)):
             return res
 
         return res.value
@@ -190,8 +190,8 @@ class Gff(object):
     def __setitem__(self, name, value):
         res = self.structure[name]
         if (isinstance(res, list) or
-            isinstance(res, dict) or
-            isinstance(res, NWLocalizedString)):
+                isinstance(res, dict) or
+                isinstance(res, NWLocalizedString)):
             raise ValueError('Unable to set List, Struct, or NWLocalizedString types')
 
         res.value = value
@@ -209,6 +209,42 @@ class Gff(object):
             self.load()
         self.structure[name] = value
 
+    def to_dict(self, cursor=None):
+        """
+        Converts gff to dict.
+
+        :returns: A dictionary in the format of nwn-lib json output.
+        """
+
+        res = {}
+        if cursor is None:
+            res["__data_type"] = self.filetype
+            res["__struct_id"] = -1
+
+        cursor = cursor or self.structure
+
+        def get_value(val):
+            if isinstance(val, NWLocalizedString):
+                return val.to_dict()
+            else:
+                return {'value': v.value,
+                        'type': v.type}
+
+        if "_STRUCT_TYPE_" in cursor:
+            res["__struct_id"] = cursor["_STRUCT_TYPE_"]
+        for k, v in cursor.items():
+            if isinstance(v, list):
+                res[k] = {
+                    'type': 'list',
+                    'value': [self.to_dict(l) for l in v]
+                }
+            elif isinstance(v, dict):
+                res[k] = self.to_dict(v)
+            elif k == "_STRUCT_TYPE_":
+                continue
+            else:
+                res[k] = get_value(v)
+        return res
 
     @property
     def structure(self):
@@ -222,7 +258,7 @@ class Gff(object):
         return self._structure
 
     def is_loaded(self):
-        return not self._structure is None
+        return self._structure is not None
 
     def load(self):
         """Loads the source of the associated gff file."""
@@ -233,8 +269,8 @@ class Gff(object):
         header = struct.unpack(self.HeaderPattern,
                                self.source.read(struct.calcsize(self.HeaderPattern)))
 
-        if (header[0].decode(get_encoding()).rstrip() == self.filetype
-            and header[1].decode(get_encoding()) == self.Version):
+        if(header[0].decode(get_encoding()).rstrip() == self.filetype
+           and header[1].decode(get_encoding()) == self.Version):
             self.structoffset, self.structcount = header[2:4]
             self.fieldoffset, self.fieldcount = header[4:6]
             self.labeloffset, self.labelcount = header[6:8]
@@ -243,9 +279,11 @@ class Gff(object):
             self.listoffset, self.listsize = header[12:14]
         else:
             if header[1].decode(get_encoding()) != self.Version:
-                raise ValueError("File: %s: gff file version '%s' does not match current valid version '%s'" % (self.co.get_filename(), header[1], self.Version))
+                raise ValueError("File: %s: gff file version '%s' does not match current valid version '%s'" % (
+                    self.co.get_filename(), header[1], self.Version))
             else:
-                raise ValueError("File: %s: gff file type '%s' does not match specified file type '%s'" % (self.co.get_filename(), header[0].rstrip(), self.filetype))
+                raise ValueError("File: %s: gff file type '%s' does not match specified file type '%s'" % (
+                    self.co.get_filename(), header[0].rstrip(), self.filetype))
 
         # position the source file at the struct array and prepare structs list
         self.source.seek(self.structoffset)
@@ -271,7 +309,6 @@ class Gff(object):
                 indexes = struct.unpack(pattern, data)
                 self.structs.append([type, list(indexes)])
 
-
         # position the source file at the label array and prepare labels list
         self.source.seek(self.labeloffset)
         self.labels = []
@@ -296,8 +333,9 @@ class Gff(object):
             Type = self.Classes[type]
 
             position = None
+            offset = None
             # False indicates there is no offset
-            if not Type.at_offset is False:
+            if Type.at_offset is not False:
                 offset = struct.unpack('I', self.source.read(4))[0]
                 position = self.source.tell()
 
@@ -312,7 +350,7 @@ class Gff(object):
             else:
                 data = Type.unpack(self.source)
 
-            type_name  = Type.type
+            type_name = Type.type
             label_name = self.labels[label]
             self.fields.append([type_name, label_name, data])
 
@@ -326,6 +364,8 @@ class Gff(object):
         """Saves the current version of the gff structure to the associated
         file.
         """
+        if self._structure is None:
+            return
 
         print("Attempting to save %s" % (self.co.get_filename()))
 
@@ -434,7 +474,8 @@ class Gff(object):
         # Modified the following lines.  Python is unable to iterate over
         # int, which is what the struct contains if there is only one field
         fields = self.structs[sid][1]
-        if not isinstance(fields, list): fields = [fields]
+        if not isinstance(fields, list):
+            fields = [fields]
 
         for field in fields:
             ftype, label, value = self.fields[field]
@@ -447,7 +488,7 @@ class Gff(object):
                 group = []
                 for structid in value:
                     stype, sid = self.structs[structid]
-                    result     = self.build_struct(structid)
+                    result = self.build_struct(structid)
                     result['_STRUCT_TYPE_'] = stype
                     group.append(result)
                 structure[label] = group

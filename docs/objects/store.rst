@@ -1,12 +1,14 @@
+.. currentmodule:: pynwn
+
 Store
 *****
 
-.. autoclass:: pynwn.store.Store
+.. autoclass:: Store
    :members:
    :undoc-members:
 
 ----------
 
-.. autoclass:: pynwn.store.StoreInstance
+.. autoclass:: StoreInstance
    :members:
    :undoc-members:

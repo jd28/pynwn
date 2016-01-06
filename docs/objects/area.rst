@@ -1,6 +1,8 @@
+.. module:: pynwn
+
 Area
 ====
 
-.. autoclass:: pynwn.area.Area
+.. autoclass:: pynwn.Area
    :members:
    :special-members:

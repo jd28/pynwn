@@ -1,7 +1,8 @@
-import fnmatch, os
+import fnmatch
+import os
 import io
+import hashlib
 
-from itertools import chain
 from pynwn.file.tlk import TlkTable
 
 Extensions = {
@@ -113,7 +114,7 @@ Extensions = {
     'jpg': 4007,
     'pwc': 4008,
 
-    #custom
+    # custom
     '2dx': 4009,
 
     'ids': 9996,
@@ -231,7 +232,7 @@ ResTypes = {
     4007: 'jpg',
     4008: 'pwc',
 
-    #custom
+    # custom
     4009: '2dx',
 
     9996: 'ids',
@@ -240,32 +241,35 @@ ResTypes = {
     9999: 'key',
 }
 
+
 class ContentObject(object):
     """A ContentObject is an abstraction of any particular NWN resource object
     either in NWN container (i.e. a hak, mod, or erf) or in a file.
 
-    NOTE: Parameter abspath is ONLY used when the content object is in a DirectoryContainer.  Since
-    modifications to content objects are not immediately written to disk, if ``io``
-    is changed from a file to cStringIO, it's necessary to know where to write
-    the file when DirectoryContainer.save() is called.
+    .. note::
+
+        Parameter abspath is ONLY used when the content object is in a DirectoryContainer.  Since
+        modifications to content objects are not immediately written to disk, if ``io``
+        is changed from a file to cStringIO, it's necessary to know where to write
+        the file when :meth:`DirectoryContainer.save` is called.
 
     :param resref: Template resref name.
     :param res_type: Resource type.
-    :param io: Either a file name or cStringIO.
+    :param content: Either a file name or cStringIO.
     :param offset: Data offest in ``io``.
     :param size: Data size.
     :param abspath: Absolute path to the file if one is contained in ``io``.
     """
 
-    def __init__(self, resref, res_type, io = None, offset = None, size=None, abspath=None):
+    def __init__(self, resref, res_type, content=None, offset=None, size=None, abspath=None):
         self.resref = resref.lower()
 
-        if not res_type in ResTypes:
+        if res_type not in ResTypes:
             raise ValueError("Invalid Resource Type: %d!" % res_type)
         self.res_type = res_type
         self.modified = False
         self.abspath = abspath
-        self.io = io
+        self.io = content
         self.offset = offset or 0
         self.size = size
 
@@ -276,20 +280,22 @@ class ContentObject(object):
     def from_file(filename):
         """Instantiates a ContentObject from a file.
         """
-        if not os.path.isfile(filename): raise ValueError("%s does not exist!" % filename)
+        if not os.path.isfile(filename):
+            raise ValueError("%s does not exist!" % filename)
 
         abspath = os.path.abspath(filename)
         basename = os.path.basename(abspath)
         basename, ext = os.path.splitext(basename)
 
         ext = ext[1:]
-        if not ext in Extensions: raise ValueError("Invalid Resource Type: %s!" % filename)
+        if ext not in Extensions:
+            raise ValueError("Invalid Resource Type: %s!" % filename)
 
         size = os.path.getsize(abspath)
 
         return ContentObject(basename, Extensions[ext], abspath, 0, size, abspath)
 
-    def get(self, mode = 'rb'):
+    def get(self, mode='rb'):
         """Returns the actual data.
         """
         mode = 'rb' if mode is None else mode
@@ -321,6 +327,7 @@ class ContentObject(object):
     def write_to(self, path):
         with open(path, 'wb') as f:
             f.write(self.get())
+
 
 def construct(co, cont):
     if co.res_type == 2027:
@@ -356,9 +363,11 @@ def construct(co, cont):
 
     return None
 
+
 class Container(object):
     """A basic container for ContentObjects
     """
+
     def __init__(self):
         self.content = []
         self.filenames = {}
@@ -370,7 +379,7 @@ class Container(object):
         """
         co = None
         if isinstance(name, str):
-            if not name in self.filenames:
+            if name not in self.filenames:
                 raise ValueError("No ContentObject exists for %s" % name)
             co = self.filenames[name]
         elif isinstance(name, int):
@@ -407,11 +416,12 @@ class Container(object):
     def pre_save(self):
         for obj in self.saves:
             obj.save()
-        saves = set([])
+        self.saves = set([])
 
     def has_modified_content_objects(self):
         for co in self.content:
-            if co.modified: return True
+            if co.modified:
+                return True
 
         return False
 
@@ -422,15 +432,21 @@ class Container(object):
         return self.filenames.keys()
 
     def get_content_data(self, name):
-        """Get content object data by file name or integer index
+        """Get content object data
+
+        :param name: File name or int index.
         """
         co = self.get_content_object(name)
         return co.get()
 
     def get_content_object(self, name):
+        """Get content object.
+
+        :param name: File name or int index.
+        """
         co = None
         if isinstance(name, str):
-            if not name in self.filenames:
+            if name not in self.filenames:
                 return None
             co = self.filenames[name]
         elif isinstance(name, int):
@@ -438,10 +454,35 @@ class Container(object):
         return co
 
     def remove(self, name):
+        """Remove content object.
+
+        :param name: File name
+        """
         co = self.get_content_object(name)
         if co:
             self.filenames.pop(name, None)
             self.content.remove(co)
+
+    def hashes(self, hash_type='sha1'):
+        """
+        Get content object hashes.
+
+        :param hash_type: 'sha1', 'sha256'
+        :returns: {filename: hexdigest}
+        """
+        if hash_type not in ['sha1', 'sha256']:
+            raise ValueError("Unsupported hash type: %s" % hash_type)
+
+        res = {}
+        for co in self.content:
+            if hash_type == 'sha1':
+                m = hashlib.sha1()
+            elif hash_type == 'sha256':
+                m = hashlib.sha256()
+            m.update(co.get())
+            res[co.get_filename()] = m.hexdigest()
+
+        return res
 
     def glob(self, glob_pattern):
         """Returns a list of objects or content objects for file names matching the glob pattern.
@@ -456,6 +497,7 @@ class Container(object):
         """
         return fname in self.filenames
 
+
 class DirectoryContainer(Container):
     """A Container that directly wraps a directory (e.g. override/).
 
@@ -464,6 +506,7 @@ class DirectoryContainer(Container):
                      even those that are not NWN resource types.
 
     """
+
     def __init__(self, path, only_nwn=True):
         super(DirectoryContainer, self).__init__()
         if not os.path.isdir(path):
@@ -476,15 +519,24 @@ class DirectoryContainer(Container):
                     self.add_file(os.path.join(dirname, filename))
 
     def save(self):
+        """Saves modified content objects.
+
+        .. note::
+
+            Content objects are not immediately saved to disk when changed.  So this function must
+            be called in order to save the them to disk.
+        """
         if self.has_modified_content_objects():
             for co in self.content:
                 if co.modified:
                     co.write_to(co.abspath)
                     co.modified = False
 
+
 class ResourceManager(object):
     """A container for Container objects.
     """
+
     def __init__(self):
         self.containers = []
         self.filenames = None
@@ -507,39 +559,34 @@ class ResourceManager(object):
         raise ValueError("No ContentObject exists for %s" % fname)
 
     @staticmethod
-    def from_module(mod, use_override=False, include_bioware=True, path = "C:\\NeverwinterNights\\NWN\\"):
-        """Creates a ResourceManager object from a module or module director.
+    def from_module(mod, use_override=False, include_bioware=True, path="C:\\NeverwinterNights\\NWN\\"):
+        """Creates a ResourceManager object from a module or module directory.
 
         :param mod: Path to module or module directory.
         :param use_override: default False, If true the overried directory in ``path`` will be used.
         :param include_bioware: default True, If false Bioware NWN BIF files will not be used.
         :param path: default "C:\\NeverwinterNights\\NWN\\", Path to NWN directory.
 
-        **NOTES:**
+        .. note::
 
-        * If a directory is passed in ``mod`` it **must** contain a ``module.ifo`` file.
-        * If ``include_bioware`` is ``False``, ``path`` can be any working directory
-          that has the same directory stucture as the default NWN installation. I.e.
-          hak files are in the subdirectory 'hak', overrides in directory 'override'.
-        * When loading the module's HAKs .hak files will attempt to be loaded first.
-          If no file exists, then a directory with the ``.hak`` files name will attempt
-          to be loaded.
+            * If a directory is passed in ``mod`` it **must** contain a ``module.ifo`` file.
+            * If ``include_bioware`` is ``False``, ``path`` can be any working directory
+              that has the same directory stucture as the default NWN installation. I.e.
+              hak files are in the subdirectory 'hak', overrides in directory 'override'.
+            * When loading the module's HAKs .hak files will attempt to be loaded first.
+              If no file exists, then a directory with the ``.hak`` files name will attempt
+              to be loaded.
 
 
         """
-        from pynwn.file.key import Key
-        from pynwn.file.erf import Erf
-        from pynwn.module import Module as Mod
+        from pynwn import Key
+        from pynwn import Erf
+        from pynwn import Module as Mod
 
         mgr = ResourceManager()
 
-        # Override
-        if use_override:
-            mgr.add_container(DirectoryContainer(os.path.join(path, 'override')))
-
         # Module
         mgr.module = Mod(mod)
-        mgr.add_container(mgr.module.container)
 
         dialog = os.path.join(path, 'dialog.tlk')
         custom = os.path.join(path, 'tlk', mgr.module.tlk + '.tlk')
@@ -551,7 +598,7 @@ class ResourceManager(object):
             h_path = os.path.join(path, 'hak', hak)
             h_file = h_path + '.hak'
             if os.path.isfile(h_file):
-                print("Adding HAK %s..." % (h_file))
+                print("Adding HAK %s..." % h_file)
                 mgr.add_container(Erf.from_file(h_file))
             elif os.path.isdir(h_path):
                 mgr.add_container(DirectoryContainer(h_path))
@@ -559,6 +606,12 @@ class ResourceManager(object):
             else:
                 print("Error no HAK file or HAK directory found: %s" % hak)
 
+        # Module is lower priority than its haks.
+        mgr.add_container(mgr.module.container)
+
+        # Override lower than module.
+        if use_override:
+            mgr.add_container(DirectoryContainer(os.path.join(path, 'override')))
 
         # First, all the base data files.
         if include_bioware:
@@ -566,7 +619,6 @@ class ResourceManager(object):
                 mgr.add_container(Key(os.path.join(path, key), path))
 
         return mgr
-
 
     def has_file(self, fname):
         """Determines if a file exists in one of the containers.
@@ -576,7 +628,8 @@ class ResourceManager(object):
     def get_filenames(self):
         """Gets a list of all file names.
         """
-        if self.filenames: return self.filenames
+        if self.filenames:
+            return self.filenames
 
         self.filenames = []
         for con in self.containers:
@@ -609,11 +662,11 @@ class ResourceManager(object):
 
         return ugh.values()
 
-    def creatures(self, glob = None):
+    def creatures(self, glob=None):
         """Returns a list of Creature objects contained in
         all of the resource managers containers."""
 
-        from pynwn.obj.creature import Creature
+        from pynwn import Creature
 
         glob = glob or '*.utc'
         res = self.glob(glob)

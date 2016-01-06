@@ -1,4 +1,4 @@
-from pynwn.util.helper import enum
+from pynwn.util import enum
 
 Event = enum('ATTACKED',
              'BLOCKED',
@@ -36,8 +36,9 @@ Event = enum('ATTACKED',
              'USED',
              'USER_DEFINED')
 
+
 class NWObjectScripts:
-    def __init__(self, obj, label_map, gff = None):
+    def __init__(self, obj, label_map, gff=None):
         self.gff = gff or obj.gff
         self.map = label_map
         self.parent = obj
@@ -49,3 +50,11 @@ class NWObjectScripts:
         self.gff[self.map[label]] = value
         if self.parent:
             self.parent.stage()
+
+    def all(self):
+        """
+        Get all set scripts.
+
+        :returns: [(Event, str)]
+        """
+        return [(key, self[key]) for key in self.map.keys() if len(self[key])]

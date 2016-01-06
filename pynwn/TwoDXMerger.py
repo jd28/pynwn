@@ -6,10 +6,16 @@ class TwoDXMerger:
 
     def merge(self):
         highest = 0
+        nrows = len(self.twoda.rows)
+        for r in self.twodx.rows:
+            if r[0] == "#":
+                r[0] = nrows
+                nrows += 1
+
         for r in self.twodx.rows:
             highest = max(highest, int(r[0]))
 
-        if highest > 0 and highest > len(self.twoda.rows):
+        if highest > 0 and highest >= len(self.twoda.rows):
             self.twoda.add_padding(len(self.twoda.rows), highest)
 
         for c in self.twodx.columns[1:]:
@@ -21,13 +27,23 @@ class TwoDXMerger:
             for c in self.twodx.columns[1:]:
                 col = self.twodx.get_column_index(c)
                 new = r[col]
-                if new == '####': continue
-                if (self.default
-                    and row < len(self.default.rows)
-                    and self.default.get_column_index(c) >= 0):
+                if new == '####':
+                    continue
+                if(self.default
+                   and row < len(self.default.rows)
+                   and self.default.get_column_index(c) >= 0):
+
                     orig = self.default.get(row, c)
-                    cur  = self.twoda.get(row, c)
+                    cur = self.twoda.get(row, c)
                     if orig == cur:
                         self.twoda.set(row, c, new)
                 else:
                     self.twoda.set(row, c, new)
+
+        if 'column_rename' in self.twodx.metadata:
+            for old, new in self.twodx.metadata['column_rename'].items():
+                old = old.lower()
+                for i, col in enumerate(self.twoda.columns):
+                    if col.lower() == old:
+                        self.twoda.columns[i] = new
+                        break

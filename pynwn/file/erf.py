@@ -1,7 +1,14 @@
-import datetime, os, struct, shutil, sys, tempfile, re
+import datetime
+import os
+import struct
+import shutil
+import sys
+import tempfile
+import re
 
 import pynwn.resource as res
-from pynwn.util.helper import chunks, get_encoding
+from pynwn.util import chunks, get_encoding
+
 
 class Erf(res.Container):
     """Reads/Writes NWN ERF formats: erf, hak, and mod.
@@ -12,32 +19,40 @@ class Erf(res.Container):
 
     def __init__(self, erf_type, version='V1.0'):
         super(Erf, self).__init__()
-        assert(erf_type in self.TYPES)
-        assert(version in self.VERSIONS)
+        assert (erf_type in self.TYPES)
+        assert (version in self.VERSIONS)
         self.localized_strings = {}
         self.ftype = erf_type
         self.fversion = version
         self.desc_strref = 0xffffffff
+        self.io = None
 
         now = datetime.datetime.now()
         self.year = now.year - 1900
         self.day_of_year = now.timetuple().tm_yday
 
     def save(self):
+        """Writes modifications to disk.
+
+        If you want to write to some other file use :meth:`write_to`
+        """
         self.pre_save()
 
-        if self.has_modified_content_objects():
+        if self.io and self.has_modified_content_objects():
             self.write_to(self.io)
 
     def description(self, lang=0):
         """Gets description, by language.
+
         :param lang: See Bioware's TLK language constants.
         """
-        if not lang in self.localized_strings: return ""
+        if lang not in self.localized_strings:
+            return ""
         return self.localized_strings[lang]
 
     def set_description(self, text, lang=0):
         """Sets description, by language.
+
         :param text: New description.
         :param lang: See Bioware's TLK language constants.
         """
@@ -69,17 +84,13 @@ class Erf(res.Container):
         lstr_iter = iter(sorted(self.localized_strings.items()))
         locstr = []
         for k, v in lstr_iter:
-            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v)+1, v.encode(get_encoding())))
+            locstr.append(struct.pack("<L L %ds x" % len(v), k, len(v) + 1, v.encode(get_encoding())))
         locstr = b''.join(locstr)
 
         keylist = []
         for i, co in enumerate(self.content):
             pad = 0
-            max = len(co.resref)
-            if len(co.resref) > fnlen:
-                print("truncating filename %s, longer than %d" % (co.resref, fnlen))
-                max = fnlen
-            else:
+            if len(co.resref) < fnlen:
                 pad = fnlen - len(co.resref)
 
             keylist.append(struct.pack("<%ds %dx L h h" % (len(co.resref), pad),
@@ -101,8 +112,8 @@ class Erf(res.Container):
         offset_to_resourcelist = offset_to_keylist + len(keylist)
 
         header = struct.pack("8s LL LL LL LL L 116x",
-                             (self.ftype+' '+self.fversion).encode(get_encoding()),
-                              len(self.localized_strings),
+                             (self.ftype + ' ' + self.fversion).encode(get_encoding()),
+                             len(self.localized_strings),
                              len(locstr), len(self.content), offset_to_locstr, offset_to_keylist,
                              offset_to_resourcelist, self.year, self.day_of_year, self.desc_strref)
 
@@ -122,15 +133,17 @@ class Erf(res.Container):
     def from_file(fname):
         """Create an Erf from a file handle.
 
-        :param io: A file handle.
+        :param fname: File name.
 
         """
+        new_erf = None
         with open(fname, 'rb') as io:
             header = io.read(160)
             hs = struct.unpack("< 4s 4s LL LL LL LL L 116s", header)
 
             ftype = hs[0].decode(get_encoding()).strip()
-            if not ftype in Erf.TYPES: raise ValueError("Invalid file type!")
+            if ftype not in Erf.TYPES:
+                raise ValueError("Invalid file type!")
 
             fvers = hs[1].decode(get_encoding())
             fname_len = Erf.filename_length(fvers)
@@ -153,11 +166,13 @@ class Erf(res.Container):
 
             for ls in range(lstr_count):
                 if len(lstr) == 0:
-                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls))
+                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls),
+                          file=sys.stderr)
                     break
 
                 if len(lstr) < 8:
-                    print("locstr table: not enough entries (expected: %d, got: %d)" % (lstr_count, ls) + " partial data: " + lstr)
+                    print("locstr table: not enough entries (expected: %d, got: %d) partial data: %s" % (
+                        lstr_count, ls, lstr), file=sys.stderr)
                     break
 
                 lid, strsz = struct.unpack("<L L", lstr[:8])
@@ -167,9 +182,9 @@ class Erf(res.Container):
                 # Necessary for hacking around the fact that erf.exe adds an extra null
                 # to the end of the description string.
                 try:
-                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(get_encoding()) #
-                except struct.error as e:
-                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(get_encoding()) #
+                    str = struct.unpack("8x %ds" % strsz, lstr)[0].decode(get_encoding())  #
+                except struct.error:
+                    str = struct.unpack("8x %ds" % (strsz + 1,), lstr)[0].decode(get_encoding())  #
 
                 new_erf.localized_strings[lid] = str.rstrip(' \t\r\n\0')
                 lstr = lstr[8 + len(str):]
@@ -200,8 +215,9 @@ class Erf(res.Container):
                     co = new_erf.content[_index]
                     co.offset = offset
                     co.size = size
-                except IndexError as e:
-                    print("WARNING: Attempt to index invalid content object in '%s' at offset %X" % (fname, offset))
+                except IndexError:
+                    print("WARNING: Attempt to index invalid content object in '%s' at offset %X" % (fname, offset),
+                          file=sys.stderr)
 
         return new_erf
 
@@ -209,9 +225,7 @@ class Erf(res.Container):
     def filename_length(version):
         """Determine maximum ResRef length.
 
-        :param version: ERF version. Only "V1.0" and "V1.1" are valid parameters.
-        :type name: str.
-
+        :param str version: ERF version. Only "V1.0" and "V1.1" are valid parameters.
         """
         if version == "V1.0":
             return 16

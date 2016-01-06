@@ -1,11 +1,12 @@
 from pynwn.file.gff import Gff
 
+
 class Faction(object):
     def __init__(self, resource):
         self.is_file = False
 
         if isinstance(resource, str):
-            from resource import ContentObject
+            from pynwn import ContentObject
             co = ContentObject.from_file(resource)
             self.gff = Gff(co)
             self.is_file = True
@@ -23,9 +24,9 @@ class Faction(object):
     def factions(self):
         res = []
         for f in self.gff['FactionList']:
-            res.append( (f['FactionParentID'],
-                         f['FactionName'],
-                         f['FactionGlobal']) )
+            res.append((f['FactionParentID'],
+                        f['FactionName'],
+                        f['FactionGlobal']))
 
         return res
 
@@ -33,8 +34,8 @@ class Faction(object):
     def reputations(self):
         res = []
         for f in self.gff['RepList']:
-            res.append( (f['FactionID1'],
-                         f['FactionID2'],
-                         f['FactionRep']) )
+            res.append((f['FactionID1'],
+                        f['FactionID2'],
+                        f['FactionRep']))
 
         return res

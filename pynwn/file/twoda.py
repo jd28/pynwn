@@ -1,14 +1,17 @@
 import re
-import itertools
-import os, io, sys
-from pynwn.util.helper import convert_to_number, get_encoding
+import os
+import io
+import csv
+
+from prettytable import PrettyTable, PLAIN_COLUMNS
+
+from pynwn.util import get_encoding
 from pynwn.resource import ContentObject
 
-import csv
-from prettytable import PrettyTable, PLAIN_COLUMNS
 
 def quote(string):
     return '"' + string + '"' if ' ' in string else string
+
 
 class TwoDA:
     """2da Files.
@@ -45,7 +48,7 @@ class TwoDA:
     def __repr__(self):
         """Returns repr of the 2da as a string
         """
-        return str(self.to_StringIO().getvalue())
+        return str(self)
 
     def __str__(self):
         """Returns a valid 2da as a string
@@ -72,10 +75,9 @@ class TwoDA:
     def to_StringIO(self):
         """Returns 2da written in a cStringIO buffer.
         """
-        i = 0
-        for r in self.rows:
+
+        for i, r in enumerate(self.rows):
             r[0] = str(i)
-            i += 1
 
         result = io.StringIO()
         result.write("2DA V2.0")
@@ -127,15 +129,15 @@ class TwoDA:
                 return int(res, base)
             except ValueError:
                 pass
-             
+
         return 0
 
-    def parse(self, io):
+    def parse(self, content):
         """Parses a 2da file.
         """
-        io = io.replace('\t', ' ')
+        content = content.replace('\t', ' ')
 
-        lines = [l.strip() for l in iter(io.splitlines()) if len(l.strip())]
+        lines = [l.strip() for l in iter(content.splitlines()) if len(l.strip())]
         if len(lines) == 0:
             raise ValueError("Invalid 2da file!")
 
@@ -155,8 +157,15 @@ class TwoDA:
                 count = len(row) + 1
             else:
                 if count != len(row):
-                    print(count, len(row), row)
-                    assert(False)
+                    if count < len(row):
+                        print("WARNING: Row %d has an invalid number of row entries, truncating row." % (
+                            len(self.rows) - 1,))
+                        row = row[:count]
+                    else:
+                        print("WARNING: Row %d has an invalid number of row entries, expanding row." % (
+                            len(self.rows) - 1,))
+                        row += ['****'] * (count - len(row))
+                    assert (count == len(row))
             self.rows.append(row)
 
         self.columns = [''] + self.rows[0]
@@ -172,9 +181,8 @@ class TwoDA:
 
     def add_padding(self, start, stop):
         pad = ['****'] * (len(self.columns) - 1)
-        for i in range(start, stop+1):
+        for i in range(start, stop + 1):
             self.rows.append([str(i)] + pad)
-
 
     def merge_2dx(self, twodx):
         highest = 0
