@@ -1,4 +1,5 @@
 import struct
+import base64
 
 from pynwn.util import get_encoding
 
@@ -487,6 +488,10 @@ class NWVoid(object):
 
     def __init__(self, val):
         self.val = val
+
+    @property
+    def value(self):
+        return base64.b64encode(self.val).decode('utf-8')
 
     @staticmethod
     def unpack(source, offset):
