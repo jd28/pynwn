@@ -506,7 +506,7 @@ class NWVoid(object):
         """Writes the specified data as a void and returns it."""
         length = len(self.val)
         pattern = "I%dB" % length
-        return struct.pack(pattern, length, self.val)
+        return struct.pack(pattern, length, *self.val)
 
 
 class NWStruct(object):
