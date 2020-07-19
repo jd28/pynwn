@@ -1,6 +1,8 @@
 PyNWN
 =====
 
+**This repository is no longer maintained.  There are good ideas here, but I will not update it to NWN:EE**
+
 Neverwinter Nights 1/2 file formats Python library.
 
 The following library combines Jordan McCoy's GFF File Format
