@@ -1,0 +1,21 @@
+{
+    "name": "libnw",
+    "version": "0.1.0",
+    "dependencies": [
+        "catch2",
+        "fmt",
+        "abseil",
+        "zstd",
+        "zlib",
+        "sqlite3",
+        "minizip",
+        "nlohmann-json",
+        "nowide",
+        {
+            "name": "libiconv",
+            "platform": "windows"
+        },
+        "glm",
+        "pybind11"
+    ]
+}

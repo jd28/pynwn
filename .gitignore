@@ -1,3 +1,20 @@
+# Build
+build/
+build-doc/
+vcpkg/
+vcpkg_installed/
+
+# IDEs
+.vscode/
+.clion/
+CMakeLists.txt.user
+.kdev4/
+*.kdev4
+
+# bin/
+bin/*
+!bin/.gitkeep
+
 test_*.py
 
 #vim
@@ -5,7 +22,8 @@ test_*.py
 
 *.py[cod]
 
-# Sphinx
+# docs
+docs/_build/
 docs/build/
 
 # C extensions
