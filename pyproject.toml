@@ -12,12 +12,7 @@ build-backend = "setuptools.build_meta"
 profile = "black"
 
 [tool.cibuildwheel]
-archs = ["auto64"] # Not supporting 32bit OS.
 environment = {VCPKG_ROOT = "vcpkg"}
-manylinux-aarch64-image = "manylinux_2_24"
-manylinux-pypy_aarch64-image = "manylinux_2_24"
-manylinux-pypy_x86_64-image = "manylinux_2_24"
-manylinux-x86_64-image = "manylinux_2_24"
 
 # test-command = "pytest {project}/tests"
 # test-extras = "test"
@@ -29,4 +24,4 @@ before-all = [
   "ninja --version",
 ]
 
-skip = "*-musllinux_*"
+skip = "*-win32 *-manylinux_i686 pp* cp36-* *-musllinux_*"
