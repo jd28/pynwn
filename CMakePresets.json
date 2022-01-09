@@ -11,7 +11,7 @@
             "displayName": "Default Config",
             "description": "Default build using Ninja generator",
             "binaryDir": "${sourceDir}/build",
-            "generator": "Ninja",
+            "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",

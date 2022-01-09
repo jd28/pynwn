@@ -1,0 +1,32 @@
+[build-system]
+requires = [
+  "setuptools>=42",
+  "wheel",
+  "cmake>=3.21",
+  "ninja>=1.10",
+]
+
+build-backend = "setuptools.build_meta"
+
+[tool.isort]
+profile = "black"
+
+[tool.cibuildwheel]
+archs = ["auto64"] # Not supporting 32bit OS.
+environment = {VCPKG_ROOT = "vcpkg"}
+manylinux-aarch64-image = "manylinux_2_24"
+manylinux-pypy_aarch64-image = "manylinux_2_24"
+manylinux-pypy_x86_64-image = "manylinux_2_24"
+manylinux-x86_64-image = "manylinux_2_24"
+
+# test-command = "pytest {project}/tests"
+# test-extras = "test"
+
+before-all = [
+  "pipx install -f --pip-args=\"-c {project}/constraints-ci.txt\" cmake",
+  "cmake --version",
+  "pipx install -f --pip-args=\"-c {project}/constraints-ci.txt\" ninja",
+  "ninja --version",
+]
+
+skip = "*-musllinux_*"

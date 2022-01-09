@@ -17,4 +17,4 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(external/libnw)
-add_subdirectory(nw-wrapper)
+add_subdirectory(src)

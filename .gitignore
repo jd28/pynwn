@@ -21,6 +21,8 @@ test_*.py
 *.swp
 
 *.py[cod]
+.venv/
+venv/
 
 # docs
 docs/_build/
@@ -30,6 +32,7 @@ docs/build/
 *.so
 
 # Packages
+wheelhouse
 *.egg
 *.egg-info
 dist
