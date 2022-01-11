@@ -1,3 +1,4 @@
 [submodule "external/libnw"]
 	path = external/libnw
 	url = https://github.com/jd28/libnw.git
+	branch = main
