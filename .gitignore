@@ -10,16 +10,13 @@ vcpkg_installed/
 CMakeLists.txt.user
 .kdev4/
 *.kdev4
+*.swp
 
 # bin/
 bin/*
 !bin/.gitkeep
 
 test_*.py
-
-#vim
-*.swp
-
 *.py[cod]
 .venv/
 venv/
@@ -47,6 +44,9 @@ develop-eggs
 lib
 lib64
 
+# Jupyter
+.ipynb_checkpoints
+
 # Installer logs
 pip-log.txt
 
@@ -58,7 +58,5 @@ nosetests.xml
 # Translations
 *.mo
 
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
+# OS
+.DS_Store
