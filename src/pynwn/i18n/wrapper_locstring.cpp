@@ -12,7 +12,7 @@ void init_locstring(py::module& m)
             "__getitem__", [](nw::LocString& ls, uint32_t index) {
                 return ls.get(index);
             })
-        .def("add", &nw::LocString::add)
+        .def("add", &nw::LocString::add, "Add a string", py::arg("language"), py::arg("string"), py::arg("feminine") = false, py::arg("force_language") = false)
         .def("get", &nw::LocString::get)
         .def("size", &nw::LocString::size)
         .def("strref", &nw::LocString::strref);

@@ -3,9 +3,9 @@ find_package(Threads)
 find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(_libnw NO_EXTRAS
-    wrapper.cpp
+    pynwn/wrapper.cpp
 
-    i18n/wrapper_locstring.cpp
+    pynwn/i18n/wrapper_locstring.cpp
 )
 
 target_link_libraries(_libnw PRIVATE nw pybind11::module)

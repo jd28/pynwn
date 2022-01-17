@@ -1,8 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![linux](https://github.com/jd28/libnw/actions/workflows/linux.yml/badge.svg)](https://github.com/jd28/pynwn/actions?query=workflow%3Alinux)
-[![macos](https://github.com/jd28/pynwn/actions/workflows/macos.yml/badge.svg)](https://github.com/jd28/pynwn/actions?query=workflow%3Amacos)
-[![windows](https://github.com/jd28/pynwn/actions/workflows/windows.yml/badge.svg)](https://github.com/jd28/pynwn/actions?query=workflow%3Awindows)
-[![CodeQL](https://github.com/jd28/pynwn/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/jd28/pynwn/actions/workflows/codeql-analysis.yml)
+[![ci](https://github.com/jd28/pynwn-private/actions/workflows/build.yml/badge.svg)](https://github.com/jd28/pynwn-private/actions/workflows/build.yml)
 
 # pynwn
 

@@ -2,7 +2,11 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(nw_wrapper, m)
+void init_locstring(py::module& m);
+
+PYBIND11_MODULE(_libnw, m)
 {
     m.doc() = "libnw python wrapper";
+
+    init_locstring(m);
 }

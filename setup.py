@@ -1,4 +1,5 @@
 from setuptools import find_packages
+import platform
 import os
 import re
 import subprocess
@@ -6,15 +7,6 @@ import sys
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
-
-# Convert distutils Windows platform specifiers to CMake -A arguments
-PLAT_TO_CMAKE = {
-    "win32": "Win32",
-    "win-amd64": "x64",
-    "win-arm32": "ARM",
-    "win-arm64": "ARM64",
-}
-
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
@@ -30,15 +22,24 @@ class CMakeBuild(build_ext):
         if not extdir.endswith(os.path.sep):
             extdir += os.path.sep
 
+        preset = "default"
+        debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
+        cfg = "Debug" if debug else "Release"
+
         cmake_args = [
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}/pynwn",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
+            f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
+            f"-DVERSION_INFO={self.distribution.get_version()}",
         ]
 
-        cmake_args += [
-            f"-DVERSION_INFO={self.distribution.get_version()}"]
-
-        preset = "default"  # we'll get this from OS or EVN var at some point.
+        if self.compiler.compiler_type == "msvc":
+            cmake_args += [
+                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
+            ]
+            preset = "windows-default"
+        elif os.environ.get('CIBUILDWHEEL', '0') == '1':
+                preset = "ci-default"
 
         subprocess.check_call(
             ["cmake", f"--preset {preset}"] + cmake_args

@@ -1,4 +1,4 @@
-name: Build and upload to PyPI
+name: ci
 
 on:
   push:
@@ -11,16 +11,63 @@ jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      vcpkg-tag: "2022.01.01"
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest] #, windows-2019, macos-10.15]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
 
-      - name: Build wheels
+      - name: macOS - Set ENV variables for clang 13
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "CC=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
+
+      - name: macOS - Check clang version
+        if: matrix.os == 'macos-latest'
+        run: $CC --version
+
+      - name: macOS|windows - cache vcpkg
+        if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-vcpgk
+        with:
+          path: |
+            ${{ github.workspace }}/vcpkg
+            ${{ github.workspace }}/build/vcpkg_installed
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: macOS|windows - download vcpkg
+        if: (matrix.os == 'macos-latest' || matrix.os == 'windows-latest') && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/microsoft/vcpkg ${{ github.workspace }}/vcpkg
+          pushd vcpkg
+          git checkout --force ${{ env.vcpkg-tag }}
+          popd
+
+      - name: macOS - bootstrap vcpkg
+        if: matrix.os == 'macos-latest' && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: vcpkg/bootstrap-vcpkg.sh
+
+      - name: windows - bootstrap vcpkg
+        if: matrix.os == 'windows-latest' && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: vcpkg/bootstrap-vcpkg.bat
+
+      - name: all - build wheels
+        env:
+          VCPKG_ROOT: vcpkg/
         uses: pypa/cibuildwheel@v2.3.1
 
       - uses: actions/upload-artifact@v2

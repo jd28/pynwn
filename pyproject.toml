@@ -1,9 +1,7 @@
 [build-system]
 requires = [
-  "setuptools>=42",
+  "setuptools>=52",
   "wheel",
-  "cmake>=3.21",
-  "ninja>=1.10",
 ]
 
 build-backend = "setuptools.build_meta"
@@ -17,13 +15,6 @@ skip = "*-win32 *-manylinux_i686 pp* cp36-* *-musllinux_*"
 
 # test-command = "pytest {project}/tests"
 # test-extras = "test"
-
-before-all = [
-  "pipx install -f --pip-args=\"-c {project}/constraints-ci.txt\" cmake",
-  "cmake --version",
-  "pipx install -f --pip-args=\"-c {project}/constraints-ci.txt\" ninja",
-  "ninja --version",
-]
 
 [tool.cibuildwheel.linux]
 before-all = [

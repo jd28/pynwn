@@ -10,14 +10,18 @@ vcpkg_installed/
 CMakeLists.txt.user
 .kdev4/
 *.kdev4
-*.swp
 
 # bin/
 bin/*
 !bin/.gitkeep
 
 test_*.py
+
+#vim
+*.swp
+
 *.py[cod]
+*.pdb
 .venv/
 venv/
 

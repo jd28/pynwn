@@ -11,6 +11,7 @@
             "displayName": "Default Config",
             "description": "Default build using Ninja generator",
             "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
@@ -35,8 +36,14 @@
                 "strategy": "external"
             },
             "cacheVariables": {
+                "CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG": "${sourceDir}/src/pynwn",
                 "VCPKG_TARGET_TRIPLET": "x64-windows-static"
             }
+        },
+        {
+            "name": "ci-default",
+            "inherits": "default",
+            "generator": "Unix Makefiles"
         }
     ],
     "buildPresets": [
