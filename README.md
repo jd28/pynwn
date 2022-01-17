@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![ci](https://github.com/jd28/pynwn-private/actions/workflows/build.yml/badge.svg)](https://github.com/jd28/pynwn-private/actions/workflows/build.yml)
+[![ci](https://github.com/jd28/pynwn/actions/workflows/build.yml/badge.svg)](https://github.com/jd28/pynwn/actions/workflows/build.yml)
 
 # pynwn
 
