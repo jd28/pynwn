@@ -53,7 +53,7 @@ jobs:
       - name: macOS|windows - download vcpkg
         if: (matrix.os == 'macos-latest' || matrix.os == 'windows-latest') && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
-          git clone https://github.com/microsoft/vcpkg ${{ github.workspace }}/vcpkg
+          git clone https://github.com/microsoft/vcpkg ${{ github.workspace }}/vcpkg || true
           pushd vcpkg
           git checkout --force ${{ env.vcpkg-tag }}
           popd
