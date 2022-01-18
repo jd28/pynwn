@@ -35,6 +35,7 @@ jobs:
 
       - name: macOS|windows - cache vcpkg
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
+        id: cache-vcpkg
         uses: actions/cache@v2
         env:
           cache-name: cache-vcpgk
