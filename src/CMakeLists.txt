@@ -23,4 +23,7 @@ set_project_warnings(_libnw)
 include(../cmake/Sanitizers.cmake)
 enable_sanitizers(_libnw)
 
-target_include_directories(_libnw PRIVATE ../external/libnw/lib)
+target_include_directories(_libnw PRIVATE
+    ../external/libnw/lib
+    ../external/libnw/external
+)
