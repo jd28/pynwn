@@ -11,7 +11,7 @@ profile = "black"
 
 [tool.cibuildwheel]
 environment = {VCPKG_ROOT = "vcpkg"}
-skip = "*-win32 *-manylinux_i686 pp* cp36-* *-musllinux_*"
+skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
 
 # test-command = "pytest {project}/tests"
 # test-extras = "test"
