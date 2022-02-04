@@ -20,6 +20,23 @@
             }
         },
         {
+            "name": "macos-default",
+            "inherits": "default",
+            "description": "This build is only available on macOS",
+            "binaryDir": "${sourceDir}/build",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            },
+            "cacheVariables": {
+                "MACOS_DEPLOYMENT_TARGET": {
+                    "value": "10.15",
+                    "type": "STRING"
+                }
+            }
+        },
+        {
             "name": "windows-default",
             "inherits": "default",
             "generator": "Visual Studio 16 2019",

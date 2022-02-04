@@ -8,6 +8,7 @@ import sys
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
@@ -23,7 +24,8 @@ class CMakeBuild(build_ext):
             extdir += os.path.sep
 
         preset = "default"
-        debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
+        debug = int(os.environ.get("DEBUG", 0)
+                    ) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
         cmake_args = [
@@ -38,8 +40,10 @@ class CMakeBuild(build_ext):
                 f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
             ]
             preset = "windows-default"
+        elif self.plat_name.startswith("macosx"):
+            preset = "macos-default"
         elif os.environ.get('CIBUILDWHEEL', '0') == '1':
-                preset = "ci-default"
+            preset = "ci-default"
 
         subprocess.check_call(
             ["cmake", f"--preset {preset}"] + cmake_args
@@ -49,8 +53,6 @@ class CMakeBuild(build_ext):
         )
 
 
-# The information here can also be placed in setup.cfg - better separation of
-# logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pynwn",
     version="0.1.0",
@@ -65,5 +67,5 @@ setup(
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )
