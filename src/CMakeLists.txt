@@ -26,4 +26,5 @@ enable_sanitizers(_libnw)
 target_include_directories(_libnw PRIVATE
     ../external/libnw/lib
     ../external/libnw/external
+    ../external/pybind11_json/include
 )
