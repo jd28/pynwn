@@ -14,7 +14,15 @@ if(MSVC)
     )
 endif()
 
+include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/ProjectSettings.cmake)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# AppleClang changes visibility to hidden
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  add_compile_options(-fvisibility=hidden)
+endif()
 
 add_subdirectory(external/libnw)
 add_subdirectory(src)
