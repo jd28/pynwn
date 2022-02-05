@@ -1,7 +1,5 @@
 from setuptools import find_packages
-import platform
 import os
-import re
 import subprocess
 import sys
 
