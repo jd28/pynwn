@@ -12,6 +12,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     env:
+      VCPKG_ROOT: vcpkg/
       vcpkg-tag: "2022.01.01"
     strategy:
       fail-fast: false
@@ -67,9 +68,13 @@ jobs:
         run: vcpkg/bootstrap-vcpkg.bat
 
       - name: all - build wheels
-        env:
-          VCPKG_ROOT: vcpkg/
         uses: pypa/cibuildwheel@v2.3.1
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: vcpkg-logs
+          path: ${{env.VCPKG_ROOT}}/buildtrees/**/*.log
 
       - uses: actions/upload-artifact@v2
         with:
