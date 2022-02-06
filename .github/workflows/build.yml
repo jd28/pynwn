@@ -24,15 +24,15 @@ jobs:
         with:
           submodules: true
 
-      - name: macOS - Set ENV variables for clang 13
+      - name: ${{ matrix.os }} - install non-vcpkg dependencies
         if: matrix.os == 'macos-latest'
+        env:
+          HOMEBREW_NO_ANALYTICS: "ON"
+          HOMEBREW_NO_AUTO_UPDATE: "ON"
+          HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK: "ON"
+          HOMEBREW_NO_INSTALL_CLEANUP: "ON"
         run: |
-          echo "CC=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
-          echo "CXX=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
-
-      - name: macOS - Check clang version
-        if: matrix.os == 'macos-latest'
-        run: $CC --version
+          brew install pkg-config automake ninja libtool
 
       - name: macOS|windows - cache vcpkg
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
