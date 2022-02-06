@@ -16,7 +16,8 @@
                 "CMAKE_TOOLCHAIN_FILE": {
                     "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                     "type": "FILEPATH"
-                }
+                },
+                "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/src/pynwn"
             }
         },
         {
@@ -30,7 +31,7 @@
                 "rhs": "Darwin"
             },
             "cacheVariables": {
-                "MACOS_DEPLOYMENT_TARGET": {
+                "CMAKE_OSX_DEPLOYMENT_TARGET": {
                     "value": "10.15",
                     "type": "STRING"
                 }
@@ -61,6 +62,14 @@
             "name": "ci-default",
             "inherits": "default",
             "generator": "Unix Makefiles"
+        },
+        {
+            "name": "ci-macos-default",
+            "inherits": "macos-default"
+        },
+        {
+            "name": "ci-windows-default",
+            "inherits": "windows-default"
         }
     ],
     "buildPresets": [

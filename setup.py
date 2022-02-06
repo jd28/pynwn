@@ -37,11 +37,12 @@ class CMakeBuild(build_ext):
             cmake_args += [
                 f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
             ]
-            preset = "windows-default"
+            preset = "windows-" + preset
         elif self.plat_name.startswith("macosx"):
-            preset = "macos-default"
-        elif os.environ.get('CIBUILDWHEEL', '0') == '1':
-            preset = "ci-default"
+            preset = "macos-" + preset
+
+        if os.environ.get('CIBUILDWHEEL', '0') == '1':
+            preset = "ci-" + preset
 
         subprocess.check_call(
             ["cmake", f"--preset {preset}"] + cmake_args
