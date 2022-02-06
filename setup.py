@@ -35,7 +35,7 @@ class CMakeBuild(build_ext):
 
         if self.compiler.compiler_type == "msvc":
             cmake_args += [
-                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
+                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}/pynwn"
             ]
             preset = "windows-" + preset
         elif self.plat_name.startswith("macosx"):
