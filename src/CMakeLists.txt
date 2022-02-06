@@ -1,7 +1,5 @@
 find_package(Threads)
 
-find_package(pybind11 CONFIG REQUIRED)
-
 pybind11_add_module(_libnw NO_EXTRAS
     pynwn/wrapper.cpp
 
@@ -27,4 +25,5 @@ target_include_directories(_libnw PRIVATE
     ../external/libnw/lib
     ../external/libnw/external
     ../external/pybind11_json/include
+    ../external/pybind11/include
 )
