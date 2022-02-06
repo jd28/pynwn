@@ -56,7 +56,8 @@
             "cacheVariables": {
                 "CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG": "${sourceDir}/src/pynwn",
                 "CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE": "${sourceDir}/src/pynwn",
-                "VCPKG_TARGET_TRIPLET": "x64-windows-static"
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+                "VCPKG_HOST_TRIPLET": "x64-windows-static"
             }
         },
         {
@@ -66,8 +67,7 @@
         },
         {
             "name": "ci-macos-default",
-            "inherits": "macos-default",
-            "generator": "Unix Makefiles"
+            "inherits": "macos-default"
         },
         {
             "name": "ci-windows-default",
