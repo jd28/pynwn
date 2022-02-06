@@ -69,12 +69,7 @@ jobs:
           path: |
             ${{ github.workspace }}/vcpkg
             ${{ github.workspace }}/build/vcpkg_installed
-          key: ubuntu-latest-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            ubuntu-latest-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}
-            ubuntu-latest-build-${{ env.cache-name }}-
-            ubuntu-latest-build-
-            ubuntu-latest-
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}-${{ hashFiles('vcpkg.json') }}
 
       - name: download vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'

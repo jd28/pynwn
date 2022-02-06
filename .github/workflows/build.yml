@@ -24,7 +24,7 @@ jobs:
         with:
           submodules: true
 
-      - name: ${{ matrix.os }} - install non-vcpkg dependencies
+      - name: macOS - install non-vcpkg dependencies
         if: matrix.os == 'macos-latest'
         env:
           HOMEBREW_NO_ANALYTICS: "ON"
@@ -45,11 +45,6 @@ jobs:
             ${{ github.workspace }}/vcpkg
             ${{ github.workspace }}/build/vcpkg_installed
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.vcpkg-tag }}
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - name: macOS|windows - download vcpkg
         if: (matrix.os == 'macos-latest' || matrix.os == 'windows-latest') && steps.cache-vcpkg.outputs.cache-hit != 'true'
