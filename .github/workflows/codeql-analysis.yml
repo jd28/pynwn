@@ -25,6 +25,7 @@ jobs:
     env:
       buildDir: "${{ github.workspace }}/build/"
       VCPKG_ROOT: vcpkg
+      vcpkg-tag: "2022.01.01"
 
     name: Analyze
     runs-on: ubuntu-latest
@@ -52,7 +53,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.3.1
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - run: pip install -r requirements.txt
 
@@ -63,7 +64,7 @@ jobs:
         id: cache-vcpkg
         uses: actions/cache@v2
         env:
-          cache-name: cache-vcpgk
+          cache-name: cache-vcpgk2
         with:
           path: |
             ${{ github.workspace }}/vcpkg
