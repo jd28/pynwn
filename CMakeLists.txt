@@ -25,4 +25,5 @@ if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GN
 endif()
 
 add_subdirectory(external/libnw)
+add_subdirectory(external/pybind11)
 add_subdirectory(src)

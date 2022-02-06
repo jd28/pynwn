@@ -15,7 +15,6 @@
             "name": "libiconv",
             "platform": "windows"
         },
-        "glm",
-        "pybind11"
+        "glm"
     ]
 }
