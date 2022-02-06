@@ -3,6 +3,8 @@
 namespace py = pybind11;
 
 void init_i18n(py::module& m);
+void init_objects(py::module& m);
+void init_serialization(py::module& m);
 
 PYBIND11_MODULE(_libnw, m)
 {
@@ -10,4 +12,6 @@ PYBIND11_MODULE(_libnw, m)
 
     // Initialize submodules
     init_i18n(m);
+    init_objects(m);
+    init_serialization(m);
 }

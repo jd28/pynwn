@@ -8,7 +8,12 @@ pybind11_add_module(_libnw NO_EXTRAS
     pynwn/i18n/wrapper_i18n.cpp
     pynwn/i18n/wrapper_i18n_locstring.cpp
 
+    pynwn/objects/wrapper_objects_components.cpp
+    pynwn/objects/wrapper_objects.cpp
+    pynwn/objects/wrapper_objects_base.cpp
+    pynwn/objects/wrapper_objects_waypoint.cpp
 
+    pynwn/serialization/wrapper_serialization.cpp
 )
 
 target_link_libraries(_libnw PRIVATE nw pybind11::module)
