@@ -1,5 +1,4 @@
 include README.md LICENSE
 graft external
 graft src
-global-include CMakeLists.txt *.cmake
-prune vcpkg
+global-include CMakeLists.txt CMakePresets.json *.cmake vcpkg.json
