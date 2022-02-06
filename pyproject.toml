@@ -15,12 +15,13 @@ skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
 test-command = "pytest {package}/tests"
 test-requires = "pytest"
 
-# test-command = "pytest {project}/tests"
-# test-extras = "test"
-
 [tool.cibuildwheel.linux]
 before-all = [
   "yum install -y curl zip unzip tar",
   "git clone https://github.com/microsoft/vcpkg.git {project}/vcpkg",
   "{project}/vcpkg/bootstrap-vcpkg.sh",
 ]
+
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"

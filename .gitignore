@@ -32,6 +32,7 @@ docs/build/
 
 # Packages
 wheelhouse
+*.whl
 *.egg
 *.egg-info
 dist
