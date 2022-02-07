@@ -3,6 +3,9 @@ find_package(Threads)
 pybind11_add_module(_libnw NO_EXTRAS
     pynwn/wrapper.cpp
 
+    pynwn/glm/glm_util.cpp
+    pynwn/glm/wrap_vmath.cpp
+
     pynwn/i18n/wrapper_i18n.cpp
     pynwn/i18n/wrapper_i18n_locstring.cpp
 
