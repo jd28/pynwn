@@ -6,15 +6,10 @@ pybind11_add_module(_libnw NO_EXTRAS
     pynwn/glm/glm_util.cpp
     pynwn/glm/wrap_vmath.cpp
 
-    pynwn/i18n/wrapper_i18n.cpp
-    pynwn/i18n/wrapper_i18n_locstring.cpp
-
-    pynwn/objects/wrapper_objects_components.cpp
-    pynwn/objects/wrapper_objects.cpp
-    pynwn/objects/wrapper_objects_base.cpp
-    pynwn/objects/wrapper_objects_waypoint.cpp
-
-    pynwn/serialization/wrapper_serialization.cpp
+    pynwn/wrapper_i18n.cpp
+    pynwn/wrapper_objects_components.cpp
+    pynwn/wrapper_objects.cpp
+    pynwn/wrapper_serialization.cpp
 )
 
 target_link_libraries(_libnw PRIVATE nw pybind11::module)

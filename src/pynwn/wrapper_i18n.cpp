@@ -1,6 +1,6 @@
-#include <pybind11/pybind11.h>
-
 #include <nw/i18n/LocString.hpp>
+
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
@@ -16,4 +16,9 @@ void init_i18n_locstring(py::module& m)
         .def("get", &nw::LocString::get)
         .def("size", &nw::LocString::size)
         .def("strref", &nw::LocString::strref);
+}
+
+void init_i18n(py::module& m)
+{
+    init_i18n_locstring(m);
 }
