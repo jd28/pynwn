@@ -2,6 +2,7 @@ find_package(Threads)
 
 pybind11_add_module(_libnw NO_EXTRAS
     pynwn/wrapper.cpp
+    pynwn/opaque_types.cpp
 
     pynwn/glm/glm_util.cpp
     pynwn/glm/wrap_vmath.cpp
@@ -9,6 +10,7 @@ pybind11_add_module(_libnw NO_EXTRAS
     pynwn/wrapper_i18n.cpp
     pynwn/wrapper_objects_components.cpp
     pynwn/wrapper_objects.cpp
+    pynwn/wrapper_resources.cpp
     pynwn/wrapper_serialization.cpp
 )
 

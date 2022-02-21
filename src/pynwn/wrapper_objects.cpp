@@ -1,3 +1,5 @@
+#include "opaque_types.hpp"
+
 #include <nw/objects/Area.hpp>
 #include <nw/objects/Creature.hpp>
 #include <nw/objects/Door.hpp>
@@ -10,7 +12,6 @@
 #include <nw/objects/Store.hpp>
 #include <nw/objects/Trigger.hpp>
 #include <nw/objects/Waypoint.hpp>
-#include <nw/objects/components/Common.hpp>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -18,9 +19,6 @@
 #include <pybind11_json/pybind11_json.hpp>
 
 namespace py = pybind11;
-
-PYBIND11_MAKE_OPAQUE(std::vector<glm::vec3>);
-PYBIND11_MAKE_OPAQUE(std::vector<nw::InventoryItem>);
 
 void init_object_components(py::module& m);
 
@@ -50,25 +48,22 @@ void init_objects_base(py::module& m)
 
     py::class_<nw::ObjectBase>(m, "ObjectBase")
         .def(py::init<>())
-        //.def("as_area", py::overload_cast<>(&nw::ObjectBase::as_area), py::return_value_policy::reference_internal)
-        //.def("as_area", py::overload_cast<>(&nw::ObjectBase::as_area, py::const_), py::return_value_policy::reference_internal)
         .def("common", py::overload_cast<>(&nw::ObjectBase::common), py::return_value_policy::reference_internal)
         .def("common", py::overload_cast<>(&nw::ObjectBase::common, py::const_), py::return_value_policy::reference_internal)
         .def("as_creature", py::overload_cast<>(&nw::ObjectBase::as_creature), py::return_value_policy::reference_internal)
         .def("as_creature", py::overload_cast<>(&nw::ObjectBase::as_creature, py::const_), py::return_value_policy::reference_internal)
         .def("as_door", py::overload_cast<>(&nw::ObjectBase::as_door), py::return_value_policy::reference_internal)
         .def("as_door", py::overload_cast<>(&nw::ObjectBase::as_door, py::const_), py::return_value_policy::reference_internal)
+        .def("as_encounter", py::overload_cast<>(&nw::ObjectBase::as_encounter), py::return_value_policy::reference_internal)
         .def("as_encounter", py::overload_cast<>(&nw::ObjectBase::as_encounter, py::const_), py::return_value_policy::reference_internal)
-        // .def("as_item", py::overload_cast<>(&nw::ObjectBase::as_item), py::return_value_policy::reference_internal)
-        // .def("as_item", py::overload_cast<>(&nw::ObjectBase::as_item, py::const_), py::return_value_policy::reference_internal)
+        .def("as_item", py::overload_cast<>(&nw::ObjectBase::as_item), py::return_value_policy::reference_internal)
+        .def("as_item", py::overload_cast<>(&nw::ObjectBase::as_item, py::const_), py::return_value_policy::reference_internal)
         .def("as_module", py::overload_cast<>(&nw::ObjectBase::as_module), py::return_value_policy::reference_internal)
         .def("as_module", py::overload_cast<>(&nw::ObjectBase::as_module, py::const_), py::return_value_policy::reference_internal)
-        // .def("as_placeable", py::overload_cast<>(&nw::ObjectBase::as_placeable), py::return_value_policy::reference_internal)
-        // .def("as_placeable", py::overload_cast<>(&nw::ObjectBase::as_placeable, py::const_), py::return_value_policy::reference_internal)
+        .def("as_placeable", py::overload_cast<>(&nw::ObjectBase::as_placeable), py::return_value_policy::reference_internal)
+        .def("as_placeable", py::overload_cast<>(&nw::ObjectBase::as_placeable, py::const_), py::return_value_policy::reference_internal)
         .def("as_sound", py::overload_cast<>(&nw::ObjectBase::as_sound), py::return_value_policy::reference_internal)
         .def("as_sound", py::overload_cast<>(&nw::ObjectBase::as_sound, py::const_), py::return_value_policy::reference_internal)
-        // .def("as_store", py::overload_cast<>(&nw::ObjectBase::as_store), py::return_value_policy::reference_internal)
-        // .def("as_store", py::overload_cast<>(&nw::ObjectBase::as_store, py::const_), py::return_value_policy::reference_internal)
         .def("as_trigger", py::overload_cast<>(&nw::ObjectBase::as_trigger), py::return_value_policy::reference_internal)
         .def("as_trigger", py::overload_cast<>(&nw::ObjectBase::as_trigger, py::const_), py::return_value_policy::reference_internal)
         .def("as_waypoint", py::overload_cast<>(&nw::ObjectBase::as_waypoint), py::return_value_policy::reference_internal)
@@ -97,13 +92,11 @@ void init_object_trigger(pybind11::module& m)
         .def_readwrite("on_trap_triggered", &nw::TriggerScripts::on_trap_triggered)
         .def_readwrite("on_user_defined", &nw::TriggerScripts::on_user_defined);
 
-    py::bind_vector<std::vector<glm::vec3>>(m, "VectorVec3");
-
     pybind11::class_<nw::Trigger, nw::ObjectBase>(m, "Trigger")
         .def(pybind11::init<>())
         .def(pybind11::init<nlohmann::json, nw::SerializationProfile>())
+        .def("to_dict", &nw::Trigger::to_json)
         .def("valid", &nw::Trigger::valid)
-        .def_readonly_static("json_archive_version", &nw::Trigger::json_archive_version)
         .def_readwrite("scripts", &nw::Trigger::scripts)
         .def_readwrite("geometry", &nw::Trigger::geometry)
         .def_readwrite("linked_to", &nw::Trigger::linked_to)
@@ -120,7 +113,7 @@ void init_object_waypoint(pybind11::module& m)
 {
     pybind11::class_<nw::Waypoint, nw::ObjectBase>(m, "Waypoint")
         .def(pybind11::init<>())
-        .def(pybind11::init<nlohmann::json, nw::SerializationProfile>())
+        .def(pybind11::init<const nlohmann::json&, nw::SerializationProfile>())
         .def_readwrite("description", &nw::Waypoint::description)
         .def_readwrite("linked_to", &nw::Waypoint::linked_to)
         .def_readwrite("map_note", &nw::Waypoint::map_note)

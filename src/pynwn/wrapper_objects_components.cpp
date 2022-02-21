@@ -1,5 +1,12 @@
+#include "opaque_types.hpp"
+
+#include <nw/objects/Item.hpp>
 #include <nw/objects/components/Appearance.hpp>
 #include <nw/objects/components/Common.hpp>
+#include <nw/objects/components/Location.hpp>
+#include <nw/objects/components/Lock.hpp>
+#include <nw/objects/components/Saves.hpp>
+#include <nw/objects/components/Trap.hpp>
 
 #include <pybind11/pybind11.h>
 #include <pybind11_json/pybind11_json.hpp>
@@ -15,7 +22,7 @@ void init_component_common(py::module& m)
         .def_readwrite("resref", &nw::Common::resref)
         .def_readwrite("tag", &nw::Common::tag)
         .def_readwrite("name", &nw::Common::name)
-        .def_readwrite("local_data", &nw::Common::local_data)
+        .def_readwrite("locals", &nw::Common::locals)
         .def_readwrite("location", &nw::Common::location)
         .def_readwrite("comment", &nw::Common::comment)
         .def_readwrite("palette_id", &nw::Common::palette_id);
@@ -25,18 +32,31 @@ void init_component_localdata(py::module& m)
 {
     pybind11::class_<nw::LocalData>(m, "LocalData")
         .def(py::init<>())
-        .def("get_local_float", &nw::LocalData::get_local_float)
-        .def("get_local_int", &nw::LocalData::get_local_int)
-        .def("get_local_object", &nw::LocalData::get_local_object)
-        .def("get_local_string", &nw::LocalData::get_local_string)
-        .def("get_local_location", &nw::LocalData::get_local_location)
+        .def("delete_float", &nw::LocalData::delete_float)
+        .def("delete_int", &nw::LocalData::delete_int)
+        .def("delete_object", &nw::LocalData::delete_object)
+        .def("delete_string", &nw::LocalData::delete_string)
+        .def("delete_location", &nw::LocalData::delete_location)
+        .def("get_float", &nw::LocalData::get_float)
+        .def("get_int", &nw::LocalData::get_int)
+        .def("get_object", &nw::LocalData::get_object)
+        .def("get_string", &nw::LocalData::get_string)
+        .def("get_location", &nw::LocalData::get_location)
+        .def("set_float", &nw::LocalData::set_float)
+        .def("set_int", &nw::LocalData::set_int)
+        .def("set_object", &nw::LocalData::set_object)
+        .def("set_string", &nw::LocalData::set_string)
+        .def("set_location", &nw::LocalData::set_location)
         .def("size", &nw::LocalData::size);
 }
 
 void init_component_location(py::module& m)
 {
     pybind11::class_<nw::Location>(m, "Location")
-        .def(py::init<>());
+        .def(py::init<>())
+        .def_readwrite("area", &nw::Location::area)
+        .def_readwrite("position", &nw::Location::position)
+        .def_readwrite("orientation", &nw::Location::orientation);
 }
 
 void init_component_appearance(py::module& m)
