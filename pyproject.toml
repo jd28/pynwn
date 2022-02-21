@@ -19,8 +19,8 @@ before-all = [
   "git clone https://github.com/microsoft/vcpkg.git {project}/vcpkg",
   "{project}/vcpkg/bootstrap-vcpkg.sh",
 ]
-test-command = "pytest {package}/tests"
-test-requires = "pytest"
+# test-command = "pytest {package}/tests"
+# test-requires = "pytest"
 
 # [tool.cibuildwheel.windows]
 # before-build = "pip install delvewheel"
