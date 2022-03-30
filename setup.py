@@ -6,14 +6,14 @@ except ImportError:
 setup(
     name='PyNWN',
     version='0.1dev',
-    packages = ['pynwn',
-                'pynwn.nwn',
-                'pynwn.file',
-                'pynwn.util',],
+    packages=['pynwn',
+              'pynwn.nwn',
+              'pynwn.file',
+              'pynwn.util', ],
     license='GPL v2 and 2-Clause BSD License',
     install_requires=[
         'prettytable',
-        'pyyaml'
+        'PyYAML'
     ],
     zip_safe=False
 )

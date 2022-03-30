@@ -1,7 +1,7 @@
 from pynwn.file.gff import Gff, make_gff_property, make_gff_locstring_property
 from pynwn.file.gff import GffInstance
 
-from pynwn.item import ItemInstance
+from pynwn.item import RepositoryItem, ItemInstance
 
 __all__ = ['PlayerCharacter']
 
@@ -123,6 +123,30 @@ class PlayerCharacter(object):
             equip_slot = p['_STRUCT_TYPE_']
             result.append((equip_slot, st_inst))
             i += 1
+
+        return result
+
+    @property
+    def items(self):
+        """Creature's inventory items.
+
+        :returns: List of tuples contiain repository position
+                  and the :class:`pynwn.ItemInstance`.
+        """
+
+        result = []
+        i = 0
+        # If the creature doesn't have inventory items they won't
+        # have an 'ItemList' field in their gff structure.
+        try:
+            for p in self.gff['ItemList']:
+                gff_inst = GffInstance(self.gff, 'ItemList', i)
+                st_inst = ItemInstance(gff_inst, self)
+                repo_pos = (p['Repos_PosX'], p['Repos_Posy'])
+                result.append((repo_pos, st_inst))
+                i += 1
+        except KeyError:
+            pass
 
         return result
 
