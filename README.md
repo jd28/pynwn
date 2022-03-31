@@ -4,17 +4,103 @@
 
 # pynwn
 
-```
-    Thus far I have proceeded in a theme
-    Renewed with no kind auspices:--to feel
-    We are not what we have been, and to deem
-    We are not what we should be,--and to steel
-    The heart against itself; and to conceal,
-    With a proud caution, love, or hate, or aught,--
-    Passion or feeling, purpose, grief or zeal,--
-    Which is the tyrant spirit of our thought,
-Is a stern task of soul:--No matter,--it is taught.
-    -- George Gordon, Lord Byron, Childe Harold's Pilgrimage, Canto the Third, CXI
-```
-
 pynwn is now a wrapper (or will be) around [libnw](https://github.com/jd28/libnw).  Older versions can be found on `master-obsolete` and `develop-obsolete`.  Getting CI going, first.. then the rest.
+
+## Status
+
+### formats
+- [] Image
+- [] Ini
+- [] Nss
+- [] NssAstPrinter
+- [] NssLexer
+- [] NssParser
+- [] TwoDA
+- [] d3dtypes.h
+
+### i18n
+
+- [x] Language
+- [x] LocString
+- [x] Tlk
+- [x] conversion - unneeded, Python strings are already utf8
+
+### kernel
+
+- [] Config
+- [] Kernel
+- [] Objects
+- [] Resources
+- [] Strings
+
+
+### objects
+
+- [x] Area
+- [x] Creature
+- [] Dialog
+- [x] Door
+- [x] Encounter
+- [] Faction
+- [x] Item
+- [] Journal
+- [x] Module
+- [x] ObjectBase
+- [] Palette
+- [x] Placeable
+- [x] Sound
+- [x] Store
+- [x] Trigger
+- [x] Waypoint
+
+#### components
+
+- [x] Appearance
+- [] CombatInfo
+- [x] Common
+- [x] CreatureStats
+- [x] Equips
+- [x] Inventory
+- [] LevelStats
+- [x] LocalData
+- [x] Location
+- [x] Lock
+- [x] Saves
+- [] SpellBook
+- [x] Trap
+
+### resources
+
+- [] Bif - unexposed
+- [x] Container
+- [x] Directory
+- [x] Erf
+- [x] Key
+- [x] NWSync
+- [x] Resource
+- [x] ResourceDescriptor
+- [x] ResourceType
+- [x] Resref
+- [x] Zip
+
+### serialization
+
+- [] Archives
+- [] GffInputArchive
+- [] GffOutputArchive
+- [] Serialization
+- [] gff_common
+
+### util
+
+- [x] ByteArray
+- [] Tokenizer
+- [x] base64 - unneeded
+- [] compression
+- [x] enum_flags - unneeded
+- [x] game_install
+- [x] macros - unneeded
+- [] platform
+- [x] scope_exit - unneeded
+- [] string - unneeded
+- [x] templates - unneeded

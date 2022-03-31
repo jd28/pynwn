@@ -18,15 +18,16 @@ void bind_opaque_types(py::module& m)
     py::bind_vector<std::vector<nw::InventoryItem>>(m, "InvetoryItemVector");
     py::bind_vector<std::vector<nw::Resref>>(m, "ResrefVector");
     py::bind_vector<std::vector<nw::Resource>>(m, "ResourceVector");
+    py::bind_vector<std::vector<nw::ResourceDescriptor>>(m, "ResourceDescriptorVector");
 
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Area>>>(m, "AreaVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Creature>>>(m, "CreatureVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Door>>>(m, "DoorVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Encounter>>>(m, "EncounterVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Item>>>(m, "ItemVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Placeable>>>(m, "PlaceableVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Sound>>>(m, "SoundVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Store>>>(m, "StoreVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Trigger>>>(m, "TriggerVector");
-    // py::bind_vector<std::vector<std::unique_ptr<nw::Waypoint>>>(m, "WaypointVector");
+    py::bind_vector<std::vector<nw::Area*>>(m, "AreaVector");
+    py::bind_vector<std::vector<nw::Creature*>>(m, "CreatureVector");
+    py::bind_vector<std::vector<nw::Door*>>(m, "DoorVector");
+    py::bind_vector<std::vector<nw::Encounter*>>(m, "EncounterVector");
+    py::bind_vector<std::vector<nw::Item*>>(m, "ItemVector");
+    py::bind_vector<std::vector<nw::Placeable*>>(m, "PlaceableVector");
+    py::bind_vector<std::vector<nw::Sound*>>(m, "SoundVector");
+    py::bind_vector<std::vector<nw::Store*>>(m, "StoreVector");
+    py::bind_vector<std::vector<nw::Trigger*>>(m, "TriggerVector");
+    py::bind_vector<std::vector<nw::Waypoint*>>(m, "WaypointVector");
 }

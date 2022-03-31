@@ -9,6 +9,7 @@
 #include <nw/resources/ResourceType.hpp>
 #include <nw/resources/Resref.hpp>
 #include <nw/resources/Zip.hpp>
+#include <nw/util/string.hpp>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -18,21 +19,22 @@
 
 namespace py = pybind11;
 
-void init_resources_resref(py::module& m)
+void init_resources_resref(py::module& nw)
 {
-    py::class_<nw::Resref>(m, "Resref")
+    py::class_<nw::Resref>(nw, "Resref")
         .def(py::init<>())
         .def(py::init<std::string_view>())
         .def("empty", &nw::Resref::empty)
         .def("length", &nw::Resref::length)
-        .def("string", &nw::Resref::string);
+        .def("string", &nw::Resref::string)
+        .def("view", &nw::Resref::view);
 }
 
-void init_resources_resourcetype(py::module& m)
+void init_resources_resourcetype(py::module& nw)
 {
-    m.def("resource_type_to_string", &nw::ResourceType::to_string);
+    nw.def("resource_type_to_string", &nw::ResourceType::to_string);
 
-    py::enum_<nw::ResourceType::type>(m, "ResourceType")
+    py::enum_<nw::ResourceType::type>(nw, "ResourceType")
         .value("invalid", nw::ResourceType::invalid)
         .value("bmp", nw::ResourceType::bmp)
         .value("mve", nw::ResourceType::mve)
@@ -126,9 +128,14 @@ void init_resources_resourcetype(py::module& m)
         .value("key", nw::ResourceType::key);
 }
 
-void init_resources_resource(py::module& m)
+void init_resources_resource(py::module& nw)
 {
-    py::class_<nw::Resource>(m, "Resource")
+    nw.def("resource_match", [](const nw::Resource& r, std::string_view pat) {
+        auto re = nw::string::glob_to_regex(pat);
+        return std::regex_match(r.filename(), re);
+    });
+
+    py::class_<nw::Resource>(nw, "Resource")
         .def(py::init<>())
         .def(py::init<const nw::Resref&, nw::ResourceType::type>())
         .def(py::init<std::string_view, nw::ResourceType::type>())
@@ -138,18 +145,18 @@ void init_resources_resource(py::module& m)
         .def("valid", &nw::Resource::valid);
 }
 
-void init_resources_descriptor(py::module& m)
+void init_resources_descriptor(py::module& nw)
 {
-    py::class_<nw::ResourceDescriptor>(m, "ResourceDescriptor")
+    py::class_<nw::ResourceDescriptor>(nw, "ResourceDescriptor")
         .def_readwrite("name", &nw::ResourceDescriptor::name)
         .def_readwrite("size", &nw::ResourceDescriptor::size)
         .def_readwrite("mtime", &nw::ResourceDescriptor::mtime)
         .def_readwrite("parent", &nw::ResourceDescriptor::parent);
 }
 
-void init_resources_container(py::module& m)
+void init_resources_container(py::module& nw)
 {
-    py::class_<nw::Container>(m, "Container")
+    py::class_<nw::Container>(nw, "Container")
         .def("all", &nw::Container::all, "Get all resources in a container")
         .def("demand", &nw::Container::demand)
         .def("extract_by_glob", &nw::Container::extract_by_glob)
@@ -164,25 +171,33 @@ void init_resources_container(py::module& m)
         .def("valid", &nw::Container::valid);
 }
 
-void init_resources_dir(py::module& m)
+void init_resources_dir(py::module& nw)
 {
     // virtuals will already have been handled in Container
-    py::class_<nw::Directory, nw::Container>(m, "Directory")
+    py::class_<nw::Directory, nw::Container>(nw, "Directory")
         .def(py::init<std::filesystem::path>());
 }
 
-void init_resources_erf(py::module& m)
+void init_resources_erf(py::module& nw)
 {
     // virtuals will already have been handled in Container
-    py::class_<nw::Erf, nw::Container>(m, "Erf")
+    py::class_<nw::Erf, nw::Container>(nw, "Erf")
         .def(py::init<>())
         .def(py::init<std::filesystem::path>())
+        .def("add", static_cast<bool (nw::Erf::*)(nw::Resource res, const nw::ByteArray&)>(&nw::Erf::add))
+        .def("add", static_cast<bool (nw::Erf::*)(const std::filesystem::path&)>(&nw::Erf::add))
+        .def("erase", &nw::Erf::erase)
+        .def("merge", &nw::Erf::merge)
+        .def("reload", &nw::Erf::reload)
+        .def("save", &nw::Erf::save)
+        .def("save_as", &nw::Erf::save_as)
+
         .def_readwrite("description", &nw::Erf::description);
 }
 
-void init_resources_nwsync(py::module& m)
+void init_resources_nwsync(py::module& nw)
 {
-    py::class_<nw::NWSync>(m, "NWSync")
+    py::class_<nw::NWSync>(nw, "NWSync")
         .def(py::init<std::filesystem::path>())
         .def("get", &nw::NWSync::get)
         .def("is_loaded", &nw::NWSync::is_loaded)
@@ -190,33 +205,33 @@ void init_resources_nwsync(py::module& m)
         .def("shard_count", &nw::NWSync::shard_count);
 
     // virtuals will already have been handled in Container
-    py::class_<nw::NWSyncManifest, nw::Container>(m, "NWSyncManifest");
+    py::class_<nw::NWSyncManifest, nw::Container>(nw, "NWSyncManifest");
 }
 
-void init_resources_key(py::module& m)
+void init_resources_key(py::module& nw)
 {
     // virtuals will already have been handled in Container
-    py::class_<nw::Key, nw::Container>(m, "Key")
+    py::class_<nw::Key, nw::Container>(nw, "Key")
         .def(py::init<std::filesystem::path>());
 }
 
-void init_resources_zip(py::module& m)
+void init_resources_zip(py::module& nw)
 {
     // virtuals will already have been handled in Container
-    py::class_<nw::Zip, nw::Container>(m, "Zip")
+    py::class_<nw::Zip, nw::Container>(nw, "Zip")
         .def(py::init<std::filesystem::path>());
 }
 
-void init_resources(py::module& m)
+void init_resources(py::module& nw)
 {
-    init_resources_resref(m);
-    init_resources_resourcetype(m);
-    init_resources_resource(m);
-    init_resources_descriptor(m);
-    init_resources_container(m);
-    init_resources_dir(m);
-    init_resources_erf(m);
-    init_resources_key(m);
-    init_resources_nwsync(m);
-    init_resources_zip(m);
+    init_resources_resref(nw);
+    init_resources_resourcetype(nw);
+    init_resources_resource(nw);
+    init_resources_descriptor(nw);
+    init_resources_container(nw);
+    init_resources_dir(nw);
+    init_resources_erf(nw);
+    init_resources_key(nw);
+    init_resources_nwsync(nw);
+    init_resources_zip(nw);
 }
