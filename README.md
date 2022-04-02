@@ -1,6 +1,8 @@
 PyNWN
 =====
 
+**This branch is no longer being maintained, see branch main for work on a new version**
+
 Neverwinter Nights 1/2 file formats Python library.
 
 The following library combines Jordan McCoy's GFF File Format
