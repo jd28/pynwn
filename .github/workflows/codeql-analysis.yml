@@ -25,7 +25,7 @@ jobs:
     env:
       buildDir: "${{ github.workspace }}/build/"
       VCPKG_ROOT: vcpkg
-      vcpkg-tag: "2022.01.01"
+      vcpkg-tag: "2022.03.10"
 
     name: Analyze
     runs-on: ubuntu-latest
