@@ -15,41 +15,33 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(
-            self.get_ext_fullpath(ext.name)))
+        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
 
         if not extdir.endswith(os.path.sep):
             extdir += os.path.sep
 
         preset = "default"
-        debug = int(os.environ.get("DEBUG", 0)
-                    ) if self.debug is None else self.debug
+        debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
         cmake_args = [
-            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}/pynwn",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
             f"-DVERSION_INFO={self.distribution.get_version()}",
         ]
 
         if self.compiler.compiler_type == "msvc":
-            cmake_args += [
-                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}/pynwn"
-            ]
+            cmake_args += [f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"]
             preset = "windows-" + preset
         elif self.plat_name.startswith("macosx"):
             preset = "macos-" + preset
 
-        if os.environ.get('CIBUILDWHEEL', '0') == '1':
+        if os.environ.get("CIBUILDWHEEL", "0") == "1":
             preset = "ci-" + preset
 
-        subprocess.check_call(
-            ["cmake", f"--preset {preset}"] + cmake_args
-        )
-        subprocess.check_call(
-            ["cmake", "--build", "--preset", "default"]
-        )
+        subprocess.check_call(["cmake", f"--preset {preset}"] + cmake_args)
+        subprocess.check_call(["cmake", "--build", "--preset", "default"])
 
 
 setup(
@@ -57,8 +49,8 @@ setup(
     version="0.1.0",
     author="jmd",
     author_email="joshua.m.dean@gmail.com",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    # packages=find_packages(where="src"),
+    # package_dir={"": "src"},
     include_package_data=True,
     description="libnw wrapper",
     long_description=open("README.md").read(),

@@ -14,7 +14,7 @@ void init_util(py::module& nw);
 
 void init_kernel(py::module& nw, py::module& kernel);
 
-PYBIND11_MODULE(_libnw, nw)
+PYBIND11_MODULE(pynwn, nw)
 {
     nw.doc() = "libnw python wrapper";
 
