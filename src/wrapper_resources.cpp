@@ -27,7 +27,8 @@ void init_resources_resref(py::module& nw)
         .def("empty", &nw::Resref::empty)
         .def("length", &nw::Resref::length)
         .def("string", &nw::Resref::string)
-        .def("view", &nw::Resref::view);
+        .def("view", &nw::Resref::view)
+        .def("__repr__", &nw::Resref::view);
 }
 
 void init_resources_resourcetype(py::module& nw)

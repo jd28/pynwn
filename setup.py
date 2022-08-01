@@ -20,7 +20,7 @@ class CMakeBuild(build_ext):
         if not extdir.endswith(os.path.sep):
             extdir += os.path.sep
 
-        preset = "default"
+        preset = "linux"
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
@@ -33,9 +33,9 @@ class CMakeBuild(build_ext):
 
         if self.compiler.compiler_type == "msvc":
             cmake_args += [f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"]
-            preset = "windows-" + preset
+            preset = "windows"
         elif self.plat_name.startswith("macosx"):
-            preset = "macos-" + preset
+            preset = "macos"
 
         if os.environ.get("CIBUILDWHEEL", "0") == "1":
             preset = "ci-" + preset

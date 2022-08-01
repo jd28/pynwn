@@ -2,6 +2,10 @@
 #include "opaque_types.hpp"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
+
+#include <nw/util/platform.hpp>
 
 namespace py = pybind11;
 
@@ -22,7 +26,7 @@ PYBIND11_MODULE(pynwn, nw)
     py::class_<std::filesystem::path>(nw, "Path")
         .def(py::init<std::string>())
         .def("__repr__", [](const std::filesystem::path& self) {
-            return self.u8string();
+            return nw::path_to_string(self);
         });
     py::implicitly_convertible<std::string, std::filesystem::path>();
 

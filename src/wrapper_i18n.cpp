@@ -71,6 +71,7 @@ void init_i18n_tlk(py::module& m)
         .def("__setitem__", [](nw::Tlk& self, uint32_t strref, std::string_view string) {
             self.set(strref, string);
         })
+        .def("__len__", &nw::Tlk::size, "Gets the highest set strref")
         .def("get", &nw::Tlk::get, "Gets a localized string")
         .def("language_id", &nw::Tlk::language_id, "Gets the language ID")
         .def("modified", &nw::Tlk::modified, "Is Tlk modfied")

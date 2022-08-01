@@ -4,7 +4,18 @@
 
 # pynwn
 
-pynwn is now a wrapper (or will be) around [libnw](https://github.com/jd28/libnw).  Older versions can be found on `master-obsolete` and `develop-obsolete`.  Getting CI going, first.. then the rest.
+pynwn is now a wrapper (or will be) around [rollnw](https://github.com/jd28/rollnw).  Older versions can be found on `master-obsolete` and `develop-obsolete`.  Getting CI going, first.. then the rest.
+
+```python
+
+import pynwn
+
+pynwn.kernel.start()
+mod = pynwn.load_module("mymodule.mod")
+for area in mod:
+    # Do neat things
+
+```
 
 ## Status
 

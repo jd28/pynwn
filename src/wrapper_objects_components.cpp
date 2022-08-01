@@ -1,18 +1,18 @@
 #include "opaque_types.hpp"
 
-#include <nw/objects/Item.hpp>
-#include <nw/objects/components/Appearance.hpp>
-#include <nw/objects/components/CombatInfo.hpp>
-#include <nw/objects/components/Common.hpp>
-#include <nw/objects/components/CreatureStats.hpp>
-#include <nw/objects/components/Equips.hpp>
-#include <nw/objects/components/Inventory.hpp>
-#include <nw/objects/components/LevelStats.hpp>
-#include <nw/objects/components/Location.hpp>
-#include <nw/objects/components/Lock.hpp>
-#include <nw/objects/components/Saves.hpp>
-#include <nw/objects/components/SpellBook.hpp>
-#include <nw/objects/components/Trap.hpp>
+#include <nw/components/Appearance.hpp>
+#include <nw/components/CombatInfo.hpp>
+#include <nw/components/Common.hpp>
+#include <nw/components/CreatureStats.hpp>
+#include <nw/components/Equips.hpp>
+#include <nw/components/Inventory.hpp>
+#include <nw/components/Item.hpp>
+#include <nw/components/LevelStats.hpp>
+#include <nw/components/Location.hpp>
+#include <nw/components/Lock.hpp>
+#include <nw/components/Saves.hpp>
+#include <nw/components/SpellBook.hpp>
+#include <nw/components/Trap.hpp>
 
 #include <pybind11/pybind11.h>
 #include <pybind11_json/pybind11_json.hpp>
@@ -77,7 +77,9 @@ void init_component_creature_stats(py::module& m)
 {
     py::class_<nw::CreatureStats>(m, "CreatureStats")
         .def_readonly("abilities", &nw::CreatureStats::abilities)
-        .def_readonly("feats", &nw::CreatureStats::feats)
+        .def("feats", &nw::CreatureStats::feats)
+        .def("add_feat", &nw::CreatureStats::add_feat)
+        .def("has_feat", &nw::CreatureStats::has_feat)
         .def_readonly("skills", &nw::CreatureStats::skills)
         .def_readonly("save_bonus", &nw::CreatureStats::save_bonus);
 }

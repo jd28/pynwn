@@ -1,17 +1,17 @@
 #include "opaque_types.hpp"
 
-#include <nw/objects/Area.hpp>
-#include <nw/objects/Creature.hpp>
-#include <nw/objects/Door.hpp>
-#include <nw/objects/Encounter.hpp>
-#include <nw/objects/Item.hpp>
-#include <nw/objects/Module.hpp>
-#include <nw/objects/ObjectBase.hpp>
-#include <nw/objects/Placeable.hpp>
-#include <nw/objects/Sound.hpp>
-#include <nw/objects/Store.hpp>
-#include <nw/objects/Trigger.hpp>
-#include <nw/objects/Waypoint.hpp>
+#include <nw/components/Area.hpp>
+#include <nw/components/Creature.hpp>
+#include <nw/components/Door.hpp>
+#include <nw/components/Encounter.hpp>
+#include <nw/components/Item.hpp>
+#include <nw/components/Module.hpp>
+#include <nw/components/ObjectBase.hpp>
+#include <nw/components/Placeable.hpp>
+#include <nw/components/Sound.hpp>
+#include <nw/components/Store.hpp>
+#include <nw/components/Trigger.hpp>
+#include <nw/components/Waypoint.hpp>
 #include <nw/util/templates.hpp>
 
 #include <fmt/format.h>
@@ -21,6 +21,14 @@
 #include <pybind11_json/pybind11_json.hpp>
 
 namespace py = pybind11;
+
+template <typename T>
+nlohmann::json to_json_helper(const T* self, nw::SerializationProfile profile)
+{
+    nlohmann::json result;
+    T::serialize(self, result, profile);
+    return result;
+}
 
 void init_object_components(py::module& nw);
 
@@ -48,12 +56,23 @@ void init_objects_base(py::module& nw)
         .value("portal", nw::ObjectType::portal)
         .value("sound", nw::ObjectType::sound);
 
+    py::class_<nw::ObjectHandle>(nw, "ObjectHandle")
+        .def(py::init<>())
+        .def("__repr__", [](nw::ObjectHandle self) {
+            return fmt::format("<ObjectHandle id: {}, version: {}, type: {}",
+                nw::to_underlying(self.id), self.version, nw::to_underlying(self.type));
+        })
+        .def_readonly("id", &nw::ObjectHandle::id)
+        .def_readonly("version", &nw::ObjectHandle::version)
+        .def_readonly("type", &nw::ObjectHandle::type)
+        .def("valid", [](const nw::ObjectHandle& self) { return self.id != nw::object_invalid; });
+
     py::class_<nw::ObjectBase>(nw, "ObjectBase")
         .def("handle", &nw::ObjectBase::handle)
-        .def("instantiate", &nw::ObjectBase::instantiate)
-        .def("valid", &nw::ObjectBase::valid)
-        .def("common", py::overload_cast<>(&nw::ObjectBase::common), py::return_value_policy::reference_internal)
-        .def("common", py::overload_cast<>(&nw::ObjectBase::common, py::const_), py::return_value_policy::reference_internal)
+        //.def("instantiate", &nw::ObjectBase::instantiate)
+        //.def("valid", &nw::ObjectBase::valid)
+        .def("as_common", py::overload_cast<>(&nw::ObjectBase::as_common), py::return_value_policy::reference_internal)
+        .def("as_common", py::overload_cast<>(&nw::ObjectBase::as_common, py::const_), py::return_value_policy::reference_internal)
         .def("as_creature", py::overload_cast<>(&nw::ObjectBase::as_creature), py::return_value_policy::reference_internal)
         .def("as_creature", py::overload_cast<>(&nw::ObjectBase::as_creature, py::const_), py::return_value_policy::reference_internal)
         .def("as_door", py::overload_cast<>(&nw::ObjectBase::as_door), py::return_value_policy::reference_internal)
@@ -72,26 +91,6 @@ void init_objects_base(py::module& nw)
         .def("as_trigger", py::overload_cast<>(&nw::ObjectBase::as_trigger, py::const_), py::return_value_policy::reference_internal)
         .def("as_waypoint", py::overload_cast<>(&nw::ObjectBase::as_waypoint), py::return_value_policy::reference_internal)
         .def("as_waypoint", py::overload_cast<>(&nw::ObjectBase::as_waypoint, py::const_), py::return_value_policy::reference_internal);
-
-    py::class_<nw::ObjectHandle>(nw, "ObjectHandle")
-        .def(py::init<>())
-        .def("__repr__", [](nw::ObjectHandle self) {
-            return fmt::format("<ObjectHandle id: {}, version: {}, type: {}",
-                nw::to_underlying(self.id), self.version, nw::to_underlying(self.type));
-        })
-        .def_readonly("id", &nw::ObjectHandle::id)
-        .def_readonly("version", &nw::ObjectHandle::version)
-        .def_readonly("type", &nw::ObjectHandle::type)
-        .def_static("from_dict", [](const nlohmann::json& j) {
-            nw::ObjectHandle oh;
-            j.get_to(oh);
-            return oh;
-        })
-        .def("to_dict", [](const nw::ObjectHandle& self) {
-            nlohmann::json j = self;
-            return j;
-        })
-        .def("valid", [](const nw::ObjectHandle& self) { return !!self; });
 }
 
 void init_objects_area(py::module& nw)
@@ -135,7 +134,6 @@ void init_objects_area(py::module& nw)
         .def_readwrite("id", &nw::Tile::id)
         .def_readwrite("height", &nw::Tile::height)
         .def_readwrite("orientation", &nw::Tile::orientation)
-
         .def_readwrite("animloop1", &nw::Tile::animloop1)
         .def_readwrite("animloop2", &nw::Tile::animloop2)
         .def_readwrite("animloop3", &nw::Tile::animloop3)
@@ -145,12 +143,7 @@ void init_objects_area(py::module& nw)
         .def_readwrite("srclight2", &nw::Tile::srclight2);
 
     py::class_<nw::Area, nw::ObjectBase>(nw, "Area")
-        //.def(py::init<>())
-        // [TODO] Area(const GffInputArchiveStruct& caf, const GffInputArchiveStruct& gic);
-        // [TODO] Area(const GffInputArchiveStruct& are, const GffInputArchiveStruct& git, const GffInputArchiveStruct& gic);
-        .def(py::init<const nlohmann::json&, const nlohmann::json&>())
-        .def("to_dict", &nw::Area::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def(py::init<>())
 
         .def_readonly_static("json_archive_version", &nw::Area::json_archive_version)
         .def_readonly_static("object_type", &nw::Area::object_type)
@@ -204,15 +197,14 @@ void init_objects_creature(py::module& nw)
 
     py::class_<nw::Creature, nw::ObjectBase>(nw, "Creature")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Creature::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Creature>)
+        .def("handle", &nw::Creature::handle)
 
         .def_readonly_static("json_archive_version", &nw::Creature::json_archive_version)
         .def_readonly_static("object_type", &nw::Creature::object_type)
 
         .def_readwrite("appearance", &nw::Creature::appearance)
-        .def_readwrite("combat_info", &nw::Creature::combat_info)
+        //.def_readwrite("combat_info", &nw::Creature::combat_info)
         .def_readwrite("conversation", &nw::Creature::conversation)
         .def_readwrite("deity", &nw::Creature::deity)
         .def_readwrite("description", &nw::Creature::description)
@@ -279,9 +271,7 @@ void init_objects_door(py::module& nw)
 
     py::class_<nw::Door, nw::ObjectBase>(nw, "Door")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Door::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Door>)
 
         .def_readonly_static("json_archive_version", &nw::Door::json_archive_version)
         .def_readonly_static("object_type", &nw::Door::object_type)
@@ -331,9 +321,7 @@ void init_objects_encounter(py::module& nw)
 
     py::class_<nw::Encounter, nw::ObjectBase>(nw, "Encounter")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Encounter::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Encounter>)
 
         .def_readonly_static("json_archive_version", &nw::Encounter::json_archive_version)
         .def_readonly_static("object_type", &nw::Encounter::object_type)
@@ -407,9 +395,8 @@ void init_objects_item(py::module& nw)
 
     py::class_<nw::Item, nw::ObjectBase>(nw, "Item")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Item::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Item>)
+        .def("handle", &nw::Item::handle)
 
         .def_readonly_static("json_archive_version", &nw::Item::json_archive_version)
         .def_readonly_static("object_type", &nw::Item::object_type)
@@ -461,16 +448,27 @@ void init_objects_module(py::module& nw)
 
     py::class_<nw::Module, nw::ObjectBase>(nw, "Module")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&>())
-        .def("to_dict", &nw::Module::to_json)
-        .def("handle", &nw::Waypoint::handle)
+
+        .def("to_dict", [](const nw::Module& self) {
+            nlohmann::json j;
+            nw::Module::serialize(&self, j);
+            return j;
+        })
 
         .def_readonly_static("json_archive_version", &nw::Module::json_archive_version)
         .def_readonly_static("object_type", &nw::Module::object_type)
 
         .def("area_count", &nw::Module::area_count)
-        .def("get_area", &nw::Module::get_area)
-        // AreaVariant areas;
+        .def("get_area", &nw::Module::get_area, py::return_value_policy::reference_internal)
+        .def("__len__", [](const nw::Module& self) {
+            return self.area_count();
+        })
+        .def(
+            "__iter__", [](nw::Module& self) {
+                auto& areas = std::get<std::vector<nw::Area*>>(self.areas);
+                return py::make_iterator(areas.begin(), areas.end());
+            },
+            py::keep_alive<0, 1>())
 
         .def_readwrite("description", &nw::Module::description)
         .def_readwrite("entry_area", &nw::Module::entry_area)
@@ -531,13 +529,12 @@ void init_objects_placeable(py::module& nw)
 
     py::class_<nw::Placeable, nw::ObjectBase>(nw, "Placeable")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Placeable::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Placeable>)
 
         .def_readonly_static("json_archive_version", &nw::Placeable::json_archive_version)
         .def_readonly_static("object_type", &nw::Placeable::object_type)
 
+        .def_readwrite("common", &nw::Placeable::common)
         .def_readwrite("conversation", &nw::Placeable::conversation)
         .def_readwrite("description", &nw::Placeable::description)
         .def_property_readonly(
@@ -567,13 +564,12 @@ void init_objects_placeable(py::module& nw)
 void init_objects_sound(py::module& nw)
 {
     py::class_<nw::Sound>(nw, "Sound")
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Sound::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Sound>)
 
         .def_readonly_static("json_archive_version", &nw::Sound::json_archive_version)
         .def_readonly_static("object_type", &nw::Sound::object_type)
 
+        .def_readwrite("common", &nw::Sound::common)
         .def_readwrite("sounds", &nw::Sound::sounds)
 
         .def_readwrite("distance_min", &nw::Sound::distance_min)
@@ -607,26 +603,24 @@ void init_objects_store(py::module& nw)
 
     py::class_<nw::Store, nw::ObjectBase>(nw, "Store")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Store::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Store>)
 
         .def_readonly_static("json_archive_version", &nw::Store::json_archive_version)
         .def_readonly_static("object_type", &nw::Store::object_type)
 
         .def_property_readonly(
-            "armor", [](const nw::Store& s) { return &s.armor; }, py::return_value_policy::reference_internal)
+            "armor", [](const nw::Store& s) { return &s.inventory.armor; }, py::return_value_policy::reference_internal)
         .def_property_readonly(
-            "miscellaneous", [](const nw::Store& s) { return &s.miscellaneous; }, py::return_value_policy::reference_internal)
+            "miscellaneous", [](const nw::Store& s) { return &s.inventory.miscellaneous; }, py::return_value_policy::reference_internal)
         .def_property_readonly(
-            "potions", [](const nw::Store& s) { return &s.potions; }, py::return_value_policy::reference_internal)
+            "potions", [](const nw::Store& s) { return &s.inventory.potions; }, py::return_value_policy::reference_internal)
         .def_property_readonly(
-            "rings", [](const nw::Store& s) { return &s.rings; }, py::return_value_policy::reference_internal)
+            "rings", [](const nw::Store& s) { return &s.inventory.rings; }, py::return_value_policy::reference_internal)
         .def_property_readonly(
-            "weapons", [](const nw::Store& s) { return &s.weapons; }, py::return_value_policy::reference_internal)
+            "weapons", [](const nw::Store& s) { return &s.inventory.weapons; }, py::return_value_policy::reference_internal)
         .def_readonly("scripts", &nw::Store::scripts)
-        .def_readonly("will_not_buy", &nw::Store::will_not_buy)
-        .def_readonly("will_only_buy", &nw::Store::will_only_buy)
+        //.def_readonly("will_not_buy", &nw::Store::will_not_buy)
+        //.def_readonly("will_only_buy", &nw::Store::will_only_buy)
 
         .def_readwrite("blackmarket_markdown", &nw::Store::blackmarket_markdown)
         .def_readwrite("identify_price", &nw::Store::identify_price)
@@ -651,9 +645,7 @@ void init_object_trigger(pybind11::module& nw)
 
     pybind11::class_<nw::Trigger, nw::ObjectBase>(nw, "Trigger")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Trigger::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Trigger>)
 
         .def_readonly_static("json_archive_version", &nw::Trigger::json_archive_version)
         .def_readonly_static("object_type", &nw::Trigger::object_type)
@@ -678,9 +670,7 @@ void init_object_waypoint(pybind11::module& nw)
 {
     pybind11::class_<nw::Waypoint, nw::ObjectBase>(nw, "Waypoint")
         .def(py::init<>())
-        .def(py::init<const nlohmann::json&, nw::SerializationProfile>())
-        .def("to_dict", &nw::Waypoint::to_json)
-        .def("handle", &nw::Waypoint::handle)
+        .def("to_dict", &to_json_helper<nw::Waypoint>)
 
         .def_readonly_static("json_archive_version", &nw::Waypoint::json_archive_version)
         .def_readonly_static("object_type", &nw::Waypoint::object_type)

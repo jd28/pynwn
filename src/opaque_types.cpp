@@ -1,6 +1,6 @@
 #include "opaque_types.hpp"
 
-#include <nw/objects/Item.hpp>
+#include <nw/components/Item.hpp>
 
 namespace py = pybind11;
 
@@ -14,11 +14,13 @@ void bind_opaque_types(py::module& m)
     py::bind_vector<std::vector<uint32_t>>(m, "UInt32Vector");
     py::bind_vector<std::vector<uint16_t>>(m, "UInt16Vector");
     py::bind_vector<std::vector<uint8_t>>(m, "UInt8Vector");
+    py::bind_vector<std::vector<std::string>>(m, "StringVector");
     py::bind_vector<std::vector<glm::vec3>>(m, "Vec3Vector");
     py::bind_vector<std::vector<nw::InventoryItem>>(m, "InvetoryItemVector");
     py::bind_vector<std::vector<nw::Resref>>(m, "ResrefVector");
     py::bind_vector<std::vector<nw::Resource>>(m, "ResourceVector");
     py::bind_vector<std::vector<nw::ResourceDescriptor>>(m, "ResourceDescriptorVector");
+    py::bind_vector<std::vector<nw::Tile>>(m, "TileVector");
 
     py::bind_vector<std::vector<nw::Area*>>(m, "AreaVector");
     py::bind_vector<std::vector<nw::Creature*>>(m, "CreatureVector");

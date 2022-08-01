@@ -17,7 +17,11 @@ pybind11_add_module(pynwn NO_EXTRAS
     wrapper_util.cpp
 )
 
-target_link_libraries(pynwn PRIVATE nw pybind11::module)
+target_link_libraries(pynwn PRIVATE
+    nw
+    nw-profiles
+    pybind11::module
+)
 
 include(../cmake/Cache.cmake)
 
@@ -27,6 +31,7 @@ set_project_warnings(pynwn)
 target_include_directories(pynwn PRIVATE
     ../external/libnw/lib
     ../external/libnw/external
+    ../external/libnw/profiles
     ../external/pybind11_json/include
     ../external/pybind11/include
 )

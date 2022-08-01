@@ -7,7 +7,7 @@
     },
     "configurePresets": [
         {
-            "name": "default",
+            "name": "linux",
             "displayName": "Default Config",
             "description": "Default build using Ninja generator",
             "binaryDir": "${sourceDir}/build",
@@ -21,8 +21,8 @@
             }
         },
         {
-            "name": "macos-default",
-            "inherits": "default",
+            "name": "macos",
+            "inherits": "linux",
             "description": "This build is only available on macOS",
             "binaryDir": "${sourceDir}/build",
             "condition": {
@@ -38,8 +38,8 @@
             }
         },
         {
-            "name": "windows-default",
-            "inherits": "default",
+            "name": "windows",
+            "inherits": "linux",
             "generator": "Visual Studio 16 2019",
             "displayName": "Windows-only configuration",
             "description": "This build is only available on Windows",
@@ -61,23 +61,23 @@
             }
         },
         {
-            "name": "ci-default",
-            "inherits": "default",
+            "name": "ci-linux",
+            "inherits": "linux",
             "generator": "Unix Makefiles"
         },
         {
-            "name": "ci-macos-default",
-            "inherits": "macos-default"
+            "name": "ci-macos",
+            "inherits": "macos"
         },
         {
-            "name": "ci-windows-default",
-            "inherits": "windows-default"
+            "name": "ci-windows",
+            "inherits": "windows"
         }
     ],
     "buildPresets": [
         {
             "name": "default",
-            "configurePreset": "default"
+            "configurePreset": "linux"
         }
     ]
 }
