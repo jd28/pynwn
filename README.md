@@ -11,7 +11,7 @@ pynwn is now a wrapper (or will be) around [rollnw](https://github.com/jd28/roll
 import pynwn
 
 pynwn.kernel.start()
-mod = pynwn.load_module("mymodule.mod")
+mod = pynwn.kernel.load_module("mymodule.mod")
 for area in mod:
     # Do neat things
 
@@ -20,14 +20,14 @@ for area in mod:
 ## Status
 
 ### formats
-- [] Image
-- [] Ini
-- [] Nss
-- [] NssAstPrinter
-- [] NssLexer
-- [] NssParser
-- [] TwoDA
-- [] d3dtypes.h
+- [ ] Image
+- [ ] Ini
+- [ ] Nss
+- [ ] NssAstPrinter
+- [ ] NssLexer
+- [ ] NssParser
+- [x] TwoDA
+- [x] d3dtypes.h - unneeded
 
 ### i18n
 
@@ -38,26 +38,26 @@ for area in mod:
 
 ### kernel
 
-- [] Config
-- [] Kernel
-- [] Objects
-- [] Resources
-- [] Strings
+- [ ] Config
+- [ ] Kernel
+- [ ] Objects
+- [ ] Resources
+- [ ] Strings
 
 
 ### objects
 
 - [x] Area
 - [x] Creature
-- [] Dialog
+- [ ] Dialog
 - [x] Door
 - [x] Encounter
-- [] Faction
+- [ ] Faction
 - [x] Item
-- [] Journal
+- [ ] Journal
 - [x] Module
 - [x] ObjectBase
-- [] Palette
+- [ ] Palette
 - [x] Placeable
 - [x] Sound
 - [x] Store
@@ -67,22 +67,22 @@ for area in mod:
 #### components
 
 - [x] Appearance
-- [] CombatInfo
+- [ ] CombatInfo
 - [x] Common
 - [x] CreatureStats
 - [x] Equips
 - [x] Inventory
-- [] LevelStats
+- [ ] LevelStats
 - [x] LocalData
 - [x] Location
 - [x] Lock
 - [x] Saves
-- [] SpellBook
+- [ ] SpellBook
 - [x] Trap
 
 ### resources
 
-- [] Bif - unexposed
+- [ ] Bif - unexposed
 - [x] Container
 - [x] Directory
 - [x] Erf
@@ -96,22 +96,22 @@ for area in mod:
 
 ### serialization
 
-- [] Archives
-- [] GffInputArchive
-- [] GffOutputArchive
-- [] Serialization
-- [] gff_common
+- [ ] Archives
+- [ ] GffInputArchive
+- [ ] GffOutputArchive
+- [ ] Serialization
+- [ ] gff_common
 
 ### util
 
 - [x] ByteArray
-- [] Tokenizer
+- [x] Tokenizer - unneeded
 - [x] base64 - unneeded
-- [] compression
+- [ ] compression
 - [x] enum_flags - unneeded
 - [x] game_install
 - [x] macros - unneeded
-- [] platform
+- [ ] platform
 - [x] scope_exit - unneeded
-- [] string - unneeded
+- [ ] string - unneeded
 - [x] templates - unneeded
