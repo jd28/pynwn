@@ -1,3 +1,4 @@
+#include <nw/formats/Image.hpp>
 #include <nw/formats/TwoDA.hpp>
 
 #include <pybind11/pybind11.h>
@@ -8,6 +9,18 @@
 #include <variant>
 
 namespace py = pybind11;
+
+void init_formats_image(py::module& nw)
+{
+    py::class_<nw::Image>(nw, "Image")
+        .def(py::init<const std::filesystem::path&>())
+        .def("channels", &nw::Image::channels, "Gets BPP")
+        .def("data", &nw::Image::data, py::return_value_policy::reference_internal, "Get raw data")
+        .def("height", &nw::Image::height, "Get height")
+        .def("valid", &nw::Image::valid, "Determine if successfully loaded.")
+        .def("width", &nw::Image::width, "Get width")
+        .def("write_to", &nw::Image::write_to, "Write Image to file");
+}
 
 void init_formats_twoda(py::module& nw)
 {
@@ -107,5 +120,6 @@ void init_formats_twoda(py::module& nw)
 
 void init_formats(py::module& nw)
 {
+    init_formats_image(nw);
     init_formats_twoda(nw);
 }

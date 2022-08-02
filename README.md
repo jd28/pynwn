@@ -20,14 +20,13 @@ for area in mod:
 ## Status
 
 ### formats
-- [ ] Image
+- [x] Image
 - [ ] Ini
 - [ ] Nss
 - [ ] NssAstPrinter
 - [ ] NssLexer
 - [ ] NssParser
 - [x] TwoDA
-- [x] d3dtypes.h - unneeded
 
 ### i18n
 
