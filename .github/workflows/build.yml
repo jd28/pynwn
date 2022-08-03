@@ -104,12 +104,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - run: |
-        pip install dist/pynwn-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-        pushd ${{ github.workspace }}/docs
-        pip install -r requirements.txt
-        make html
-        popd
+      - name: Install requirements
+        run: |
+          pip install dist/pynwn-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+          pushd ${{ github.workspace }}/docs
+          pip install -r requirements.txt
+          make html
+          popd
 
       - name: deploy docs to github pages
         if: github.event_name == 'push'
