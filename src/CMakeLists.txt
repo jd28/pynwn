@@ -10,9 +10,11 @@ pybind11_add_module(pynwn NO_EXTRAS
     wrapper_formats.cpp
     wrapper_i18n.cpp
     wrapper_kernel.cpp
+    wrapper_model.cpp
     wrapper_objects_components.cpp
     wrapper_objects.cpp
     wrapper_resources.cpp
+    wrapper_script.cpp
     wrapper_serialization.cpp
     wrapper_util.cpp
 )

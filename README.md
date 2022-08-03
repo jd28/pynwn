@@ -22,9 +22,8 @@ for area in mod:
 ### formats
 - [x] Image
 - [ ] Ini
-- [ ] Nss
-- [ ] NssAstPrinter
-- [ ] NssLexer
+- [x] Nss
+- [x] NssLexer
 - [ ] NssParser
 - [x] TwoDA
 

@@ -216,8 +216,11 @@ void init_objects_creature(py::module& nw)
         .def_readwrite("name_first", &nw::Creature::name_first)
         .def_readwrite("name_last", &nw::Creature::name_last)
         .def_readwrite("scripts", &nw::Creature::scripts)
-        .def_readwrite("stats", &nw::Creature::stats)
-        .def_readwrite("subrace", &nw::Creature::subrace)
+        .def_readonly("stats", &nw::Creature::stats,
+            R"(Creature Stats
+
+            :type: pynwn.CreatureStats)")
+        .def_readwrite("subrace", &nw::Creature::subrace, "Subrace")
 
         .def_readwrite("cr", &nw::Creature::cr)
         .def_readwrite("cr_adjust", &nw::Creature::cr_adjust)

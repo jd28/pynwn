@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 profile = "black"
 
 [tool.cibuildwheel]
-environment = {VCPKG_ROOT = "vcpkg", MACOSX_DEPLOYMENT_TARGET="10.15"}
+environment = {VCPKG_ROOT = "vcpkg", MACOSX_DEPLOYMENT_TARGET = "10.15"}
 skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
 
 [tool.cibuildwheel.linux]
@@ -19,6 +19,12 @@ before-all = [
   "git clone https://github.com/microsoft/vcpkg.git {project}/vcpkg",
   "{project}/vcpkg/bootstrap-vcpkg.sh",
 ]
+
+[tool.pytest.ini_options]
+norecursedirs = [
+  "external/*",
+]
+
 # test-command = "pytest {package}/tests"
 # test-requires = "pytest"
 
