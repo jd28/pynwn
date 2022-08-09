@@ -90,41 +90,6 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-  build_docs:
-    name: Build docs
-    needs: [build_wheels]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: artifact
-          path: dist
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install requirements
-        run: |
-          python -m pip install dist/pynwn-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-          pushd ${{ github.workspace }}/docs
-          python -m pip install -r requirements.txt
-          make html
-          popd
-
-      - name: deploy docs to github pages
-        if: github.event_name == 'push'
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
-        with:
-          branch: gh-pages
-          folder: "${{ github.workspace }}/docs/_build/html"
-          clean: true
-
-
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-20.04
