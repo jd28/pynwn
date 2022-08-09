@@ -38,6 +38,13 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Install gcc-11
+        run: |
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt install gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -85,4 +92,4 @@ jobs:
           python setup.py bdist_wheel
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
