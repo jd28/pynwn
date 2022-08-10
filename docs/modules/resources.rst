@@ -1,4 +1,4 @@
-Resources
+resources
 =========
 
 .. autoclass:: pynwn.Resref

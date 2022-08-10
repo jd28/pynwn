@@ -1,14 +1,7 @@
 script
 ======
 
-.. autoclass:: pynwn.script.Nss
-   :members:
-   :special-members:
+.. toctree::
+   :maxdepth: 2
 
-.. autoclass:: pynwn.script.Script
-   :members:
-   :special-members:
-
-.. autoclass:: pynwn.script.FunctionDecl
-   :members:
-   :special-members:
+   script/Script

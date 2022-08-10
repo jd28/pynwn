@@ -180,7 +180,24 @@ void init_objects_area(py::module& nw)
 
 void init_objects_creature(py::module& nw)
 {
-    py::class_<nw::CreatureScripts>(nw, "CreatureScripts")
+    py::class_<nw::CreatureScripts>(nw, "CreatureScripts",
+        R"(A class containing a creature's script set.
+
+        Attributes:
+            on_attacked (pynwn.Resref): A script
+            on_blocked (pynwn.Resref): A script
+            on_conversation (pynwn.Resref): A script
+            on_damaged (pynwn.Resref): A script
+            on_death (pynwn.Resref): A script
+            on_disturbed (pynwn.Resref): A script
+            on_endround (pynwn.Resref): A script
+            on_heartbeat (pynwn.Resref): A script
+            on_perceived (pynwn.Resref): A script
+            on_rested (pynwn.Resref): A script
+            on_spawn (pynwn.Resref): A script
+            on_spell_cast_at (pynwn.Resref): A script
+            on_user_defined (pynwn.Resref): A script
+        )")
         .def_readwrite("on_attacked", &nw::CreatureScripts::on_attacked)
         .def_readwrite("on_blocked", &nw::CreatureScripts::on_blocked)
         .def_readwrite("on_conversation", &nw::CreatureScripts::on_conversation)
@@ -195,7 +212,15 @@ void init_objects_creature(py::module& nw)
         .def_readwrite("on_spell_cast_at", &nw::CreatureScripts::on_spell_cast_at)
         .def_readwrite("on_user_defined", &nw::CreatureScripts::on_user_defined);
 
-    py::class_<nw::Creature, nw::ObjectBase>(nw, "Creature")
+    py::class_<nw::Creature, nw::ObjectBase>(nw, "Creature",
+        R"(This is the main class that represents a Creature object
+
+        Attributes:
+            conversation (pynwn.Resref): Dialog resref
+            subrace (str): Subrace
+            stats (:class:`pynwn.CreatureStats`): Offensive and defensive stats.
+        )")
+
         .def(py::init<>())
         .def("to_dict", &to_json_helper<nw::Creature>)
         .def("handle", &nw::Creature::handle)
@@ -216,11 +241,8 @@ void init_objects_creature(py::module& nw)
         .def_readwrite("name_first", &nw::Creature::name_first)
         .def_readwrite("name_last", &nw::Creature::name_last)
         .def_readwrite("scripts", &nw::Creature::scripts)
-        .def_readonly("stats", &nw::Creature::stats,
-            R"(Creature Stats
-
-            :type: pynwn.CreatureStats)")
-        .def_readwrite("subrace", &nw::Creature::subrace, "Subrace")
+        .def_readonly("stats", &nw::Creature::stats)
+        .def_readwrite("subrace", &nw::Creature::subrace)
 
         .def_readwrite("cr", &nw::Creature::cr)
         .def_readwrite("cr_adjust", &nw::Creature::cr_adjust)

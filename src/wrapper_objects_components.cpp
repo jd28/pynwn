@@ -21,7 +21,29 @@ namespace py = pybind11;
 
 void init_component_appearance(py::module& m)
 {
-    py::class_<nw::BodyParts>(m, "BodyParts")
+    py::class_<nw::BodyParts>(m, "BodyParts",
+        R"(Class containing references to creature's body parts
+
+        Attributes:
+            belt (int): body part
+            bicep_left (int): body part
+            bicep_right (int): body part
+            foot_left (int): body part
+            foot_right (int): body part
+            forearm_left (int): body part
+            forearm_right (int): body part
+            hand_left (int): body part
+            hand_right (int): body part
+            head (int): body part
+            neck (int): body part
+            pelvis (int): body part
+            shin_left (int): body part
+            shin_right (int): body part
+            shoulder_left (int): body part
+            shoulder_right (int): body part
+            thigh_left (int): body part
+            thigh_right (int): body part
+        )")
         .def(py::init<>())
         .def_readwrite("belt", &nw::BodyParts::belt)
         .def_readwrite("bicep_left", &nw::BodyParts::bicep_left)
@@ -42,7 +64,21 @@ void init_component_appearance(py::module& m)
         .def_readwrite("thigh_left", &nw::BodyParts::thigh_left)
         .def_readwrite("thigh_right", &nw::BodyParts::thigh_right);
 
-    py::class_<nw::Appearance>(m, "Appearance")
+    py::class_<nw::Appearance>(m, "Appearance",
+        R"(Class containing creature's appearance
+
+        Attributes:
+            body_parts (pynwn.BodyParts): body_parts
+            hair (int): hair
+            id (int): Index into ``appearance.2da``
+            phenotype (int): phenotype
+            portrait_id (int): Index into ``portraits.2da``
+            skin (int): skin
+            tail (int): tail
+            tattoo1 (int): tattoo1
+            tattoo2 (int): tattoo2
+            wings (int): wings
+        )")
         .def(py::init<>())
         .def_readwrite("phenotype", &nw::Appearance::phenotype)
         .def_readwrite("tail", &nw::Appearance::tail)
@@ -63,7 +99,18 @@ void init_component_combatinfo(py::module& m)
 
 void init_component_common(py::module& m)
 {
-    py::class_<nw::Common>(m, "Common")
+    py::class_<nw::Common>(m, "Common",
+        R"(Class containing attributes common to all objects
+
+        Attributes:
+            resref (pynwn.Resref): resref
+            tag (str): tag
+            name (pynwn.LocString): name
+            locals (pynwn.LocalData): locals
+            location (pynwn.Location): location
+            comment (str): comment
+            palette_id (int): palette_id
+        )")
         .def_readwrite("resref", &nw::Common::resref)
         .def_readwrite("tag", &nw::Common::tag)
         .def_readwrite("name", &nw::Common::name)
