@@ -221,18 +221,17 @@ void init_component_trap(py::module& m)
 
 void init_object_components(py::module& m)
 {
-    py::module c = m.def_submodule("components", "Object components");
-    init_component_appearance(c);
-    init_component_combatinfo(c);
-    init_component_common(c);
-    init_component_creature_stats(c);
-    init_component_equips(c);
-    init_component_inventory(c);
-    init_component_levelstats(c);
-    init_component_localdata(c);
-    init_component_location(c);
-    init_component_lock(c);
-    init_component_saves(c);
-    init_component_spellbook(c);
-    init_component_trap(c);
+    init_component_appearance(m);
+    init_component_combatinfo(m);
+    init_component_common(m);
+    init_component_creature_stats(m);
+    init_component_equips(m);
+    init_component_inventory(m);
+    init_component_levelstats(m);
+    init_component_localdata(m);
+    init_component_location(m);
+    init_component_lock(m);
+    init_component_saves(m);
+    init_component_spellbook(m);
+    init_component_trap(m);
 }
