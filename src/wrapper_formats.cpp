@@ -88,7 +88,6 @@ void init_formats_twoda(py::module& nw)
         })
 
         .def("set", [](nw::TwoDA& self, size_t row, std::string_view col, std::variant<int, float, std::string> val) {
-            std::variant<int, float, std::string> result = "";
             if (std::holds_alternative<int>(val)) {
                 self.set(row, col, std::get<int>(val));
             } else if (std::holds_alternative<float>(val)) {
@@ -99,7 +98,6 @@ void init_formats_twoda(py::module& nw)
         })
 
         .def("set", [](nw::TwoDA& self, size_t row, size_t col, std::variant<int, float, std::string> val) {
-            std::variant<int, float, std::string> result = "";
             if (std::holds_alternative<int>(val)) {
                 self.set(row, col, std::get<int>(val));
             } else if (std::holds_alternative<float>(val)) {
