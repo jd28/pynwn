@@ -11,6 +11,7 @@
 #include <nw/resources/Zip.hpp>
 #include <nw/util/string.hpp>
 
+#include <fmt/format.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl/filesystem.h>
@@ -23,11 +24,15 @@ void init_resources_resref(py::module& nw)
 {
     py::class_<nw::Resref>(nw, "Resref")
         .def(py::init<>())
-        .def(py::init<std::string_view>())
+        .def(py::init([](std::string_view str) -> nw::Resref {
+            if (str.length() >= 16) {
+                throw std::runtime_error(fmt::format("invalid resref '{}', must be 16 characters or less", str));
+            }
+            return nw::Resref(str);
+        }))
         .def("empty", &nw::Resref::empty)
         .def("length", &nw::Resref::length)
-        .def("string", &nw::Resref::string)
-        .def("view", &nw::Resref::view)
+        .def("__str__", &nw::Resref::string)
         .def("__repr__", &nw::Resref::view);
 }
 
