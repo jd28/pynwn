@@ -11,6 +11,7 @@ pynwn
    :caption: API
 
    modules/components
+   modules/formats
    modules/objects
    modules/script
    modules/resources

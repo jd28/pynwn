@@ -1,4 +1,0 @@
-CreatureScripts
-===============
-
-.. autoclass:: pynwn.CreatureScripts

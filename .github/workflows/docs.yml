@@ -26,27 +26,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Install gcc-11
-        run: |
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-          sudo apt update
-          sudo apt install gcc-11 g++-11 ninja-build
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
-
-      - name: download vcpkg
-        run: |
-          git clone https://github.com/microsoft/vcpkg ${{ github.workspace }}/vcpkg || true
-          pushd vcpkg
-          mkdir -p .cache
-          git checkout --force ${{ env.vcpkg-tag }}
-          ./bootstrap-vcpkg.sh
-          popd
-
-      - name: Build pynwn
-        run: |
-          cmake --preset=linux
-          cmake --build --preset default
-
       - name: Build docs
         run: |
           pushd ${{ github.workspace }}/docs

@@ -10,6 +10,7 @@ objects
    objects/encounter
    objects/item
    objects/Module
+   objects/ObjectBase
    objects/Placeable
    objects/Sound
    objects/Store

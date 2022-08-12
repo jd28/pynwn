@@ -21,29 +21,7 @@ namespace py = pybind11;
 
 void init_component_appearance(py::module& m)
 {
-    py::class_<nw::BodyParts>(m, "BodyParts",
-        R"(Class containing references to creature's body parts
-
-        Attributes:
-            belt (int): body part
-            bicep_left (int): body part
-            bicep_right (int): body part
-            foot_left (int): body part
-            foot_right (int): body part
-            forearm_left (int): body part
-            forearm_right (int): body part
-            hand_left (int): body part
-            hand_right (int): body part
-            head (int): body part
-            neck (int): body part
-            pelvis (int): body part
-            shin_left (int): body part
-            shin_right (int): body part
-            shoulder_left (int): body part
-            shoulder_right (int): body part
-            thigh_left (int): body part
-            thigh_right (int): body part
-        )")
+    py::class_<nw::BodyParts>(m, "BodyParts")
         .def(py::init<>())
         .def_readwrite("belt", &nw::BodyParts::belt)
         .def_readwrite("bicep_left", &nw::BodyParts::bicep_left)

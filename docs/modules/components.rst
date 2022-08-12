@@ -8,8 +8,6 @@ components
    components/BodyParts
    components/CombatInfo
    components/Common
-   components/CreatureScripts
-   components/CreatureStats
    components/Equips
    components/Inventory
    components/LevelStats

@@ -69,7 +69,7 @@ void init_objects_base(py::module& nw)
 
     py::class_<nw::ObjectBase>(nw, "ObjectBase")
         .def("handle", &nw::ObjectBase::handle)
-        //.def("instantiate", &nw::ObjectBase::instantiate)
+        .def("instantiate", &nw::ObjectBase::instantiate)
         //.def("valid", &nw::ObjectBase::valid)
         .def("as_common", py::overload_cast<>(&nw::ObjectBase::as_common), py::return_value_policy::reference_internal)
         .def("as_common", py::overload_cast<>(&nw::ObjectBase::as_common, py::const_), py::return_value_policy::reference_internal)
@@ -180,24 +180,7 @@ void init_objects_area(py::module& nw)
 
 void init_objects_creature(py::module& nw)
 {
-    py::class_<nw::CreatureScripts>(nw, "CreatureScripts",
-        R"(A class containing a creature's script set.
-
-        Attributes:
-            on_attacked (pynwn.Resref): A script
-            on_blocked (pynwn.Resref): A script
-            on_conversation (pynwn.Resref): A script
-            on_damaged (pynwn.Resref): A script
-            on_death (pynwn.Resref): A script
-            on_disturbed (pynwn.Resref): A script
-            on_endround (pynwn.Resref): A script
-            on_heartbeat (pynwn.Resref): A script
-            on_perceived (pynwn.Resref): A script
-            on_rested (pynwn.Resref): A script
-            on_spawn (pynwn.Resref): A script
-            on_spell_cast_at (pynwn.Resref): A script
-            on_user_defined (pynwn.Resref): A script
-        )")
+    py::class_<nw::CreatureScripts>(nw, "CreatureScripts")
         .def_readwrite("on_attacked", &nw::CreatureScripts::on_attacked)
         .def_readwrite("on_blocked", &nw::CreatureScripts::on_blocked)
         .def_readwrite("on_conversation", &nw::CreatureScripts::on_conversation)
@@ -212,15 +195,7 @@ void init_objects_creature(py::module& nw)
         .def_readwrite("on_spell_cast_at", &nw::CreatureScripts::on_spell_cast_at)
         .def_readwrite("on_user_defined", &nw::CreatureScripts::on_user_defined);
 
-    py::class_<nw::Creature, nw::ObjectBase>(nw, "Creature",
-        R"(This is the main class that represents a Creature object
-
-        Attributes:
-            conversation (pynwn.Resref): Dialog resref
-            subrace (str): Subrace
-            stats (:class:`pynwn.CreatureStats`): Offensive and defensive stats.
-        )")
-
+    py::class_<nw::Creature, nw::ObjectBase>(nw, "Creature")
         .def(py::init<>())
         .def("to_dict", &to_json_helper<nw::Creature>)
         .def("handle", &nw::Creature::handle)

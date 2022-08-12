@@ -47,7 +47,6 @@ void init_formats_twoda(py::module& nw)
             }
             return result;
         })
-
         .def("size", &nw::TwoDARowView::size);
 
     py::class_<nw::TwoDA>(nw, "TwoDA")
@@ -87,16 +86,25 @@ void init_formats_twoda(py::module& nw)
             return result;
         })
 
-        .def("set", [](nw::TwoDA& self, size_t row, std::string_view col, std::variant<int, float, std::string> val) {
-            if (std::holds_alternative<int>(val)) {
-                self.set(row, col, std::get<int>(val));
-            } else if (std::holds_alternative<float>(val)) {
-                self.set(row, col, std::get<float>(val));
-            } else if (std::holds_alternative<std::string>(val)) {
-                self.set(row, col, std::get<std::string>(val));
-            }
-        })
+        .def(
+            "set", [](nw::TwoDA& self, size_t row, std::string_view col, std::variant<int, float, std::string> val) {
+                if (std::holds_alternative<int>(val)) {
+                    self.set(row, col, std::get<int>(val));
+                } else if (std::holds_alternative<float>(val)) {
+                    self.set(row, col, std::get<float>(val));
+                } else if (std::holds_alternative<std::string>(val)) {
+                    self.set(row, col, std::get<std::string>(val));
+                }
+            },
+            R"(Set a 2da value
 
+            Args:
+                row (int): The first parameter.
+                column (str): The second parameter.
+
+            Returns:
+                None
+            )")
         .def("set", [](nw::TwoDA& self, size_t row, size_t col, std::variant<int, float, std::string> val) {
             if (std::holds_alternative<int>(val)) {
                 self.set(row, col, std::get<int>(val));
