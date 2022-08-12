@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resources &mdash; pynwn 0.1.0 documentation</title>
+  <title>resources &mdash; pynwn 0.1.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,7 +17,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="script" href="script.html" /> 
+    <link rel="next" title="Resref" href="resources/Resref.html" />
+    <link rel="prev" title="Script" href="script/Script.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -37,9 +38,14 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects.html">objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="script.html">script</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Resources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="resources/Resref.html">Resref</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -56,7 +62,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Resources</li>
+      <li>resources</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/modules/resources.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -67,171 +73,20 @@
            <div itemprop="articleBody">
              
   <div class="section" id="resources">
-<h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynwn.Resref">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">Resref</span></span><a class="headerlink" href="#pynwn.Resref" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynwn.Resref.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overloaded function.</p>
-<ol class="arabic simple">
-<li><p>__init__(self: pynwn.Resref) -&gt; None</p></li>
-<li><p>__init__(self: pynwn.Resref, arg0: str) -&gt; None</p></li>
-</ol>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resref" title="pynwn.Resref"><span class="pre">pynwn.Resref</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pynwn.Resref.__repr__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.empty">
-<span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resref" title="pynwn.Resref"><span class="pre">pynwn.Resref</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pynwn.Resref.empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.length">
-<span class="sig-name descname"><span class="pre">length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resref" title="pynwn.Resref"><span class="pre">pynwn.Resref</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#pynwn.Resref.length" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.string">
-<span class="sig-name descname"><span class="pre">string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resref" title="pynwn.Resref"><span class="pre">pynwn.Resref</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pynwn.Resref.string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resref.view">
-<span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resref" title="pynwn.Resref"><span class="pre">pynwn.Resref</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pynwn.Resref.view" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pynwn.Resource">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">Resource</span></span><a class="headerlink" href="#pynwn.Resource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resource.filename">
-<span class="sig-name descname"><span class="pre">filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resource" title="pynwn.Resource"><span class="pre">pynwn.Resource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pynwn.Resource.filename" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynwn.Resource.valid">
-<span class="sig-name descname"><span class="pre">valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynwn.Resource" title="pynwn.Resource"><span class="pre">pynwn.Resource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pynwn.Resource.valid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pynwn.ResourceType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">ResourceType</span></span><a class="headerlink" href="#pynwn.ResourceType" title="Permalink to this definition">¶</a></dt>
-<dd><p>Members:</p>
-<p>invalid</p>
-<p>bmp</p>
-<p>mve</p>
-<p>tga</p>
-<p>wav</p>
-<p>plt</p>
-<p>ini</p>
-<p>bmu</p>
-<p>mpg</p>
-<p>txt</p>
-<p>plh</p>
-<p>tex</p>
-<p>mdl</p>
-<p>thg</p>
-<p>fnt</p>
-<p>lua</p>
-<p>slt</p>
-<p>nss</p>
-<p>ncs</p>
-<p>mod</p>
-<p>are</p>
-<p>set</p>
-<p>ifo</p>
-<p>bic</p>
-<p>wok</p>
-<p>twoda</p>
-<p>tlk</p>
-<p>txi</p>
-<p>git</p>
-<p>bti</p>
-<p>uti</p>
-<p>btc</p>
-<p>utc</p>
-<p>dlg</p>
-<p>itp</p>
-<p>btt</p>
-<p>utt</p>
-<p>dds</p>
-<p>bts</p>
-<p>uts</p>
-<p>ltr</p>
-<p>gff</p>
-<p>fac</p>
-<p>bte</p>
-<p>ute</p>
-<p>btd</p>
-<p>utd</p>
-<p>btp</p>
-<p>utp</p>
-<p>dft</p>
-<p>gic</p>
-<p>gui</p>
-<p>css</p>
-<p>ccs</p>
-<p>btm</p>
-<p>utm</p>
-<p>dwk</p>
-<p>pwk</p>
-<p>btg</p>
-<p>utg</p>
-<p>jrl</p>
-<p>sav</p>
-<p>utw</p>
-<p>fourpc</p>
-<p>ssf</p>
-<p>hak</p>
-<p>nwm</p>
-<p>bik</p>
-<p>ndb</p>
-<p>ptm</p>
-<p>ptt</p>
-<p>bak</p>
-<p>dat</p>
-<p>shd</p>
-<p>xbc</p>
-<p>wbm</p>
-<p>mtr</p>
-<p>ktx</p>
-<p>ttf</p>
-<p>sql</p>
-<p>tml</p>
-<p>sq3</p>
-<p>lod</p>
-<p>gif</p>
-<p>png</p>
-<p>jpg</p>
-<p>caf</p>
-<p>ids</p>
-<p>erf</p>
-<p>bif</p>
-<p>key</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynwn.ResourceType.ifo">
-<span class="sig-name descname"><span class="pre">ifo</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ResourceType.ifo:</span> <span class="pre">2014&gt;</span></em><a class="headerlink" href="#pynwn.ResourceType.ifo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<h1>resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="resources/Resref.html">Resref</a></li>
+</ul>
+</div>
 </div>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="script.html" class="btn btn-neutral float-left" title="script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="script/Script.html" class="btn btn-neutral float-left" title="Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="resources/Resref.html" class="btn btn-neutral float-right" title="Resref" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

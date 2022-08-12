@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creature &mdash; pynwn 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Door" href="door.html" />
+    <link rel="prev" title="Area" href="Area.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> pynwn
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../components.html">components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">formats</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../objects.html">objects</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Area.html">Area</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Creature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="door.html">Door</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encounter.html">Encounter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="item.html">Item</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Module.html">Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ObjectBase.html">ObjectBase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Placeable.html">Placeable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sound.html">Sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Store.html">Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trigger.html">Trigger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waypoint.html">Waypoint</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../script.html">script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">resources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pynwn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../objects.html">objects</a> &raquo;</li>
+      <li>Creature</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/objects/creature.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="creature">
+<h1>Creature<a class="headerlink" href="#creature" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynwn.Creature">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">Creature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynwn.Creature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that represents a Creature object</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.appearance">
+<span class="sig-name descname"><span class="pre">appearance</span></span><a class="headerlink" href="#pynwn.Creature.appearance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.bodybag">
+<span class="sig-name descname"><span class="pre">bodybag</span></span><a class="headerlink" href="#pynwn.Creature.bodybag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.chunk_death">
+<span class="sig-name descname"><span class="pre">chunk_death</span></span><a class="headerlink" href="#pynwn.Creature.chunk_death" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.combat_info">
+<span class="sig-name descname"><span class="pre">combat_info</span></span><a class="headerlink" href="#pynwn.Creature.combat_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.conversation">
+<span class="sig-name descname"><span class="pre">conversation</span></span><a class="headerlink" href="#pynwn.Creature.conversation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dialog resref</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.cr">
+<span class="sig-name descname"><span class="pre">cr</span></span><a class="headerlink" href="#pynwn.Creature.cr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.cr_adjust">
+<span class="sig-name descname"><span class="pre">cr_adjust</span></span><a class="headerlink" href="#pynwn.Creature.cr_adjust" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.decay_time">
+<span class="sig-name descname"><span class="pre">decay_time</span></span><a class="headerlink" href="#pynwn.Creature.decay_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.deity">
+<span class="sig-name descname"><span class="pre">deity</span></span><a class="headerlink" href="#pynwn.Creature.deity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#pynwn.Creature.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.disarmable">
+<span class="sig-name descname"><span class="pre">disarmable</span></span><a class="headerlink" href="#pynwn.Creature.disarmable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.faction_id">
+<span class="sig-name descname"><span class="pre">faction_id</span></span><a class="headerlink" href="#pynwn.Creature.faction_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.gender">
+<span class="sig-name descname"><span class="pre">gender</span></span><a class="headerlink" href="#pynwn.Creature.gender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.good_evil">
+<span class="sig-name descname"><span class="pre">good_evil</span></span><a class="headerlink" href="#pynwn.Creature.good_evil" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.hp">
+<span class="sig-name descname"><span class="pre">hp</span></span><a class="headerlink" href="#pynwn.Creature.hp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.hp_current">
+<span class="sig-name descname"><span class="pre">hp_current</span></span><a class="headerlink" href="#pynwn.Creature.hp_current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.hp_max">
+<span class="sig-name descname"><span class="pre">hp_max</span></span><a class="headerlink" href="#pynwn.Creature.hp_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.immortal">
+<span class="sig-name descname"><span class="pre">immortal</span></span><a class="headerlink" href="#pynwn.Creature.immortal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.interruptable">
+<span class="sig-name descname"><span class="pre">interruptable</span></span><a class="headerlink" href="#pynwn.Creature.interruptable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.lawful_chaotic">
+<span class="sig-name descname"><span class="pre">lawful_chaotic</span></span><a class="headerlink" href="#pynwn.Creature.lawful_chaotic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.levels">
+<span class="sig-name descname"><span class="pre">levels</span></span><a class="headerlink" href="#pynwn.Creature.levels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.lootable">
+<span class="sig-name descname"><span class="pre">lootable</span></span><a class="headerlink" href="#pynwn.Creature.lootable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.name_first">
+<span class="sig-name descname"><span class="pre">name_first</span></span><a class="headerlink" href="#pynwn.Creature.name_first" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.name_last">
+<span class="sig-name descname"><span class="pre">name_last</span></span><a class="headerlink" href="#pynwn.Creature.name_last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.pc">
+<span class="sig-name descname"><span class="pre">pc</span></span><a class="headerlink" href="#pynwn.Creature.pc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.perception_range">
+<span class="sig-name descname"><span class="pre">perception_range</span></span><a class="headerlink" href="#pynwn.Creature.perception_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><a class="headerlink" href="#pynwn.Creature.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.race">
+<span class="sig-name descname"><span class="pre">race</span></span><a class="headerlink" href="#pynwn.Creature.race" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.scripts">
+<span class="sig-name descname"><span class="pre">scripts</span></span><a class="headerlink" href="#pynwn.Creature.scripts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.soundset">
+<span class="sig-name descname"><span class="pre">soundset</span></span><a class="headerlink" href="#pynwn.Creature.soundset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.starting_package">
+<span class="sig-name descname"><span class="pre">starting_package</span></span><a class="headerlink" href="#pynwn.Creature.starting_package" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><a class="headerlink" href="#pynwn.Creature.stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Offensive and defensive stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pynwn.CreatureStats" title="pynwn.CreatureStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynwn.CreatureStats</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.subrace">
+<span class="sig-name descname"><span class="pre">subrace</span></span><a class="headerlink" href="#pynwn.Creature.subrace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subrace</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.Creature.walkrate">
+<span class="sig-name descname"><span class="pre">walkrate</span></span><a class="headerlink" href="#pynwn.Creature.walkrate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynwn.Creature.handle">
+<span class="sig-name descname"><span class="pre">handle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pynwn.Creature.handle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets object handle</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">CreatureScripts</span></span><a class="headerlink" href="#pynwn.CreatureScripts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class containing a creature’s script set.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_attacked">
+<span class="sig-name descname"><span class="pre">on_attacked</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_attacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_blocked">
+<span class="sig-name descname"><span class="pre">on_blocked</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_blocked" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_conversation">
+<span class="sig-name descname"><span class="pre">on_conversation</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_conversation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_damaged">
+<span class="sig-name descname"><span class="pre">on_damaged</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_damaged" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_death">
+<span class="sig-name descname"><span class="pre">on_death</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_death" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_disturbed">
+<span class="sig-name descname"><span class="pre">on_disturbed</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_disturbed" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_endround">
+<span class="sig-name descname"><span class="pre">on_endround</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_endround" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_heartbeat">
+<span class="sig-name descname"><span class="pre">on_heartbeat</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_heartbeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_perceived">
+<span class="sig-name descname"><span class="pre">on_perceived</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_perceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_rested">
+<span class="sig-name descname"><span class="pre">on_rested</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_rested" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_spawn">
+<span class="sig-name descname"><span class="pre">on_spawn</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_spawn" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_spell_cast_at">
+<span class="sig-name descname"><span class="pre">on_spell_cast_at</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_spell_cast_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureScripts.on_user_defined">
+<span class="sig-name descname"><span class="pre">on_user_defined</span></span><a class="headerlink" href="#pynwn.CreatureScripts.on_user_defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>A script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pynwn.Resref</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="pynwn.CreatureStats">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynwn.</span></span><span class="sig-name descname"><span class="pre">CreatureStats</span></span><a class="headerlink" href="#pynwn.CreatureStats" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="pynwn.CreatureStats.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#pynwn.CreatureStats.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Area.html" class="btn btn-neutral float-left" title="Area" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="door.html" class="btn btn-neutral float-right" title="Door" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, jmd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

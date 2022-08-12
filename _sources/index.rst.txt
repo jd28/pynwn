@@ -10,6 +10,8 @@ pynwn
    :maxdepth: 2
    :caption: API
 
+   modules/components
+   modules/formats
    modules/objects
    modules/script
    modules/resources

@@ -1,7 +1,7 @@
-script
+formats
 ======
 
 .. toctree::
    :maxdepth: 2
 
-   script/Script
+   formats/TwoDA
