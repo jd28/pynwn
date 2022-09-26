@@ -1,6 +1,6 @@
 #include "opaque_types.hpp"
 
-#include <nw/formats/Nss.hpp>
+#include <nw/script/Nss.hpp>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
@@ -128,11 +128,12 @@ void init_script(py::module& nw, py::module& script)
 
     py::class_<nws::Nss>(script, "Nss")
         .def(py::init<std::filesystem::path>())
-        .def("parse", [](nws::Nss& self) {
-            auto result = new nws::Script;
-            *result = self.parse();
-            return result;
-        });
+        .def(
+            "parse", [](nws::Nss& self) {
+                self.parse();
+                return &self.script();
+            },
+            py::return_value_policy::reference_internal);
 
     py::class_<nws::Script>(script, "Script")
         .def(
