@@ -46,7 +46,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name="pynwn",
-    version="0.1.0",
+    version="0.1.dev0",
     author="jmd",
     author_email="joshua.m.dean@gmail.com",
     # packages=find_packages(where="src"),
@@ -54,6 +54,7 @@ setup(
     include_package_data=True,
     description="libnw wrapper",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     ext_modules=[CMakeExtension("src")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
