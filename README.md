@@ -1,7 +1,8 @@
 PyNWN
 =====
 
-**This repository is no longer maintained.  There are good ideas here, but I will not update it to NWN:EE**
+**This repository is no longer maintained.  There are good ideas here, but I will not update it to NWN:EE.  If you
+are interested in this library, please see [rollnw](https://github.com/jd28/rollnw)**
 
 Neverwinter Nights 1/2 file formats Python library.
 
